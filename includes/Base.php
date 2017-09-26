@@ -19,4 +19,8 @@ class Base {
 	public function constructQuery() {
 		return [];
 	}
+
+	public function constructMutation() {
+		return [];
+	}
 }

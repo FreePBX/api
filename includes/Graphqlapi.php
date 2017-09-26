@@ -33,8 +33,27 @@ class Graphqlapi {
 			'fields' => $queryFields
 		]);
 
+		$mutationFields = [];
+		foreach($classes as $module => $objects) {
+			foreach($objects as $name => $object) {
+				$mutation = $object->constructMutation();
+				foreach($mutation as &$q) {
+					if(isset($q['type']) && is_string($q['type'])) {
+						$q = $this->replaceTypes($q);
+					}
+				}
+				$mutationFields = array_merge($mutationFields,$mutation);
+			}
+		}
+
+		$mutationType = new ObjectType([
+			'name' => 'Mutation',
+			'fields' => $mutationFields
+		]);
+
 		$schema = new Schema([
-			'query' => $queryType
+			'query' => $queryType,
+			'mutation' => $mutationType
 		]);
 
 		//$schema->assertValid();
