@@ -1,0 +1,19 @@
+<module>
+	<rawname>gqlapi</rawname>
+	<repo>standard</repo>
+	<name>PBX API</name>
+	<version>15.0.1alpha1</version>
+	<publisher>Sangoma Technologies Corporation</publisher>
+	<license>GPLv3+</license>
+	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
+	<category>Settings</category>
+	<changelog>
+
+	</changelog>
+	<description>
+
+	</description>
+	<supported>
+		<version>15.0</version>
+	</supported>
+</module>
