@@ -6,6 +6,14 @@ use GraphQL\GraphQL;
 use GraphQL\Schema;
 use GraphQL\Type\Definition\Type;
 
+use GraphQL\Server\StandardServer;
+use GraphQL\Executor\ExecutionResult;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+
+use Slim\App;
+
 class Graphqlapi {
 	public function __construct($freepbx) {
 		$this->freepbx = $freepbx;
@@ -58,28 +66,34 @@ class Graphqlapi {
 
 		//$schema->assertValid();
 
-		$rawInput = file_get_contents('php://input');
-		$input = json_decode($rawInput, true);
-		$query = $input['query'];
-		$variableValues = !empty($input['variables']) ? $input['variables'] : null;
+		$_SERVER['QUERY_STRING'] = str_replace('module=gqlapi&command='.$_GET['command'].'&restofpath='.$_GET['restofpath'],'',$_SERVER['QUERY_STRING']);
+		$_SERVER['REQUEST_URI'] = '/'.$_GET['command'].(!empty($_GET['restofpath']) ? '/'.$_GET['restofpath'] : '');
 
-		try {
-			$result = GraphQL::execute(
-				$schema,
-				$query,
-				null,
-				null,
-				$variableValues
-			);
-		} catch (\Exception $e) {
-			$result = [
-				'error' => [
-					'message' => $e->getMessage()
-				]
-			];
-		}
-		header('Content-Type: application/json; charset=UTF-8');
-		echo json_encode($result);
+		$config = [
+			'settings' => [
+				'displayErrorDetails' => true,
+			],
+		];
+
+		$accessTokenRepository = new \FreePBX\modules\Gqlapi\Oauth\AccessTokenRepository();
+		$publicKeyPath = 'file://' . __DIR__ . '/../public.key';
+		$server = new \League\OAuth2\Server\ResourceServer(
+			$accessTokenRepository,
+				$publicKeyPath
+		);
+
+		$app = new App($config);
+
+		$app->add(new \League\OAuth2\Server\Middleware\ResourceServerMiddleware($server));
+
+		$app->post('/api', function ($request, $response, $args) use ($app, $schema) {
+			$server = new StandardServer([
+				'schema' => $schema
+			]);
+			$server->processPsrRequest($request, $response, $response->getBody());
+		});
+		$app->run();
+
 	}
 
 	private function initalizeReferences() {
