@@ -1,6 +1,6 @@
 <?php
 
-namespace FreePBX\modules\Gqlapi\Oauth;
+namespace FreePBX\modules\Api\Oauth\Entities;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Traits\ClientTrait;

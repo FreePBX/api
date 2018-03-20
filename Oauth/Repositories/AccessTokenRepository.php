@@ -1,22 +1,27 @@
 <?php
 
-namespace FreePBX\modules\Gqlapi\Oauth;
+namespace FreePBX\modules\Api\Oauth\Repositories;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use FreePBX\modules\Api\Oauth\Entities\AccessTokenEntity;
 
 class AccessTokenRepository implements AccessTokenRepositoryInterface {
+	public function __construct($api) {
+		$this->api = $api;
+	}
 	public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity) {
-		// Some logic here to save the access token to a database
+		$application = $this->api->applications->getByClientId($accessTokenEntity->getClient()->getIdentifier());
+		$this->api->accessTokens->add($accessTokenEntity->getIdentifier(), $application['id'], $_SERVER['REMOTE_ADDR'], $accessTokenEntity->getScopes(), $accessTokenEntity->getExpiryDateTime(), $accessTokenEntity->getUserIdentifier());
 	}
 
 	public function revokeAccessToken($tokenId) {
-		// Some logic here to revoke the access token
+		$this->api->accessTokens->revokeToken($tokenId);
 	}
 
 	public function isAccessTokenRevoked($tokenId) {
-		return false; // Access token hasn't been revoked
+		return $this->api->accessTokens->isRevoked($tokenId);
 	}
 
 	public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null) {

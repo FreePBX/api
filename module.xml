@@ -1,5 +1,5 @@
 <module>
-	<rawname>gqlapi</rawname>
+	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
 	<version>15.0.1alpha1</version>
@@ -7,12 +7,60 @@
 	<license>GPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<category>Settings</category>
+	<menuitems>
+		<api>API</api>
+	</menuitems>
 	<changelog>
-
 	</changelog>
 	<description>
-
 	</description>
+	<hooks>
+		<framework class="Chown" namespace="FreePBX\Console\Command">
+			<method callingMethod="fwcChownFiles" class="Api" namespace="FreePBX\modules">chownFreepbx</method>
+		</framework>
+		<userman class="Userman" namespace="FreePBX\modules">
+			<method callingMethod="delGroup" class="Api" namespace="FreePBX\modules">usermanDelGroup</method>
+			<method callingMethod="addGroup" class="Api" namespace="FreePBX\modules">usermanAddGroup</method>
+			<method callingMethod="updateGroup" class="Api" namespace="FreePBX\modules">usermanUpdateGroup</method>
+			<method callingMethod="delUser" class="Api" namespace="FreePBX\modules">usermanDelUser</method>
+			<method callingMethod="addUser" class="Api" namespace="FreePBX\modules">usermanAddUser</method>
+			<method callingMethod="updateUser" class="Api" namespace="FreePBX\modules">usermanUpdateUser</method>
+			<method callingMethod="myShowPage" class="Api" namespace="FreePBX\modules">usermanShowPage</method>
+		</userman>
+	</hooks>
+	<database>
+		<table name="api_applications">
+			<field name="id" type="integer" unsigned="true" primarykey="true" autoincrement="true"/>
+	    <field name="owner" type="integer" notnull="false"/>
+	    <field name="name" type="string" length="50" default=""/>
+	    <field name="description" type="text" notnull="false"/>
+	    <field name="grant_type" type="string" length="20" default=""/>
+	    <field name="client_id" type="string" length="128" default=""/>
+	    <field name="client_secret" type="string" length="64" notnull="false"/>
+	    <field name="redirect_uri" type="string" length="150" notnull="false"/>
+	    <field name="website" type="string" length="150" notnull="false"/>
+	    <field name="algo" type="string" length="10" notnull="false"/>
+	    <key name="client_id" type="unique">
+	      <column name="client_id"/>
+	    </key>
+		</table>
+		<table name="api_access_tokens">
+			<field name="token" type="string" length="80" default="" primarykey="true"/>
+	    <field name="aid" type="integer" unsigned="true"/>
+	    <field name="expiry" type="integer"/>
+	    <field name="scopes" type="blob"/>
+	    <field name="uid" type="integer" notnull="false"/>
+	    <field name="ip_address" type="string" length="80" default=""/>
+	    <field name="last_accessed" type="integer"/>
+		</table>
+		<table name="api_refresh_tokens">
+			<field name="token" type="string" length="80" default="" primarykey="true"/>
+	    <field name="access_token" type="string" length="80" default=""/>
+	    <field name="expiry" type="integer"/>
+	    <field name="ip_address" type="string" length="80" default=""/>
+	    <field name="last_accessed" type="integer"/>
+		</table>
+	</database>
 	<supported>
 		<version>15.0</version>
 	</supported>

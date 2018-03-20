@@ -1,5 +1,5 @@
 <?php
-namespace FreePBX\modules\Gqlapi\includes;
+namespace FreePBX\modules\Api\Gql;
 
 use GraphQL\Type\Definition\ObjectType;
 class ObjectReference {
