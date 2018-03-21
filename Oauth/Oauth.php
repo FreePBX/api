@@ -68,14 +68,39 @@ class Oauth {
 					new \DateInterval('PT1H') // access tokens will expire after 1 hour
 				);
 
+				// Enable the authentication code grant on the server
+				$grant = new \League\OAuth2\Server\Grant\AuthCodeGrant(
+					new Repositories\AuthCodeRepository($this->api),
+					new Repositories\RefreshTokenRepository($this->api),    // instance of RefreshTokenRepositoryInterface
+					new \DateInterval('PT10M') // authorization codes will expire after 10 minutes
+				);
+
+				$grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
+
+				// Enable the authentication code grant on the server
+				$server->enableGrantType(
+					$grant,
+					new \DateInterval('PT1H') // access tokens will expire after 1 hour
+				);
+
 				return $server;
-			}
+			},
+			'freepbx' => [
+				'identity' => $this->freepbx->Config->get("FREEPBX_SYSTEM_IDENT"),
+				'brand_image' => $this->freepbx->Config->get("BRAND_IMAGE_FREEPBX_FOOT"),
+				'flattenedScopes' => $this->api->getFlattenedScopes()
+			],
+			'api' => $this->api
 		];
 
+		$ident = $this->freepbx->Config->get("FREEPBX_SYSTEM_IDENT");
+		$image = $this->freepbx->Config->get("BRAND_IMAGE_FREEPBX_FOOT");
+		$flattenedScopes = $this->api->getFlattenedScopes();
 		$app = new App($config);
 		$app->get('/authorize', function ($request, $response, $args) use ($app) {
 			try {
-
+				$api = $app->getContainer()->get('api');
+				$freepbx = $app->getContainer()->get('freepbx');
 				$server = $app->getContainer()->get(AuthorizationServer::class);
 				if(empty($_SESSION['authorize'])) {
 					// Validate the HTTP request and return an AuthorizationRequest object.
@@ -85,51 +110,52 @@ class Oauth {
 					$authRequest = unserialize($_SESSION['authorize']);
 				}
 
+				// The auth request object can be serialized and saved into a user's session.
+				// You will probably want to redirect the user at this point to a login endpoint.
+
 				if(!$authRequest->isAuthorizationApproved()) {
+					if(!empty($_REQUEST['username']) && !empty($_REQUEST['password'])) {
+						if($api->freepbx->Userman->checkCredentials($_REQUEST['username'], $_REQUEST['password'])) {
+							$user = $api->freepbx->Userman->getUserByUsername($_REQUEST['username']);
+							// Once the user has logged in set the user on the AuthorizationRequest
+							$authRequest->setUser(new UserEntity($user));
+							// Once the user has approved or denied the client update the status
+							// (true = approved, false = denied)
+							$authRequest->setAuthorizationApproved(true);
+							// Return the HTTP redirect response
+							return $server->completeAuthorizationRequest($authRequest, $response);
+						}
+					}
 					$body = $response->getBody();
-					$body->write('Login Form');
+					$body->write(load_view(dirname(__DIR__)."/views/authorize.php",[
+						"app_name" => $authRequest->getClient()->getName(),
+						"server" => $freepbx['identity'],
+						"image" => $freepbx['brand_image'],
+						"flattenedScopes" => $freepbx['flattenedScopes'],
+						"scopes" => $authRequest->getScopes()
+					]));
 					return;
 				}
+			} catch (OAuthServerException $exception) {
 
+				// All instances of OAuthServerException can be formatted into a HTTP response
+				return $exception->generateHttpResponse($response);
 
-        // The auth request object can be serialized and saved into a user's session.
-        // You will probably want to redirect the user at this point to a login endpoint.
+			} catch (\Exception $exception) {
+				// Unknown exception
+				$body = new Stream(fopen('php://temp', 'r+'));
+				$body->write($exception->getMessage());
+				return $response->withStatus(500)->withBody($body);
 
-        // Once the user has logged in set the user on the AuthorizationRequest
-        //$authRequest->setUser(new UserEntity(["id" => 1])); // an instance of UserEntityInterface
-
-        // At this point you should redirect the user to an authorization page.
-        // This form will ask the user to approve the client and the scopes requested.
-
-        // Once the user has approved or denied the client update the status
-        // (true = approved, false = denied)
-        //$authRequest->setAuthorizationApproved(true);
-
-        // Return the HTTP redirect response
-        //return $server->completeAuthorizationRequest($authRequest, $response);
-
-    } catch (OAuthServerException $exception) {
-
-        // All instances of OAuthServerException can be formatted into a HTTP response
-        return $exception->generateHttpResponse($response);
-
-    } catch (\Exception $exception) {
-        // Unknown exception
-        $body = new Stream(fopen('php://temp', 'r+'));
-        $body->write($exception->getMessage());
-        return $response->withStatus(500)->withBody($body);
-
-    }
+			}
 		});
 		$app->post('/token', function ($request, $response, $args) use ($app) {
 			$s = $app->getContainer()->get(AuthorizationServer::class);
 			try {
-
 				// Try to respond to the request
 				return $s->respondToAccessTokenRequest($request, $response);
 
 			} catch (OAuthServerException $exception) {
-
 				// All instances of OAuthServerException can be formatted into a HTTP response
 				return $exception->generateHttpResponse($response);
 

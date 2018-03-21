@@ -7,7 +7,7 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use FreePBX\modules\Api\Oauth\Entities\ScopeEntity;
 
 class ScopeRepository implements ScopeRepositoryInterface {
-	public function __construct($freepbx, $scopes) {
+	public function __construct($api, $scopes) {
 		$this->scopes = $scopes;
 	}
 	public function getScopeEntityByIdentifier($scopeIdentifier) {

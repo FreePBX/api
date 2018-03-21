@@ -7,7 +7,7 @@
 					<div role="tabpanel">
 						<ul class="nav nav-tabs" role="tablist">
 							<li role="presentation" class="active"><a href="#applications" aria-controls="applications" role="tab" data-toggle="tab"><?php echo _("Applications"); ?></a></li>
-							<li role="presentation"><a href="#tokens" aria-controls="tokens" role="tab" data-toggle="tab"><?php echo _("Tokens"); ?></a></li>
+							<li role="presentation"><a href="#tokens" aria-controls="tokens" role="tab" data-toggle="tab"><?php echo _("Access Tokens"); ?></a></li>
 							<li role="presentation"><a href="#refresh" aria-controls="refresh" role="tab" data-toggle="tab"><?php echo _("Refresh Tokens"); ?></a></li>
 						</ul>
 						<div class="tab-content">
@@ -15,7 +15,7 @@
 								<?php show_view(__DIR__.'/applicationGrid.php',[]); ?>
 							</div>
 							<div role="tabpanel" id="tokens" class="tab-pane display">
-								<?php show_view(__DIR__.'/tokenGrid.php',[]); ?>
+								<?php show_view(__DIR__.'/accessTokenGrid.php',[]); ?>
 							</div>
 							<div role="tabpanel" id="refresh" class="tab-pane display">
 								<?php show_view(__DIR__.'/refreshTokenGrid.php',[]); ?>

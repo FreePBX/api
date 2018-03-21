@@ -19,7 +19,11 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
 	}
 
 	public function isRefreshTokenRevoked($tokenId) {
-		return $this->api->refreshTokens->isRevoked($tokenId);
+		if($this->api->refreshTokens->isRevoked($tokenId)) {
+			return true;
+		}
+		$this->api->refreshTokens->updateAccessed($tokenId, $_SERVER['REMOTE_ADDR']);
+		return false;
 	}
 
 	public function getNewRefreshToken() {

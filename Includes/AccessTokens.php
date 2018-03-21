@@ -24,10 +24,14 @@ class AccessTokens {
 	}
 
 	public function getAll() {
-		$sql = "SELECT * FROM api_access_tokens";
+		$sql = "SELECT t.*, a.name as app_name FROM api_access_tokens t, api_applications a WHERE t.aid = a.id";
 		$sth = $this->database->prepare($sql);
 		$sth->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	public function revoke($token) {
+		return $this->remove($token);
 	}
 
 	public function remove($token) {
@@ -54,6 +58,16 @@ class AccessTokens {
 		]);
 	}
 
+	public function updateAccessed($token, $ip_address) {
+		$sql = "UPDATE IGNORE api_access_tokens SET last_accessed = :time, ip_address = :ip  WHERE `token` = :token";
+		$sth = $this->database->prepare($sql);
+		return $sth->execute([
+			":token" => $token,
+			":time" => time(),
+			":ip" => $ip_address
+		]);
+	}
+
 	public function get($token) {
 		$sql = "SELECT * FROM api_access_tokens WHERE `token` = :token";
 		$sth = $this->database->prepare($sql);
@@ -68,6 +82,15 @@ class AccessTokens {
 	}
 
 	public function isRevoked($token) {
+		$this->removeExpired();
 		return empty($this->get($token));
+	}
+
+	private function removeExpired() {
+		$sql = "DELETE FROM api_access_tokens WHERE `expiry` <= :time";
+		$sth = $this->database->prepare($sql);
+		$sth->execute([
+			":time" => time()
+		]);
 	}
 }

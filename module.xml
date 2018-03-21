@@ -6,7 +6,7 @@
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>GPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
-	<category>Settings</category>
+	<category>Connectivity</category>
 	<menuitems>
 		<api>API</api>
 	</menuitems>
@@ -52,6 +52,15 @@
 	    <field name="uid" type="integer" notnull="false"/>
 	    <field name="ip_address" type="string" length="80" default=""/>
 	    <field name="last_accessed" type="integer"/>
+		</table>
+		<table name="api_auth_codes">
+			<field name="code" type="string" length="80" default="" primarykey="true"/>
+			<field name="aid" type="integer" unsigned="true"/>
+			<field name="expiry" type="integer"/>
+			<field name="scopes" type="blob"/>
+			<field name="uid" type="integer" notnull="false"/>
+			<field name="ip_address" type="string" length="80" default=""/>
+			<field name="last_accessed" type="integer"/>
 		</table>
 		<table name="api_refresh_tokens">
 			<field name="token" type="string" length="80" default="" primarykey="true"/>

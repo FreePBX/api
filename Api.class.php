@@ -44,6 +44,10 @@ class Api implements \BMO {
 				$this->applications = new Api\Includes\Applications($this->freepbx->Database);
 				return $this->applications;
 			break;
+			case "authCodes":
+				$this->authCodes = new Api\Includes\AuthCodes($this->freepbx->Database);
+				return $this->authCodes;
+			break;
 		}
 	}
 
@@ -93,6 +97,8 @@ class Api implements \BMO {
 				$setting['authenticate'] = false;
 				$setting['allowremote'] = true;
 			case "add_application":
+			case "remove_refresh_token":
+			case "remove_access_token":
 			case "remove_application":
 			case "regenerate_application":
 			case "getApplications":
@@ -105,6 +111,14 @@ class Api implements \BMO {
 
 	public function ajaxHandler(){
 		switch($_REQUEST['command']) {
+			case "remove_access_token":
+				$this->accessTokens->remove($_POST['id']);
+				return ["status" => true];
+			break;
+			case "remove_refresh_token":
+				$this->refreshTokens->remove($_POST['id']);
+				return ["status" => true];
+			break;
 			case "getTokens":
 				return $this->accessTokens->getAll();
 			break;

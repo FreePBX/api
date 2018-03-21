@@ -37,7 +37,7 @@ class Api {
 			]
 		];
 
-		$accessTokenRepository = new AccessTokenRepository();
+		$accessTokenRepository = new AccessTokenRepository($this->freepbx->api);
 		$publicKeyPath = 'file://' . $this->publicKey;
 		$server = new ResourceServer(
 			$accessTokenRepository,
