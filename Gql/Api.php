@@ -84,7 +84,7 @@ class Api {
 				if($fileInfo->isDot()) { continue; };
 				$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 				$class = "FreePBX\\Api\\Gql\\".$name;
-				$this->classes['framework'][$name] = new $class($this->freepbx,$this->objectReferences);
+				$this->classes['framework'][$name] = new $class($this->freepbx,$this->objectReferences,'framework');
 			}
 
 			$amodules = $this->freepbx->Modules->getActiveModules();
@@ -97,7 +97,7 @@ class Api {
 						if($fileInfo->isDot()) { continue; };
 						$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 						$class = "FreePBX\\modules\\".$module['rawname']."\\Api\\Gql\\".$name;
-						$this->classes[$module['rawname']][$name] = new $class($this->freepbx,$this->objectReferences);
+						$this->classes[$module['rawname']][$name] = new $class($this->freepbx,$this->objectReferences,$module['rawname']);
 					}
 				}
 			}
@@ -109,13 +109,16 @@ class Api {
 
 	private function setupGql($request, $response, $args) {
 
-		//dbug(array_keys($request->getAttributes()));
-
 		$allowedScopes = $request->getAttribute('oauth_scopes');
 		$userId = $request->getAttribute('oauth_user_id');
 
-		$classes = $this->getAPIClasses($allowedScopes);
-
+		$classes = $this->getAPIClasses();
+		foreach($classes as $module => $objects) {
+			foreach($objects as $name => $object) {
+				$object->setAllowedScopes($allowedScopes);
+				$object->setUserId($userId);
+			}
+		}
 		$this->initalizeReferences();
 
 		$queryFields = [];

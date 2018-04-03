@@ -12,6 +12,7 @@ use FreePBX\modules\Api\Oauth\Oauth;
 
 class Api implements \BMO {
 	private $oauthKey = 'api_oauth';
+	private $flattenedScopes = [];
 
 	public function __construct($freepbx = null) {
 		if ($freepbx == null) {
@@ -104,6 +105,7 @@ class Api implements \BMO {
 			case "getApplications":
 			case "getTokens":
 			case "getRefreshTokens":
+			case "getScopes":
 				return true;
 			break;
 		}
@@ -111,6 +113,14 @@ class Api implements \BMO {
 
 	public function ajaxHandler(){
 		switch($_REQUEST['command']) {
+			case "getScopes":
+				$scopes = [];
+				foreach($this->getFlattenedScopes() as $key => $scope) {
+					$scope['scope'] = $key;
+					$scopes[] = $scope;
+				}
+				return $scopes;
+			break;
 			case "remove_access_token":
 				$this->accessTokens->remove($_POST['id']);
 				return ["status" => true];
@@ -153,25 +163,64 @@ class Api implements \BMO {
 	}
 
 	public function getFlattenedScopes() {
+		if(!empty($this->flattenedScopes)) {
+			return $this->flattenedScopes;
+		}
 		$validScopes = $this->getScopes();
-		$scopes = [];
+		$scopes = [
+			'gql' => [
+				'description' => _("All of GraphQL Read Write for all modules"),
+				'module' => null
+			],
+			'rest' => [
+				'description' => _("All of Rest Read Write for all modules"),
+				'module' => null
+			]
+		];
 
-		if(!empty($validScopes['rest'])) {
-			foreach($validScopes['rest'] as $module => $scope) {
-				foreach($scope as $scopeKey => $scopeData) {
-					$scopes['rest:'.$module.':'.$scopeKey] = $scopeData;
+		foreach(['rest','gql'] as $type) {
+			if(!empty($validScopes[$type])) {
+				foreach($validScopes[$type] as $module => $scope) {
+					$scopes[$type.':'.$module] = [
+						'description' => sprintf(_("All of %s Read Write for %s"),$type,$module),
+						'module' => $module
+					];
+					foreach($scope as $scopeKey => $scopeData) {
+						$parts = explode(":",$scopeKey);
+
+						$scopes[$type.':'.$module.':'.$parts[0]] = [
+							'description' => sprintf(_("All of %s %s for %s"),$type,$parts[0],$module),
+							'module' => $module
+						];
+						$scopeData['module'] = $module;
+						$scopes[$type.':'.$module.':'.$scopeKey] = $scopeData;
+					}
 				}
 			}
 		}
+		$this->flattenedScopes = $scopes;
+		return $this->flattenedScopes;
+	}
 
-		if(!empty($validScopes['gql'])) {
-			foreach($validScopes['gql'] as $module => $scope) {
-				foreach($scope as $scopeKey => $scopeData) {
-					$scopes['gql:'.$module.':'.$scopeKey] = $scopeData;
+	public function isScopeValid($scope) {
+		return isset($this->getFlattenedScopes()[$scope]);
+	}
+
+	public function getVisualScopes($filter=[]) {
+		$scopes = $this->getFlattenedScopes();
+		$visual = [];
+		foreach($scopes as $scopeKey => $scope) {
+			if(in_array($scopeKey,$filter)) {
+				if(!empty($scope['module'])) {
+					$scope['modData'] = [
+						"name" => $this->freepbx->Modules->getInfo($scope['module'])[$scope['module']]['name'],
+						"description" => ""
+					];
 				}
+				$visual[$scopeKey] = $scope;
 			}
 		}
-		return $scopes;
+		return $visual;
 	}
 
 	public function ajaxCustomHandler() {

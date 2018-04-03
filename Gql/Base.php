@@ -1,25 +1,16 @@
 <?php
 
 namespace FreePBX\modules\Api\Gql;
+use FreePBX\modules\Api\Includes\ApiBase;
 
-class Base {
-	protected $freepbx;
+abstract class Base extends ApiBase {
+	protected $type = 'gql';
 	protected $typeContainer;
-	public function __construct($freepbx,$typeContainer) {
+	protected $module;
+	public function __construct($freepbx,$typeContainer,$module) {
 		$this->freepbx = $freepbx;
 		$this->typeContainer = $typeContainer;
-	}
-
-	public static function getScopes() {
-		return [];
-	}
-
-	public function allowedScopes($scopes) {
-
-	}
-
-	protected function checkScope($scope) {
-		return true;
+		$this->module = $module;
 	}
 
 	public function initReferences() {

@@ -70,7 +70,7 @@ class Api {
 				if($fileInfo->isDot()) { continue; };
 				$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 				$class = "FreePBX\\Api\\Rest\\".$name;
-				$this->classes['framework'][$name] = new $class($this->freepbx);
+				$this->classes['framework'][$name] = new $class($this->freepbx,'framework');
 			}
 
 			$amodules = $this->freepbx->Modules->getActiveModules();
@@ -83,7 +83,7 @@ class Api {
 						if($fileInfo->isDot()) { continue; };
 						$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 						$class = "FreePBX\\modules\\".$module['rawname']."\\Api\\Rest\\".$name;
-						$this->classes[$module['rawname']][$name] = new $class($this->freepbx);
+						$this->classes[$module['rawname']][$name] = new $class($this->freepbx,$module['rawname']);
 					}
 				}
 			}

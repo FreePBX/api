@@ -37,8 +37,8 @@
 					<br>
 					<p class="text-success"><strong><?php echo _("This application is requesting being able to:")?></strong></p>
 					<ul>
-					<?php foreach($scopes as $scope) { ?>
-						<li><?php echo $flattenedScopes[$scope->getIdentifier()]['description']?></li>
+					<?php foreach($visualScopes as $typeInfo) { ?>
+						<li><?php echo $typeInfo['description']?> <?php echo !empty($module['modData']['name']) ? '('.$module['modData']['name'].')' : ''?></li>
 					<?php } ?>
 					</ul>
 				</div>

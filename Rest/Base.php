@@ -1,18 +1,9 @@
 <?php
 
 namespace FreePBX\modules\Api\Rest;
+use FreePBX\modules\Api\Includes\ApiBase;
 
-class Base {
-	protected $freepbx;
-	public function __construct($freepbx) {
-		$this->freepbx = $freepbx;
-	}
-
+abstract class Base extends ApiBase {
 	public function setupRoutes($app) {
 	}
-
-	public function getScopes() {
-		return [];
-	}
-
 }

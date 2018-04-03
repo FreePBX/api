@@ -10,11 +10,10 @@ use Slim\Http\Stream;
 use League\OAuth2\Server\Exception\OAuthServerException;
 
 class Oauth {
-	public function __construct($api, $privateKey, $validScopes) {
+	public function __construct($api, $privateKey) {
 		$this->freepbx = $api->freepbx;
 		$this->api = $api;
 		$this->privateKey = $privateKey;
-		$this->validScopes = $validScopes;
 	}
 	public function access_token() {
 		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',$_SERVER['QUERY_STRING']);
@@ -29,7 +28,7 @@ class Oauth {
 				$server = new \League\OAuth2\Server\AuthorizationServer(
 						new Repositories\ClientRepository($this->api),                 // instance of ClientRepositoryInterface
 						new Repositories\AccessTokenRepository($this->api),            // instance of AccessTokenRepositoryInterface
-						new Repositories\ScopeRepository($this->api, $this->validScopes),                  // instance of ScopeRepositoryInterface
+						new Repositories\ScopeRepository($this->api),                  // instance of ScopeRepositoryInterface
 						'file://' . $this->privateKey,    // path to private key
 						'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'      // encryption key
 				);
@@ -88,7 +87,8 @@ class Oauth {
 			'freepbx' => [
 				'identity' => $this->freepbx->Config->get("FREEPBX_SYSTEM_IDENT"),
 				'brand_image' => $this->freepbx->Config->get("BRAND_IMAGE_FREEPBX_FOOT"),
-				'flattenedScopes' => $this->api->getFlattenedScopes()
+				'flattenedScopes' => $this->api->getFlattenedScopes(),
+				'visualScopes' => $this->api->getVisualScopes()
 			],
 			'api' => $this->api
 		];
@@ -108,6 +108,7 @@ class Oauth {
 					$_SESSION['authorize'] = serialize($authRequest);
 				} else {
 					$authRequest = unserialize($_SESSION['authorize']);
+					session_destroy();
 				}
 
 				// The auth request object can be serialized and saved into a user's session.
@@ -132,7 +133,8 @@ class Oauth {
 						"server" => $freepbx['identity'],
 						"image" => $freepbx['brand_image'],
 						"flattenedScopes" => $freepbx['flattenedScopes'],
-						"scopes" => $authRequest->getScopes()
+						"scopes" => $authRequest->getScopes(),
+						"visualScopes" => $api->getVisualScopes(json_decode(json_encode($authRequest->getScopes()),true))
 					]));
 					return;
 				}
