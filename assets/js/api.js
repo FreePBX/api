@@ -1,3 +1,5 @@
+var host = window.location.protocol+"//"+window.location.host+(window.location.port ? ":"+window.location.port : '')
+
 var app_type;
 $(".api-add-app").click(function() {
 	app_type = $(this).data("id")
@@ -55,11 +57,11 @@ $('#api-app').on('show.bs.modal', function () {
 	}
 	switch(app_type) {
 		case "implicit":
-			$("#api-app-title").text(_("Web-server App"))
+			$("#api-app-title").text(_('Browser-based/Single Page app'))
 			$("#api-app-description").html(_("The 'Web-server App' should be very familiar if you’ve ever signed into a web app using your Facebook or Google account"));
 		break;
 		case "authorization_code":
-			$("#api-app-title").text(_('Browser-based/Single Page app'))
+			$("#api-app-title").text(_("Web-server App"))
 			$("#api-app-description").html(_("The 'Browser-based/Single Page app' is similar to the 'Web-server App' with two distinct differences")+"<br>"+_("It is intended to be used for user-agent-based clients (e.g. single page web apps) that can’t keep a client secret because all of the application code and storage is easily accessible")+"<br>"+_("Secondly instead of the authorization server returning an authorization code which is exchanged for an access token, the authorization server returns an access token"));
 		break;
 		case "password":
@@ -176,6 +178,23 @@ function apiUpdateapplicationCredentials(res) {
 	$("#api-info .client_id").text(res.client_id);
 }
 
+function grantType(value, row, index, field) {
+	switch(value) {
+		case "implicit":
+			return _('Browser-based/Single Page app')
+		break;
+		case "authorization_code":
+			return _("Web-server App")
+		break;
+		case "password":
+			return _('Native app')
+		break;
+		case "client_credentials":
+			return _('Machine-to-Machine app')
+		break;
+	}
+}
+
 function apiUsername(value, row, index, field) {
 	return (value !== null ? value : _('System'));
 }
@@ -195,3 +214,86 @@ function apiRefreshTokenActions(value, row, index, field) {
 function apiAccessTokenActions(value, row, index, field) {
 	return '<a class="clickable api-delete-access-token" data-id="'+value+'" data-index="'+index+'"><i class="fa fa-trash"></i></a>';
 }
+
+var automated = false;
+$(function () {
+	$.getJSON( "ajax.php?module=api&command=getJSTreeScopes", function( data ) {
+		$('#jstree_demo_div').jstree({
+			'core' : {
+				'check_callback' : true,
+				'data' :data ,
+			},
+			checkbox: {
+	      three_state : true, // to avoid that fact that checking a node also check others
+	      whole_node : true,  // to avoid checking the box just clicking the node
+	      tie_selection : false // for checking without selecting and selecting without checking
+	    },
+
+			"plugins" : ["search", "checkbox"]
+		}).on("check_node.jstree uncheck_node.jstree uncheck_all.jstree check_all.jstree", function(e, data) {
+			var checked = $(this).jstree("get_top_checked");
+			$("#scope-area").val(checked.join(" "))
+			$("#scope-doc").val(checked.join(" "))
+			$("#scope-explorer").val(checked.join(" "))
+			automated = true; //prevent loop
+			$.each($('#scope_visualizer_list').bootstrapTable("getData"), function(k,v) {
+				$('#scope_visualizer_list').bootstrapTable("uncheck",k)
+			})
+			//$('#scope_visualizer_list').bootstrapTable("uncheckAll")
+			$('#scope_visualizer_list').bootstrapTable("checkBy", {field:"scope", values:checked})
+			automated = false; //end prevention
+		}).on("after_open.jstree after_close.jstree", function(e, data) {
+			//$("#scope-area").css("height",$('#jstree_demo_div').height()+'px');
+		});
+	});
+});
+$('#scope_visualizer_list').on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function (e) {
+	//prevent loop
+	if(automated) {
+		return;
+	}
+	var checked = $('#scope_visualizer_list').bootstrapTable('getAllSelections');
+	var check = [];
+	$.each(checked, function(k,v) {
+		check.push(v.scope)
+	})
+	$('#jstree_demo_div').jstree("uncheck_all")
+	$('#jstree_demo_div').jstree("check_node",check)
+});
+
+$("#api_types").change(function() {
+	var sel = $("#api_types").val();
+	$('#scope_visualizer_list').bootstrapTable('filterBy',{type:sel});
+})
+
+$("#copy-scopes").click(function() {
+	$("#scope-area").select();
+	document.execCommand('copy');
+	fpbxToast("Copied")
+})
+
+$("#generate-docs").click(function() {
+	if(!$("#scope-doc").val().length) {
+		alert("Please define a valid scope")
+		return;
+	}
+	$("#generate-docs").prop("disabled",true)
+	$("#doc-container")[0].src = ""
+	$.post( "ajax.php?module=api&command=generatedocs", { scopes: $("#scope-doc").val(), host: host },function( data ) {
+		$("#doc-container")[0].src = "modules/api/docs/index.html"
+		$("#doc-buttons").removeClass("hidden")
+	})
+	.always(function() {
+		$("#generate-docs").prop("disabled",false)
+	})
+})
+
+$("#docs-home").click(function() {
+	$("#doc-container")[0].src = "modules/api/docs/index.html"
+})
+$("#docs-back").click(function() {
+	$("#doc-container")[0].contentWindow.history.go(-1);
+})
+$("#docs-forward").click(function() {
+	$("#doc-container")[0].contentWindow.history.go(1);
+})

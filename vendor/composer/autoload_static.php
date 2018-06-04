@@ -8,8 +8,10 @@ class ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b
 {
     public static $files = array (
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
-        'c594688b3441835d5575f3085da4a242' => __DIR__ . '/..' . '/webonyx/graphql-php/src/deprecated.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -25,6 +27,7 @@ class ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b
         'L' => 
         array (
             'League\\OAuth2\\Server\\' => 21,
+            'League\\OAuth2\\Client\\' => 21,
             'League\\Event\\' => 13,
             'Lcobucci\\JWT\\' => 13,
         ),
@@ -34,6 +37,9 @@ class ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b
         ),
         'G' => 
         array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
             'GraphQL\\' => 8,
         ),
         'F' => 
@@ -63,6 +69,10 @@ class ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b
         array (
             0 => __DIR__ . '/..' . '/league/oauth2-server/src',
         ),
+        'League\\OAuth2\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/oauth2-client/src',
+        ),
         'League\\Event\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/event/src',
@@ -74,6 +84,18 @@ class ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b
         'Interop\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
         'GraphQL\\' => 
         array (
@@ -99,12 +121,22 @@ class ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b
         ),
     );
 
+    public static $classMap = array (
+        'GraphQLRelay\\Connection\\ArrayConnection' => __DIR__ . '/..' . '/ivome/graphql-relay-php/src/Connection/ArrayConnection.php',
+        'GraphQLRelay\\Connection\\Connection' => __DIR__ . '/..' . '/ivome/graphql-relay-php/src/Connection/Connection.php',
+        'GraphQLRelay\\Mutation\\Mutation' => __DIR__ . '/..' . '/ivome/graphql-relay-php/src/Mutation/Mutation.php',
+        'GraphQLRelay\\Node\\Node' => __DIR__ . '/..' . '/ivome/graphql-relay-php/src/Node/Node.php',
+        'GraphQLRelay\\Node\\Plural' => __DIR__ . '/..' . '/ivome/graphql-relay-php/src/Node/Plural.php',
+        'GraphQLRelay\\Relay' => __DIR__ . '/..' . '/ivome/graphql-relay-php/src/Relay.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitab73bdc72878e22a3b313dbac4b0095b::$classMap;
 
         }, null, ClassLoader::class);
     }

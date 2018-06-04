@@ -1,0 +1,3722 @@
+{
+	"data": {
+		"__schema": {
+			"queryType": {
+				"name": "Query",
+				"description": null,
+				"kind": "OBJECT"
+			},
+			"mutationType": {
+				"name": "Mutation",
+				"description": null,
+				"kind": "OBJECT"
+			},
+			"subscriptionType": null,
+			"types": [
+				{
+					"name": "Query",
+					"kind": "OBJECT",
+					"description": null,
+					"fields": [
+						{
+							"name": "version",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "announcements",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "announcement",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "announcement",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "Device ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "announcement",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "blacklists",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "blacklist",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "blacklist",
+							"description": null,
+							"args": [
+								{
+									"name": "number",
+									"description": "Number",
+									"type": {
+										"kind": "SCALAR",
+										"name": "String",
+										"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "blacklist",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "users",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "user",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "user",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "Device ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "user",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "devices",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "device",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "device",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "Device ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "device",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "extensions",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "extension",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "extension",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "Device ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "extension",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "dids",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "did",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "did",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "DID ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "did",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "trunks",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "trunk",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "trunk",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "Trunk ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "trunk",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "musics",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "music",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "music",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "Device ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "music",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkinglots",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "parkinglot",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkinglot",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "Device ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "parkinglot",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "recordings",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "recording",
+									"description": "",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "recording",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": "Device ID",
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "recording",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "String",
+					"kind": "SCALAR",
+					"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+					"fields": null,
+					"inputFields": null,
+					"interfaces": null,
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "announcement",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "recording_id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "recording",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "post_dest",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "destination",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "allow_skip",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "return_ivr",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "noanswer",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "repeat_msg",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "recording",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "displayname",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "filename",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "fcode",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "fcode_pass",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "ID",
+					"kind": "SCALAR",
+					"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+					"fields": null,
+					"inputFields": null,
+					"interfaces": null,
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "Boolean",
+					"kind": "SCALAR",
+					"description": "The `Boolean` scalar type represents `true` or `false`.",
+					"fields": null,
+					"inputFields": null,
+					"interfaces": null,
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "destination",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "destination",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "category",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "module",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "edit_url",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "Int",
+					"kind": "SCALAR",
+					"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+					"fields": null,
+					"inputFields": null,
+					"interfaces": null,
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "blacklist",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "number",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "user",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "noanswer_dest",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "destination",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "busy_dest",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "destination",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "chanunavail_dest",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "destination",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "extension",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "password",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "voicemail",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "ringtimer",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "noanswer",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "recording",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "outboundcid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "sipname",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "noanswer_cid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "busy_cid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "chanunavail_cid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "mohclass",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "device",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "tech",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "tech_driver",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "dial",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "type",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "emergency_cid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkpro_parkinglot",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "parkinglot",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "user",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "user",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "tech_driver",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "channel",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "context",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "immediate",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "signalling",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "echocancel",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "echocancelwhenbridged",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "echotraining",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "busydetect",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "busycount",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "callprogress",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "transfer",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "host",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "type",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "port",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "qualify",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "disallow",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "allow",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "accountcode",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "requirecalltoken",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "setvar",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "sipdriver",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "secret",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "dtmfmode",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "trustrpid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "sendrpid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "qualifyfreq",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "transport",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "avpf",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "timers",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "icesupport",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "namedcallgroup",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "namedpickupgroup",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "mailbox",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "max_contacts",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "media_use_received_transport",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "rtp_symmetric",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "force_rport",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "rewrite_contact",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "mwi_subscription",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "media_encryption",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "media_encryption_optimistic",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "device_state_busy_at",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "rtcp_mux",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "bundle",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "maximum_expiration",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "canreinvite",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "nat",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "force_avp",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "sessiontimers",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "videosupport",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "encryption",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "vmexten",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "deny",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "permit",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "defaultuser",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "parkinglot",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "parkedmusicclass",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "music",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "announcement_id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "recording",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "dest",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "destination",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkext",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkpos",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "numslots",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkingtime",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "findslot",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkedplay",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkedcalltransfers",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "parkedcallreparking",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "alertinfo",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "rvolume",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "cidpp",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "autocidpp",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "comebacktoorigin",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "defaultlot",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "type",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "music",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "category",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "type",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "random",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "application",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "format",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "extension",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "device",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "device",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "user",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "user",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "did",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "cidnum",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "extension",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "destination",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "destination",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "privacyman",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "alertinfo",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "ringing",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "mohclass",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "music",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": "Provide a meaningful description of what this incoming route is",
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "delay_answer",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "pricid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "pmmaxretries",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "pmminlength",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "reversal",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "rvolume",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Int",
+								"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "trunk",
+					"kind": "OBJECT",
+					"description": "",
+					"fields": [
+						{
+							"name": "id",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "ID",
+								"description": "The `ID` scalar type represents a unique identifier, often used to\nrefetch an object or as key for a cache. The ID type appears in a JSON\nresponse as a String; however, it is not intended to be human-readable.\nWhen expected as an input type, any string (such as `\"4\"`) or integer\n(such as `4`) input value will be accepted as an ID.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "tech",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "outcid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "maxchans",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "failscript",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "dialoutprefix",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "usercontext",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "provider",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "keepcid",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "disabled",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "continue",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "Boolean",
+								"description": "The `Boolean` scalar type represents `true` or `false`.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "Mutation",
+					"kind": "OBJECT",
+					"description": null,
+					"fields": [
+						{
+							"name": "createDevice",
+							"description": null,
+							"args": [
+								{
+									"name": "id",
+									"description": null,
+									"type": {
+										"kind": "SCALAR",
+										"name": "Int",
+										"description": "The `Int` scalar type represents non-fractional signed whole numeric\nvalues. Int can represent values between -(2^31) and 2^31 - 1. ",
+										"ofType": null
+									},
+									"defaultValue": null
+								}
+							],
+							"type": {
+								"kind": "OBJECT",
+								"name": "device",
+								"description": "",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "Float",
+					"kind": "SCALAR",
+					"description": "The `Float` scalar type represents signed double-precision fractional\nvalues as specified by\n[IEEE 754](http:\/\/en.wikipedia.org\/wiki\/IEEE_floating_point). ",
+					"fields": null,
+					"inputFields": null,
+					"interfaces": null,
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "__Schema",
+					"kind": "OBJECT",
+					"description": "A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation, and subscription operations.",
+					"fields": [
+						{
+							"name": "types",
+							"description": "A list of all types supported by this server.",
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "LIST",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "NON_NULL",
+										"name": null,
+										"description": null,
+										"ofType": {
+											"kind": "OBJECT",
+											"name": "__Type",
+											"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+											"ofType": null
+										}
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "queryType",
+							"description": "The type that query operations will be rooted at.",
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "__Type",
+									"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "mutationType",
+							"description": "If this server supports mutation, the type that mutation operations will be rooted at.",
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "__Type",
+								"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "subscriptionType",
+							"description": "If this server support subscription, the type that subscription operations will be rooted at.",
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "__Type",
+								"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "directives",
+							"description": "A list of all directives supported by this server.",
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "LIST",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "NON_NULL",
+										"name": null,
+										"description": null,
+										"ofType": {
+											"kind": "OBJECT",
+											"name": "__Directive",
+											"description": "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
+											"ofType": null
+										}
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "__Type",
+					"kind": "OBJECT",
+					"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+					"fields": [
+						{
+							"name": "kind",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "ENUM",
+									"name": "__TypeKind",
+									"description": "An enum describing what kind of type a given `__Type` is.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "fields",
+							"description": null,
+							"args": [
+								{
+									"name": "includeDeprecated",
+									"description": null,
+									"type": {
+										"kind": "SCALAR",
+										"name": "Boolean",
+										"description": "The `Boolean` scalar type represents `true` or `false`.",
+										"ofType": null
+									},
+									"defaultValue": "false"
+								}
+							],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "NON_NULL",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "OBJECT",
+										"name": "__Field",
+										"description": "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
+										"ofType": null
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "interfaces",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "NON_NULL",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "OBJECT",
+										"name": "__Type",
+										"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+										"ofType": null
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "possibleTypes",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "NON_NULL",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "OBJECT",
+										"name": "__Type",
+										"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+										"ofType": null
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "enumValues",
+							"description": null,
+							"args": [
+								{
+									"name": "includeDeprecated",
+									"description": null,
+									"type": {
+										"kind": "SCALAR",
+										"name": "Boolean",
+										"description": "The `Boolean` scalar type represents `true` or `false`.",
+										"ofType": null
+									},
+									"defaultValue": "false"
+								}
+							],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "NON_NULL",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "OBJECT",
+										"name": "__EnumValue",
+										"description": "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
+										"ofType": null
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "inputFields",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "LIST",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "NON_NULL",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "OBJECT",
+										"name": "__InputValue",
+										"description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+										"ofType": null
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "ofType",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "OBJECT",
+								"name": "__Type",
+								"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "__TypeKind",
+					"kind": "ENUM",
+					"description": "An enum describing what kind of type a given `__Type` is.",
+					"fields": null,
+					"inputFields": null,
+					"interfaces": null,
+					"enumValues": [
+						{
+							"name": "SCALAR",
+							"description": "Indicates this type is a scalar.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "OBJECT",
+							"description": "Indicates this type is an object. `fields` and `interfaces` are valid fields.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "INTERFACE",
+							"description": "Indicates this type is an interface. `fields` and `possibleTypes` are valid fields.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "UNION",
+							"description": "Indicates this type is a union. `possibleTypes` is a valid field.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "ENUM",
+							"description": "Indicates this type is an enum. `enumValues` is a valid field.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "INPUT_OBJECT",
+							"description": "Indicates this type is an input object. `inputFields` is a valid field.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "LIST",
+							"description": "Indicates this type is a list. `ofType` is a valid field.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "NON_NULL",
+							"description": "Indicates this type is a non-null. `ofType` is a valid field.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"possibleTypes": null
+				},
+				{
+					"name": "__Field",
+					"kind": "OBJECT",
+					"description": "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
+					"fields": [
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "String",
+									"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "args",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "LIST",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "NON_NULL",
+										"name": null,
+										"description": null,
+										"ofType": {
+											"kind": "OBJECT",
+											"name": "__InputValue",
+											"description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+											"ofType": null
+										}
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "type",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "__Type",
+									"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "isDeprecated",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "Boolean",
+									"description": "The `Boolean` scalar type represents `true` or `false`.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "deprecationReason",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "__InputValue",
+					"kind": "OBJECT",
+					"description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+					"fields": [
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "String",
+									"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "type",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "OBJECT",
+									"name": "__Type",
+									"description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "defaultValue",
+							"description": "A GraphQL-formatted string representing the default value for this input value.",
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "__EnumValue",
+					"kind": "OBJECT",
+					"description": "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
+					"fields": [
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "String",
+									"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "isDeprecated",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "Boolean",
+									"description": "The `Boolean` scalar type represents `true` or `false`.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "deprecationReason",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "__Directive",
+					"kind": "OBJECT",
+					"description": "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
+					"fields": [
+						{
+							"name": "name",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "String",
+									"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "description",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "locations",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "LIST",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "NON_NULL",
+										"name": null,
+										"description": null,
+										"ofType": {
+											"kind": "ENUM",
+											"name": "__DirectiveLocation",
+											"description": "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
+											"ofType": null
+										}
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "args",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "LIST",
+									"name": null,
+									"description": null,
+									"ofType": {
+										"kind": "NON_NULL",
+										"name": null,
+										"description": null,
+										"ofType": {
+											"kind": "OBJECT",
+											"name": "__InputValue",
+											"description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+											"ofType": null
+										}
+									}
+								}
+							},
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "onOperation",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "Boolean",
+									"description": "The `Boolean` scalar type represents `true` or `false`.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": true,
+							"deprecationReason": "Use `locations`."
+						},
+						{
+							"name": "onFragment",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "Boolean",
+									"description": "The `Boolean` scalar type represents `true` or `false`.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": true,
+							"deprecationReason": "Use `locations`."
+						},
+						{
+							"name": "onField",
+							"description": null,
+							"args": [],
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "Boolean",
+									"description": "The `Boolean` scalar type represents `true` or `false`.",
+									"ofType": null
+								}
+							},
+							"isDeprecated": true,
+							"deprecationReason": "Use `locations`."
+						}
+					],
+					"inputFields": null,
+					"interfaces": [],
+					"enumValues": null,
+					"possibleTypes": null
+				},
+				{
+					"name": "__DirectiveLocation",
+					"kind": "ENUM",
+					"description": "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
+					"fields": null,
+					"inputFields": null,
+					"interfaces": null,
+					"enumValues": [
+						{
+							"name": "QUERY",
+							"description": "Location adjacent to a query operation.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "MUTATION",
+							"description": "Location adjacent to a mutation operation.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "SUBSCRIPTION",
+							"description": "Location adjacent to a subscription operation.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "FIELD",
+							"description": "Location adjacent to a field.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "FRAGMENT_DEFINITION",
+							"description": "Location adjacent to a fragment definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "FRAGMENT_SPREAD",
+							"description": "Location adjacent to a fragment spread.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "INLINE_FRAGMENT",
+							"description": "Location adjacent to an inline fragment.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "SCHEMA",
+							"description": "Location adjacent to a schema definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "SCALAR",
+							"description": "Location adjacent to a scalar definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "OBJECT",
+							"description": "Location adjacent to an object type definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "FIELD_DEFINITION",
+							"description": "Location adjacent to a field definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "ARGUMENT_DEFINITION",
+							"description": "Location adjacent to an argument definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "INTERFACE",
+							"description": "Location adjacent to an interface definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "UNION",
+							"description": "Location adjacent to a union definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "ENUM",
+							"description": "Location adjacent to an enum definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "ENUM_VALUE",
+							"description": "Location adjacent to an enum value definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "INPUT_OBJECT",
+							"description": "Location adjacent to an input object type definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						},
+						{
+							"name": "INPUT_FIELD_DEFINITION",
+							"description": "Location adjacent to an input object field definition.",
+							"isDeprecated": false,
+							"deprecationReason": null
+						}
+					],
+					"possibleTypes": null
+				}
+			],
+			"directives": [
+				{
+					"name": "include",
+					"description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
+					"locations": [
+						"FIELD",
+						"FRAGMENT_SPREAD",
+						"INLINE_FRAGMENT"
+					],
+					"args": [
+						{
+							"name": "if",
+							"description": "Included when true.",
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "Boolean",
+									"description": "The `Boolean` scalar type represents `true` or `false`.",
+									"ofType": null
+								}
+							},
+							"defaultValue": null
+						}
+					]
+				},
+				{
+					"name": "skip",
+					"description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
+					"locations": [
+						"FIELD",
+						"FRAGMENT_SPREAD",
+						"INLINE_FRAGMENT"
+					],
+					"args": [
+						{
+							"name": "if",
+							"description": "Skipped when true.",
+							"type": {
+								"kind": "NON_NULL",
+								"name": null,
+								"description": null,
+								"ofType": {
+									"kind": "SCALAR",
+									"name": "Boolean",
+									"description": "The `Boolean` scalar type represents `true` or `false`.",
+									"ofType": null
+								}
+							},
+							"defaultValue": null
+						}
+					]
+				},
+				{
+					"name": "deprecated",
+					"description": "Marks an element of a GraphQL schema as no longer supported.",
+					"locations": [
+						"FIELD_DEFINITION",
+						"ENUM_VALUE"
+					],
+					"args": [
+						{
+							"name": "reason",
+							"description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted in [Markdown](https:\/\/daringfireball.net\/projects\/markdown\/).",
+							"type": {
+								"kind": "SCALAR",
+								"name": "String",
+								"description": "The `String` scalar type represents textual data, represented as UTF-8\ncharacter sequences. The String type is most often used by GraphQL to\nrepresent free-form human-readable text.",
+								"ofType": null
+							},
+							"defaultValue": "\"No longer supported\""
+						}
+					]
+				}
+			]
+		}
+	}
+}

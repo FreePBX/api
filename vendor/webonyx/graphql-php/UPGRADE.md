@@ -1,3 +1,102 @@
+## Upgrade v0.11.x > v0.12.x
+
+### Breaking: Minimum supported version is PHP5.6
+Dropped support for PHP 5.5. This release still supports PHP 5.6 and PHP 7.0
+**But the next major release will require PHP7.1+**
+
+### Breaking: Custom scalar types need to throw on invalid value
+As null might be a valid value custom types need to throw an
+Exception inside `parseLiteral()`, `parseValue()` and `serialize()`. 
+
+Returning null from any of these methods will now be treated as valid result.
+
+### Breaking: Descriptions in comments are not used as descriptions by default anymore
+Descriptions now need to be inside Strings or BlockStrings in order to be picked up as
+description. If you want to keep the old behaviour you can supply the option `commentDescriptions`
+to BuildSchema::buildAST(), BuildSchema::build() or Printer::doPrint().
+
+Here is the official way now to define descriptions in the graphQL language:
+
+Old:
+
+```graphql
+# Description
+type Dog {
+  ...
+}
+```
+
+New:
+
+```graphql
+"Description"
+type Dog {
+  ...
+}
+
+"""
+Long Description
+"""
+type Dog {
+  ...
+}
+```
+
+### Breaking: Most of previously deprecated classes and methods were removed
+See deprecation notices for previous versions in details.
+
+### Breaking: Standard server expects `operationName` vs `operation` for multi-op queries
+Before the change:
+```json
+{
+  "queryId": "persisted-query-id",
+  "operation": "QueryFromPersistedDocument",
+  "variables": {}
+}
+```
+After the change:
+```json
+{
+  "queryId": "persisted-query-id",
+  "operationName": "QueryFromPersistedDocument",
+  "variables": {}
+}
+```
+This naming is aligned with graphql-express version.
+
+### Possibly Breaking: AST to array serialization excludes nulls
+Most users won't be affected. It *may* affect you only if you do your own manipulations 
+with exported AST. 
+
+Example of json-serialized AST before the change:
+```json
+{
+    "kind": "Field",
+    "loc": null,
+    "name": {
+        "kind": "Name",
+        "loc": null,
+        "value": "id"
+    },
+    "alias": null,
+    "arguments": [],
+    "directives": [],
+    "selectionSet": null
+}
+```
+After the change:
+```json
+{
+    "kind": "Field",
+    "name": {
+        "kind": "Name",
+        "value": "id"
+    },
+    "arguments": [],
+    "directives": []
+}
+```
+
 ## Upgrade v0.8.x, v0.9.x > v0.10.x
 
 ### Breaking: changed minimum PHP version from 5.4 to 5.5

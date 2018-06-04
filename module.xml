@@ -4,7 +4,7 @@
 	<name>PBX API</name>
 	<version>15.0.1alpha1</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
-	<license>GPLv3+</license>
+	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<category>Connectivity</category>
 	<menuitems>

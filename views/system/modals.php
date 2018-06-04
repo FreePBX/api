@@ -52,7 +52,11 @@
 				<h4 class="modal-title"><?php echo _("Client Credentials")?></h4>
 			</div>
 			<div class="modal-body">
-				<strong><?php echo ('Client ID')?></strong>:<span class="client_id"></span>
+				<strong><?php echo ('Token URL')?></strong>:<span><?php echo $url?>/api/api/token</span><br/>
+				<strong><?php echo ('Authorization URL')?></strong>:<span><?php echo $url?>/api/api/authorize</span><br/>
+				<strong><?php echo ('GraphQL URL')?></strong>:<span><?php echo $url?>/api/api/gql</span><br/>
+				<strong><?php echo ('Rest URL')?></strong>:<span><?php echo $url?>/api/api/rest</span><br/>
+				<strong><?php echo ('Client ID')?></strong>:<span class="client_id"></span><br/>
 				<div class="client_secret_container">
 					<div class='alert alert-info'><?php echo _("Please copy your secret as you will not be able to retrieve it later")?></div>
 					<strong><?php echo ('Client Secret')?></strong>:<span class="client_secret"></span>

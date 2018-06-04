@@ -9,16 +9,23 @@ include __DIR__."/vendor/autoload.php";
 use FreePBX\modules\Api\Gql;
 use FreePBX\modules\Api\Rest;
 use FreePBX\modules\Api\Oauth\Oauth;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class Api implements \BMO {
+class Api extends \FreePBX_Helpers implements \BMO {
 	private $oauthKey = 'api_oauth';
 	private $flattenedScopes = [];
 
 	public function __construct($freepbx = null) {
 		if ($freepbx == null) {
-			throw new Exception("Not given a FreePBX Object");
+			throw new \Exception("Not given a FreePBX Object");
 		}
 		$this->freepbx = $freepbx;
+	}
+
+	public function getAPIAddress() {
+		$protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+		return $protocol.'://'.$_SERVER['HTTP_HOST']."/admin";
 	}
 
 	public function __get($var) {
@@ -53,7 +60,7 @@ class Api implements \BMO {
 	}
 
 	public function showPage() {
-		return load_view(__DIR__."/views/system/overview.php",[]);
+		return load_view(__DIR__."/views/system/overview.php",["url" => $this->getAPIAddress()]);
 	}
 
 	public function doConfigPageInit($page) {
@@ -63,7 +70,10 @@ class Api implements \BMO {
 	public function install() {
 		$this->freepbx->PKCS->generateKey($this->oauthKey);
 		$this->freepbx->PKCS->extractPublicKey($this->oauthKey);
-		$encryption_key = base64_encode(random_bytes(32)); //client_id as well
+
+		$this->freepbx->Pm2->installNodeDependencies(__DIR__."/node",function($data) {
+			outn($data);
+		});
 	}
 
 	public function uninstall() {
@@ -84,6 +94,11 @@ class Api implements \BMO {
 				'path' => $filename,
 				'perms' => 0600);
 		}
+		$files[] = array(
+			'type' => 'file',
+			'path' => __DIR__."/node/index.js",
+			'perms' => 0775
+		);
 		return $files;
 	}
 
@@ -106,6 +121,9 @@ class Api implements \BMO {
 			case "getTokens":
 			case "getRefreshTokens":
 			case "getScopes":
+			case "getJSTreeScopes":
+			case "generatedocs":
+			case "getAccessToken":
 				return true;
 			break;
 		}
@@ -113,6 +131,17 @@ class Api implements \BMO {
 
 	public function ajaxHandler(){
 		switch($_REQUEST['command']) {
+			case "getAccessToken":
+				$token = $this->getDeveloperAccessToken($_POST['scopes'], $_POST['host']);
+				return ["status" => true, "token" => $token];
+			break;
+			case "generatedocs":
+				$this->generateDocumentation($_POST['scopes'], $_POST['host']);
+				return ["status" => true];
+			break;
+			case "getJSTreeScopes":
+				return $this->getJSTreeScopes();
+			break;
 			case "getScopes":
 				$scopes = [];
 				foreach($this->getFlattenedScopes() as $key => $scope) {
@@ -169,30 +198,66 @@ class Api implements \BMO {
 		$validScopes = $this->getScopes();
 		$scopes = [
 			'gql' => [
-				'description' => _("All of GraphQL Read Write for all modules"),
-				'module' => null
+				'description' => sprintf(_("Read/Write for all modules [%s]"),$this->niceType('gql')),
+				'typeName' => $this->niceType('gql'),
+				'type' => 'gql',
+				'module' => null,
+				'moduleName' => null
 			],
 			'rest' => [
-				'description' => _("All of Rest Read Write for all modules"),
-				'module' => null
+				'description' => sprintf(_("Read/Write for all modules [%s]"),$this->niceType('rest')),
+				'typeName' => $this->niceType('rest'),
+				'type' => 'rest',
+				'module' => null,
+				'moduleName' => null
 			]
 		];
+
+		$activeModules = $this->freepbx->Modules->getActiveModules();
 
 		foreach(['rest','gql'] as $type) {
 			if(!empty($validScopes[$type])) {
 				foreach($validScopes[$type] as $module => $scope) {
 					$scopes[$type.':'.$module] = [
-						'description' => sprintf(_("All of %s Read Write for %s"),$type,$module),
-						'module' => $module
+						'description' => sprintf(_("Read/Write for %s"),$activeModules[$module]['name']),
+						'type' => $type,
+						'typeName' => $this->niceType($type),
+						'module' => $module,
+						'moduleName' => $activeModules[$module]['name'],
+						'moduleDescription' => !empty($activeModules[$module]['description']) ? $activeModules[$module]['description'] : '',
 					];
+					$defaultTypes = ['read','write'];
+					foreach($defaultTypes as $default) {
+						$scopes[$type.':'.$module.':'.$default] = [
+							'description' => sprintf(_("All %s for %s"),$default,$activeModules[$module]['name']),
+							'type' => $type,
+							'typeName' => $this->niceType($type),
+							'module' => $module,
+							'moduleName' => $activeModules[$module]['name'],
+							'moduleDescription' => !empty($activeModules[$module]['description']) ? $activeModules[$module]['description'] : '',
+						];
+					}
+
 					foreach($scope as $scopeKey => $scopeData) {
 						$parts = explode(":",$scopeKey);
 
-						$scopes[$type.':'.$module.':'.$parts[0]] = [
-							'description' => sprintf(_("All of %s %s for %s"),$type,$parts[0],$module),
-							'module' => $module
-						];
+						//Write out scopes we dont know about
+						if(!isset($scopes[$type.':'.$module.':'.$parts[0]])) {
+							$scopes[$type.':'.$module.':'.$parts[0]] = [
+								'description' => sprintf(_("All %s for %s"),$parts[0],$activeModules[$module]['name']),
+								'type' => $type,
+								'typeName' => $this->niceType($type),
+								'module' => $module,
+								'moduleName' => $activeModules[$module]['name'],
+								'moduleDescription' => !empty($activeModules[$module]['description']) ? $activeModules[$module]['description'] : '',
+							];
+						}
+
 						$scopeData['module'] = $module;
+						$scopeData['moduleName'] = $activeModules[$module]['name'];
+						$scopeData['moduleDescription'] = !empty($activeModules[$module]['description']) ? $activeModules[$module]['description'] : '';
+						$scopeData['typeName'] = $this->niceType($type);
+						$scopeData['type'] = $type;
 						$scopes[$type.':'.$module.':'.$scopeKey] = $scopeData;
 					}
 				}
@@ -202,6 +267,45 @@ class Api implements \BMO {
 		return $this->flattenedScopes;
 	}
 
+	private function niceType($type) {
+		return ($type === 'gql') ? 'GraphQL' : 'REST';
+	}
+
+	public function getJSTreeScopes() {
+		$result = array();
+
+		foreach($this->getFlattenedScopes() as $path => $value) {
+			$temp = &$result;
+
+			foreach(explode(':', $path) as $key) {
+				if(!in_array($key,['description','gql','rest'])) {
+					$temp =& $temp['children'][$key];
+				} else {
+					$temp =& $temp[$key];
+				}
+
+			}
+			$value['id'] = $path;
+			$value['text'] = $value['description'];
+			unset($value['module'],$value['description']);
+			$temp = $value;
+		}
+
+		$fix = function ($array) use(&$fix) {
+			foreach($array as $key => &$value) {
+				if(isset($value['children'])) {
+					$value['children'] = array_values($value['children']);
+				}
+				if(is_array($value)) {
+					$value = $fix($value);
+				}
+			}
+			return $array;
+		};
+
+		return array_values($fix($result));
+	}
+
 	public function isScopeValid($scope) {
 		return isset($this->getFlattenedScopes()[$scope]);
 	}
@@ -209,11 +313,12 @@ class Api implements \BMO {
 	public function getVisualScopes($filter=[]) {
 		$scopes = $this->getFlattenedScopes();
 		$visual = [];
+		$activeModules = $this->freepbx->Modules->getActiveModules();
 		foreach($scopes as $scopeKey => $scope) {
 			if(in_array($scopeKey,$filter)) {
 				if(!empty($scope['module'])) {
 					$scope['modData'] = [
-						"name" => $this->freepbx->Modules->getInfo($scope['module'])[$scope['module']]['name'],
+						"name" => $activeModules[$scope['module']]['name'],
 						"description" => ""
 					];
 				}
@@ -276,5 +381,54 @@ class Api implements \BMO {
 	}
 
 	public function usermanDelUser($id, $display, $data) {
+	}
+
+	public function getDeveloperAccessToken($scope, $host='http://localhost') {
+		$devApplication = $this->getConfig("devApplication");
+		if(empty($devApplication['clientId']) || empty($devApplication['clientSecret']) || empty($this->applications->getByClientId($devApplication['clientId']))) {
+			$application = $this->applications->add(null,'client_credentials','GQL Developer Explorer','Used for the GraphQL Documentation and GraphQL Explorer tabs');
+
+			$devApplication = [
+				"clientId" => $application['client_id'],
+				'clientSecret' => $application['client_secret']
+			];
+		}
+
+		//TODO: need to figure out a way to validate tokens
+		if(empty($devApplication['accessToken']) || empty($this->accessTokens->get($devApplication['accessToken']['access_token'])) || time() > $devApplication['accessToken']['expires'] || $scope !== $devApplication['accessToken']['scope']) {
+			$provider = new \League\OAuth2\Client\Provider\GenericProvider([
+					'clientId'                => $devApplication['clientId'],    // The client ID assigned to you by the provider
+					'clientSecret'            => $devApplication['clientSecret'],    // The client password assigned to you by the provider
+					'redirectUri'             => 'http://my.example.com/your-redirect-url/',
+					'urlAuthorize'            => $host.'/admin/api/api/authorize',
+					'urlAccessToken'          => $host.'/admin/api/api/token',
+					'urlResourceOwnerDetails' => $host.'/admin/api/api/resource'
+			]);
+
+			$options = [
+				'scope' => $scope
+			];
+
+			$accessToken = $provider->getAccessToken('client_credentials', $options);
+			$devApplication['accessToken'] = json_decode(json_encode($accessToken),true);
+			$devApplication['accessToken']['scope'] = $scope;
+			$this->setConfig("devApplication",$devApplication);
+		}
+
+		return $devApplication['accessToken']['access_token'];
+	}
+
+	public function generateDocumentation($scope, $host='http://localhost') {
+		$ht = file_get_contents(__DIR__."/docs.htaccess");
+
+		$ht = str_replace('%ipaddress%',$_SERVER['REMOTE_ADDR'],$ht);
+
+		$process = new Process('rm -Rf '.__DIR__.'/docs');
+		$process->mustRun();
+
+		$process = new Process('node '.__DIR__.'/node/index.js -e '.$host.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$this->getDeveloperAccessToken($scope, $host).'"');
+		$process->mustRun();
+
+		file_put_contents(__DIR__."/docs/.htaccess",$ht);
 	}
 }

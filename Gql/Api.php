@@ -4,8 +4,10 @@ namespace FreePBX\modules\Api\Gql;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\GraphQL;
-use GraphQL\Schema;
+use GraphQL\Type\Schema;
 use GraphQL\Type\Definition\Type;
+
+use GraphQLRelay\Relay;
 
 use GraphQL\Server\StandardServer;
 
@@ -13,12 +15,15 @@ use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use FreePBX\modules\Api\Oauth\Repositories\AccessTokenRepository;
 use League\OAuth2\Server\ResourceServer;
 
+use GraphQL\Error\Debug;
+
 use DirectoryIterator;
 
 use Slim\App;
 
 class Api {
 	private $classes;
+	private $restricted = ['framework','announcement','recordings','blacklist'];
 
 	public function __construct($freepbx, $publicKey) {
 		$this->freepbx = $freepbx;
@@ -28,11 +33,11 @@ class Api {
 	public function getValidScopes() {
 		$modules = $this->getAPIClasses();
 		$scopes = [];
-		foreach($modules as $module => $classes) {
-			$scopes[$module] = [];
-			foreach($classes as $class) {
-				$scopes[$module] = array_merge($scopes[$module],$class->getScopes());
+		foreach($modules as $info) {
+			if(!isset($scopes[$info['modname']])) {
+				$scopes[$info['modname']] = [];
 			}
+			$scopes[$info['modname']] = array_merge($scopes[$info['modname']],$info['object']->getScopes());
 		}
 		return $scopes;
 	}
@@ -65,12 +70,25 @@ class Api {
 
 		$app->post('/api/gql', function ($request, $response, $args) {
 			$server = new StandardServer([
-				'schema' => call_user_func($this->setupGql, $request, $response, $args)
+				'schema' => call_user_func($this->setupGql, $request, $response, $args),
+				'debug' => true
 			]);
 			$server->processPsrRequest($request, $response, $response->getBody());
 		});
 		$app->run();
 
+	}
+
+	private function getUnusedPriority($array,$wantedPriority) {
+		if(isset($array[$wantedPriority])) {
+			while(true) {
+				$wantedPriority = (int)$wantedPriority+1;
+				if(!isset($array[$wantedPriority])) {
+					break;
+				}
+			}
+		}
+		return $wantedPriority;
 	}
 
 	public function getAPIClasses() {
@@ -80,11 +98,19 @@ class Api {
 			$this->objectReferences = new TypeStore();
 
 			$fwcpath = $webrootpath . '/admin/libraries/Api/Gql';
+
+			$classes = [];
+
 			foreach (new DirectoryIterator($fwcpath) as $fileInfo) {
 				if($fileInfo->isDot()) { continue; };
 				$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 				$class = "FreePBX\\Api\\Gql\\".$name;
-				$this->classes['framework'][$name] = new $class($this->freepbx,$this->objectReferences,'framework');
+				$pri = $this->getUnusedPriority($classes,$class::getPriority());
+				$classes[$pri] = [
+					'modname' => 'framework',
+					'class' => $class,
+					'name' => $name
+				];
 			}
 
 			$amodules = $this->freepbx->Modules->getActiveModules();
@@ -97,9 +123,20 @@ class Api {
 						if($fileInfo->isDot()) { continue; };
 						$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 						$class = "FreePBX\\modules\\".$module['rawname']."\\Api\\Gql\\".$name;
-						$this->classes[$module['rawname']][$name] = new $class($this->freepbx,$this->objectReferences,$module['rawname']);
+						$pri = $this->getUnusedPriority($classes,$class::getPriority());
+						$classes[$pri] = [
+							'modname' => $module['rawname'],
+							'class' => $class,
+							'name' => $name
+						];
 					}
 				}
+			}
+			ksort($classes);
+			foreach($classes as $class) {
+				$cls = $class['class'];
+				$class['object'] = new $cls($this->freepbx,$this->objectReferences,$class['modname']);
+				$this->classes[] = $class;
 			}
 			return $this->classes;
 		} else {
@@ -113,39 +150,54 @@ class Api {
 		$userId = $request->getAttribute('oauth_user_id');
 
 		$classes = $this->getAPIClasses();
-		foreach($classes as $module => $objects) {
-			foreach($objects as $name => $object) {
-				$object->setAllowedScopes($allowedScopes);
-				$object->setUserId($userId);
-			}
+		foreach($classes as $object) {
+			$object['object']->setAllowedScopes($allowedScopes);
+			$object['object']->setUserId($userId);
 		}
-		$this->initalizeReferences();
+
+		$nodeDefinition = Relay::nodeDefinitions(
+			function ($globalId) {
+				$idComponents = Relay::fromGlobalId($globalId);
+				$node = $this->objectReferences->get($idComponents['type'])->getNode($idComponents['id']);
+				$node['gqlType'] = $idComponents['type'];
+				return $node;
+			},
+			function ($object) {
+				return $this->objectReferences->get($object['gqlType'])->getObject();
+			}
+		);
+
+		$this->initalizeTypes($nodeDefinition);
 
 		$queryFields = [];
 		$mutationFields = [];
-		foreach($classes as $module => $objects) {
-			foreach($objects as $name => $object) {
-				$query = $object->constructQuery();
-				foreach($query as &$q) {
-					if(isset($q['type']) && is_string($q['type'])) {
-						$q = $this->replaceTypes($q);
-					}
+
+		foreach($classes as $object) {
+			if(!in_array($object['modname'],$this->restricted)) {
+				continue;
+			}
+			$query = $object['object']->queryCallback();
+			if(is_callable($query)) {
+				$tmp = $query();
+				if(!is_array($tmp)) {
+					continue;
 				}
-				$queryFields = array_merge($queryFields,$query);
+				$queryFields = array_merge($queryFields,$tmp);
 			}
 		}
 
-		foreach($classes as $module => $objects) {
-			foreach($objects as $name => $object) {
-				$mutation = $object->constructMutation();
-				foreach($mutation as &$q) {
-					if(isset($q['type']) && is_string($q['type'])) {
-						$q = $this->replaceTypes($q);
-					}
+		foreach($classes as $object) {
+			$mutation = $object['object']->mutationCallback();
+			if(is_callable($mutation)) {
+				$tmp = $mutation();
+				if(!is_array($tmp)) {
+					continue;
 				}
-				$mutationFields = array_merge($mutationFields,$mutation);
+				$mutationFields = array_merge($mutationFields,$tmp);
 			}
 		}
+
+		$queryFields['node'] = $nodeDefinition['nodeField'];
 
 		$queryType = new ObjectType([
 			'name' => 'Query',
@@ -164,52 +216,25 @@ class Api {
 			'query' => $queryType,
 			'mutation' => $mutationType
 		]);
-
 		return $schema;
 	}
 
-	private function initalizeReferences() {
+	private function initalizeTypes($nodeDefinition) {
 		$classes = $this->getAPIClasses();
 		$fieldTypes = [];
-		foreach($classes as $module => $objects) {
-			foreach($objects as $name => $object) {
-				$object->initReferences();
+		foreach($classes as $object) {
+			if(!in_array($object['modname'],$this->restricted)) {
+				continue;
 			}
+			$object['object']->setNodeDefinition($nodeDefinition);
+			$object['object']->initializeTypes();
 		}
-		foreach($classes as $module => $objects) {
-			foreach($objects as $name => $object) {
-				$object->postInitReferences();
-			}
+		foreach($classes as $object) {
+			$object['object']->postInitializeTypes();
 		}
 	}
 
 	private function generateQuery() {
 
-	}
-
-	private function replaceTypes($q) {
-		if(isset($q['type']) && is_string($q['type'])) {
-			if(preg_match('/^objectReference-(.*)/',$q['type'],$matches)) {
-				if(!$this->objectReferences->get($matches[1])->isObject()) {
-					$fields = $this->objectReferences->get($matches[1])->getFieldsArray();
-					foreach($fields as &$a) {
-						$a = $this->replaceTypes($a);
-					}
-					$this->objectReferences->get($matches[1])->replaceFields($fields);
-				}
-				$q['type'] = $this->objectReferences->get($matches[1])->getObject();
-			}
-			if(preg_match('/^objectListReference-(.*)/',$q['type'],$matches)) {
-				if(!$this->objectReferences->get($matches[1])->isObject()) {
-					$fields = $this->objectReferences->get($matches[1])->getFieldsArray();
-					foreach($fields as &$a) {
-						$a = $this->replaceTypes($a);
-					}
-					$this->objectReferences->get($matches[1])->replaceFields($fields);
-				}
-				$q['type'] = Type::listOf($this->objectReferences->get($matches[1])->getObject());
-			}
-		}
-		return $q;
 	}
 }
