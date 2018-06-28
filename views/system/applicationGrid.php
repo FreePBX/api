@@ -3,6 +3,7 @@
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 			<i class="fa fa-plus">&nbsp;</i><?php echo _("Add Application")?> <span class="caret"></span>
 		</button>
+		<button class="btn btn-default" data-toggle="modal" data-target="#urlModal"><?php echo _('API URL List')?></button>
 		<ul class="dropdown-menu" role="menu">
 			<li data-toggle="modal" data-target="#api-app" data-id="authorization_code" class="api-add-app clickable"><a><i class="fa fa-plus"></i> <strong><?php echo _('Web-server app')?></strong></a></li> <!-- Authorization Code Grant (Explicit) -->
 			<li data-toggle="modal" data-target="#api-app" data-id="implicit" class="api-add-app clickable"><a><i class="fa fa-plus"></i> <strong><?php echo _('Browser-based/Single Page app')?></strong></a></li> <!-- Authorization Code Grant (Implicit) -->

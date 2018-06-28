@@ -23,7 +23,24 @@ use Slim\App;
 
 class Api {
 	private $classes;
-	private $restricted = ['framework','announcement','recordings','blacklist'];
+	private $safeMode = false;
+	private $restricted = [
+		'areminder',
+		'framework',
+		'announcement',
+		'recordings',
+		'blacklist',
+		'arimanager',
+		'callback',
+		'callerid',
+		'callforward',
+		'callwaiting',
+		'cdr',
+		'core',
+		'music',
+		'parking',
+		'parkpro'
+	];
 
 	public function __construct($freepbx, $publicKey) {
 		$this->freepbx = $freepbx;
@@ -173,7 +190,7 @@ class Api {
 		$mutationFields = [];
 
 		foreach($classes as $object) {
-			if(!in_array($object['modname'],$this->restricted)) {
+			if($this->safeMode && !in_array($object['modname'],$this->restricted)) {
 				continue;
 			}
 			$query = $object['object']->queryCallback();
@@ -223,7 +240,7 @@ class Api {
 		$classes = $this->getAPIClasses();
 		$fieldTypes = [];
 		foreach($classes as $object) {
-			if(!in_array($object['modname'],$this->restricted)) {
+			if($this->safeMode && !in_array($object['modname'],$this->restricted)) {
 				continue;
 			}
 			$object['object']->setNodeDefinition($nodeDefinition);
