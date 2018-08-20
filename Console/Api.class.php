@@ -262,7 +262,7 @@ EOF;
 
 		$info = \FreePBX::Modules()->getInfo($module)[$module];
 
-		$template = file_get_contents(dirname(__DIR__)."/Template/GqlTemplate.php");
+		$template = file_get_contents(dirname(__DIR__)."/Template/GqlTemplate.tpl");
 		$template = str_replace([
 			'%tablename%',
 			'%ucclassname%',
