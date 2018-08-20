@@ -1,0 +1,348 @@
+# This file is part of FreePBX.
+#
+# For licensing information, please see the file named LICENSE located in the module directory
+#
+# FreePBX language template for api
+# Copyright (C) 2008-2018 Sangoma Technologies, Inc.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-20 11:09-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: views/system/modals.php:81
+#: views/system/modals.php:89
+#: views/system/modals.php:95
+#, php-format
+msgid "%s URLs"
+msgstr ""
+
+#: Console/Api.class.php:23
+#: api.i18n.php:10
+#: views/system/overview.php:6
+msgid "API"
+msgstr ""
+
+#: views/system/scopeVisualizer.php:39
+msgid "API Type"
+msgstr ""
+
+#: views/system/applicationGrid.php:6
+msgid "API URL List"
+msgstr ""
+
+#: views/system/overview.php:10
+msgid "Access Tokens"
+msgstr ""
+
+#: views/system/accessTokenGrid.php:18
+#: views/system/applicationGrid.php:32
+#: views/system/refreshTokenGrid.php:18
+#: views/user/grid.php:26
+msgid "Actions"
+msgstr ""
+
+#: views/system/applicationGrid.php:4
+#: views/system/modals.php:42
+#: views/user/grid.php:4
+#: views/user/modals.php:42
+msgid "Add Application"
+msgstr ""
+
+#: Api.class.php:232
+#: Api.class.php:247
+#, php-format
+msgid "All %s for %s"
+msgstr ""
+
+#: views/system/applicationGrid.php:30
+#: views/user/grid.php:25
+msgid "Application Description"
+msgstr ""
+
+#: views/system/accessTokenGrid.php:14
+#: views/system/refreshTokenGrid.php:14
+msgid "Application Name"
+msgstr ""
+
+#: views/system/applicationGrid.php:29
+msgid "Application Owner"
+msgstr ""
+
+#: views/system/applicationGrid.php:31
+msgid "Application Type"
+msgstr ""
+
+#: views/system/applicationGrid.php:28
+#: views/user/grid.php:24
+msgid "Application name"
+msgstr ""
+
+#: views/system/overview.php:9
+msgid "Applications"
+msgstr ""
+
+#: assets/js/api.js:111
+msgid "Are you sure you wish to delete this access token?"
+msgstr ""
+
+#: assets/js/api.js:80
+msgid "Are you sure you wish to delete this application?"
+msgstr ""
+
+#: assets/js/api.js:133
+msgid "Are you sure you wish to delete this refresh token?"
+msgstr ""
+
+#: assets/js/api.js:153
+msgid ""
+"Are you sure you wish to regenerate this application? This will break any "
+"clients using the old credentials"
+msgstr ""
+
+#: views/authorize.php:12
+#, php-format
+msgid "Authorize %s to use your %s account?"
+msgstr ""
+
+#: views/system/applicationGrid.php:9
+#: views/user/grid.php:8
+#: assets/js/api.js:60
+#: assets/js/api.js:184
+msgid "Browser-based/Single Page app"
+msgstr ""
+
+#: views/system/modals.php:52
+#: views/user/modals.php:52
+msgid "Client Credentials"
+msgstr ""
+
+#: views/system/modals.php:41
+#: views/system/modals.php:67
+#: views/user/modals.php:41
+#: views/user/modals.php:63
+msgid "Close"
+msgstr ""
+
+#: api.i18n.php:6
+msgid "Connectivity"
+msgstr ""
+
+#: views/system/modals.php:26
+#: views/system/scopeVisualizer.php:41
+#: views/user/modals.php:26
+msgid "Description"
+msgstr ""
+
+#: views/system/accessTokenGrid.php:16
+#: views/system/refreshTokenGrid.php:16
+msgid "Expiry Time"
+msgstr ""
+
+#: views/system/graphiql.php:5
+msgid "Explore GraphQL based on scopes"
+msgstr ""
+
+#: views/system/gqldocVisualizer.php:4
+msgid "Generate Documentation"
+msgstr ""
+
+#: Console/Api.class.php:25
+#: Console/Api.class.php:26
+msgid "Generate GQL from a database table"
+msgstr ""
+
+#: Console/Api.class.php:28
+msgid "Generate GQL from a modules xml database definition"
+msgstr ""
+
+#: views/system/gqldocVisualizer.php:1
+msgid "Generate GraphQL Documentation based on scopes"
+msgstr ""
+
+#: views/system/overview.php:13
+msgid "GraphQL Documentation"
+msgstr ""
+
+#: views/system/overview.php:14
+msgid "GraphQL Explorer"
+msgstr ""
+
+#: views/system/accessTokenGrid.php:15
+#: views/system/refreshTokenGrid.php:15
+msgid "IP Address"
+msgstr ""
+
+#: assets/js/api.js:65
+msgid ""
+"It is intended to be used for user-agent-based clients (e.g. single page web "
+"apps) that can’t keep a client secret because all of the application code "
+"and storage is easily accessible"
+msgstr ""
+
+#: views/system/accessTokenGrid.php:17
+#: views/system/refreshTokenGrid.php:17
+msgid "Last Accessed Time"
+msgstr ""
+
+#: views/system/modals.php:13
+#: views/user/modals.php:13
+msgid "Learn more about this API type"
+msgstr ""
+
+#: views/system/applicationGrid.php:11
+#: views/user/grid.php:10
+#: assets/js/api.js:72
+#: assets/js/api.js:193
+msgid "Machine-to-Machine app"
+msgstr ""
+
+#: views/system/scopeVisualizer.php:40
+msgid "Module"
+msgstr ""
+
+#: Console/Api.class.php:29
+msgid "Module location path"
+msgstr ""
+
+#: Console/Api.class.php:27
+msgid "Module to place the API file if using generatefromtable"
+msgstr ""
+
+#: views/system/applicationGrid.php:10
+#: views/user/grid.php:9
+#: assets/js/api.js:68
+#: assets/js/api.js:190
+msgid "Native app"
+msgstr ""
+
+#: api.i18n.php:4
+msgid "PBX API"
+msgstr ""
+
+#: views/system/gqldocVisualizer.php:2
+#: views/system/graphiql.php:6
+msgid ""
+"Paste Scope(s) Here (You can generate scopes in the Scope Visualizer Tab)"
+msgstr ""
+
+#: views/system/modals.php:61
+#: views/user/modals.php:57
+msgid "Please copy your secret as you will not be able to retrieve it later"
+msgstr ""
+
+#: Api.class.php:222
+#, php-format
+msgid "Read/Write for %s"
+msgstr ""
+
+#: Api.class.php:201
+#: Api.class.php:208
+#, php-format
+msgid "Read/Write for all modules [%s]"
+msgstr ""
+
+#: views/system/modals.php:34
+#: views/user/modals.php:34
+msgid "Redirect URI"
+msgstr ""
+
+#: views/system/overview.php:11
+msgid "Refresh Tokens"
+msgstr ""
+
+#: views/system/modals.php:66
+#: views/user/modals.php:62
+msgid "Regenerate Credentials"
+msgstr ""
+
+#: views/system/graphiql.php:8
+msgid "Reload Explorer (If scope was changed)"
+msgstr ""
+
+#: views/system/scopeVisualizer.php:38
+msgid "Scope"
+msgstr ""
+
+#: views/system/scopeVisualizer.php:14
+msgid "Scope List"
+msgstr ""
+
+#: views/system/scopeVisualizer.php:10
+msgid "Scope Tree"
+msgstr ""
+
+#: views/system/overview.php:12
+msgid "Scope Visualizer"
+msgstr ""
+
+#: assets/js/api.js:65
+msgid ""
+"Secondly instead of the authorization server returning an authorization code "
+"which is exchanged for an access token, the authorization server returns an "
+"access token"
+msgstr ""
+
+#: views/system/scopeVisualizer.php:3
+msgid "Selected Scopes"
+msgstr ""
+
+#: views/system/scopeVisualizer.php:17
+msgid "Show API types"
+msgstr ""
+
+#: assets/js/api.js:65
+msgid ""
+"The 'Browser-based/Single Page app' is similar to the 'Web-server App' with "
+"two distinct differences"
+msgstr ""
+
+#: assets/js/api.js:61
+msgid ""
+"The 'Web-server App' should be very familiar if you’ve ever signed into a "
+"web app using your Facebook or Google account"
+msgstr ""
+
+#: views/system/modals.php:37
+#: views/user/modals.php:37
+msgid ""
+"The redirect uri specifies where we redirect users after they have chosen "
+"whether or not to authenticate your application"
+msgstr ""
+
+#: views/authorize.php:38
+msgid "This application is requesting being able to:"
+msgstr ""
+
+#: views/system/accessTokenGrid.php:13
+#: views/system/refreshTokenGrid.php:13
+msgid "Token"
+msgstr ""
+
+#: assets/js/api.js:64
+#: assets/js/api.js:187
+msgid "Web-server App"
+msgstr ""
+
+#: views/system/applicationGrid.php:8
+#: views/user/grid.php:7
+msgid "Web-server app"
+msgstr ""
+
+#: views/system/modals.php:30
+#: views/user/modals.php:30
+msgid "Website"
+msgstr ""
+
+#: views/system/modals.php:22
+#: views/user/modals.php:22
+msgid "Your App Name"
+msgstr ""
