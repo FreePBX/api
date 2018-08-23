@@ -58,19 +58,19 @@ $('#api-app').on('show.bs.modal', function () {
 	switch(app_type) {
 		case "implicit":
 			$("#api-app-title").text(_('Browser-based/Single Page app'))
-			$("#api-app-description").html(_("The 'Web-server App' should be very familiar if you’ve ever signed into a web app using your Facebook or Google account"));
+			$("#api-app-description").html(_("The 'Browser-based/Single Page app', also known as 'Implicit Code Grant', is similar to the 'Web-server App' with two distinct differences")+"<br>"+_("It is intended to be used for user-agent-based clients (e.g. single page web apps) that can’t keep a client secret because all of the application code and storage is easily accessible")+"<br>"+_("Secondly instead of the authorization server returning an authorization code which is exchanged for an access token, the authorization server returns an access token"));
 		break;
 		case "authorization_code":
 			$("#api-app-title").text(_("Web-server App"))
-			$("#api-app-description").html(_("The 'Browser-based/Single Page app' is similar to the 'Web-server App' with two distinct differences")+"<br>"+_("It is intended to be used for user-agent-based clients (e.g. single page web apps) that can’t keep a client secret because all of the application code and storage is easily accessible")+"<br>"+_("Secondly instead of the authorization server returning an authorization code which is exchanged for an access token, the authorization server returns an access token"));
+			$("#api-app-description").html(_("The 'Web-server App', also known as 'Authorization Code Grant', should be very familiar if you’ve ever signed into a web app using your Facebook or Google account"));
 		break;
 		case "password":
 			$("#api-app-title").text(_('Native app'))
-			$("#api-app-description").text("The 'Native app' is a great user experience for trusted first party clients both on the web and in native applications");
+			$("#api-app-description").text("The 'Native app', also known as 'Resource owner password credentials grant', is a great user experience for trusted first party clients both on the web and in native applications");
 		break;
 		case "client_credentials":
 			$("#api-app-title").text(_('Machine-to-Machine app'))
-			$("#api-app-description").text("The 'Machine-to-Machine app' is suitable for machine-to-machine authentication, for example for use in a cron job which is performing maintenance tasks over an API. Another example would be a client making requests to an API that don’t require user’s permission");
+			$("#api-app-description").text("The 'Machine-to-Machine app', also known as 'Client credentials grant', is suitable for machine-to-machine authentication, for example for use in a cron job which is performing maintenance tasks over an API. Another example would be a client making requests to an API that don’t require user’s permission");
 		break;
 	}
 })
