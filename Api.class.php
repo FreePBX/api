@@ -402,7 +402,8 @@ class Api extends \FreePBX_Helpers implements \BMO {
 					'redirectUri'             => 'http://my.example.com/your-redirect-url/',
 					'urlAuthorize'            => $host.'/admin/api/api/authorize',
 					'urlAccessToken'          => $host.'/admin/api/api/token',
-					'urlResourceOwnerDetails' => $host.'/admin/api/api/resource'
+					'urlResourceOwnerDetails' => $host.'/admin/api/api/resource',
+					'verify'                  => false
 			]);
 
 			$options = [
