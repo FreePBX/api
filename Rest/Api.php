@@ -19,10 +19,11 @@ class Api {
 	public function getValidScopes() {
 		$modules = $this->getAPIClasses();
 		$scopes = [];
-		foreach($modules as $module => $classes) {
-			foreach($classes as $class) {
-				$scopes = array_merge($scopes,$class->getScopes());
+		foreach($modules as $info) {
+			if(!isset($scopes[$info['modname']])) {
+				$scopes[$info['modname']] = [];
 			}
+			$scopes[$info['modname']] = array_merge($scopes[$info['modname']],$info['object']->getScopes());
 		}
 		return $scopes;
 	}
@@ -66,11 +67,18 @@ class Api {
 			$webrootpath = $this->freepbx->Config->get('AMPWEBROOT');
 
 			$fwcpath = $webrootpath . '/admin/libraries/Api/Rest';
+
+			$classes = [];
+
 			foreach (new DirectoryIterator($fwcpath) as $fileInfo) {
 				if($fileInfo->isDot()) { continue; };
 				$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 				$class = "FreePBX\\Api\\Rest\\".$name;
-				$this->classes['framework'][$name] = new $class($this->freepbx,'framework');
+				$classes[] = [
+					'modname' => 'framework',
+					'class' => $class,
+					'name' => $name
+				];
 			}
 
 			$amodules = $this->freepbx->Modules->getActiveModules();
@@ -83,9 +91,19 @@ class Api {
 						if($fileInfo->isDot()) { continue; };
 						$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 						$class = "FreePBX\\modules\\".$module['rawname']."\\Api\\Rest\\".$name;
-						$this->classes[$module['rawname']][$name] = new $class($this->freepbx,$module['rawname']);
+						$classes[] = [
+							'modname' => $module['rawname'],
+							'class' => $class,
+							'name' => $name
+						];
 					}
 				}
+			}
+			ksort($classes);
+			foreach($classes as $class) {
+				$cls = $class['class'];
+				$class['object'] = new $cls($this->freepbx,$class['modname']);
+				$this->classes[] = $class;
 			}
 			return $this->classes;
 		} else {
@@ -95,11 +113,26 @@ class Api {
 
 	private function setupRest($app) {
 		$classes = $this->getAPIClasses();
-		foreach($classes as $module => $objects) {
-			$app->group('/'.$module, function () use ($objects) {
-				foreach($objects as $name => $object) {
-					$object->setupRoutes($this);
+		$groups = [];
+		foreach($classes as $class) {
+			$groups[$class['modname']][] = $class;
+		}
+		foreach($groups as $module => $classes) {
+			$app->group('/'.$module, function () use ($classes) {
+				foreach($classes as $class) {
+					$class['object']->setupRoutes($this);
 				}
+			})->add(function ($request, $response, $next) use ($classes) {
+				$allowedScopes = $request->getAttribute('oauth_scopes');
+				$userId = $request->getAttribute('oauth_user_id');
+
+				foreach($classes as $class) {
+					$class['object']->setAllowedScopes($allowedScopes);
+					$class['object']->setUserId($userId);
+				}
+
+				$response = $next($request, $response);
+				return $response;
 			});
 		}
 	}

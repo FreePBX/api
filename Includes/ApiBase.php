@@ -7,6 +7,7 @@ abstract class ApiBase {
 
 	protected $freepbx;
 	protected $module;
+
 	public function __construct($freepbx,$module) {
 		$this->freepbx = $freepbx;
 		$this->module = $module;
