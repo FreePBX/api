@@ -122,17 +122,6 @@ class Api {
 				foreach($classes as $class) {
 					$class['object']->setupRoutes($this);
 				}
-			})->add(function ($request, $response, $next) use ($classes) {
-				$allowedScopes = $request->getAttribute('oauth_scopes');
-				$userId = $request->getAttribute('oauth_user_id');
-
-				foreach($classes as $class) {
-					$class['object']->setAllowedScopes($allowedScopes);
-					$class['object']->setUserId($userId);
-				}
-
-				$response = $next($request, $response);
-				return $response;
 			});
 		}
 	}
