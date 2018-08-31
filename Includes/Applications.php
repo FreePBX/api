@@ -17,10 +17,10 @@ class Applications {
 			throw new \Exception("The application does not exist");
 		}
 		$this->remove($owner, $client_id);
-		return $this->add($owner,$app['grant_type'],$app['name'],$app['description'],$app['website'],$app['redirect_uri']);
+		return $this->add($owner,$app['grant_type'],$app['name'],$app['description'],$app['website'],$app['redirect_uri'],$app['allowed_scopes']);
 	}
 
-	public function add($ownerid,$type,$name,$description,$website=null,$redirect=null) {
+	public function add($ownerid,$type,$name,$description,$website=null,$redirect=null,$allowed_scopes=null) {
 		switch($type) {
 			case "implicit": //Authorization Code Grant (Implicit) //implicit
 				$client_id = bin2hex(random_bytes(32));
@@ -37,7 +37,7 @@ class Applications {
 				throw new \Exception("Invalid Grant Type");
 			break;
 		}
-		$sql = "INSERT INTO api_applications (`owner`,`name`,`description`,`grant_type`,`client_id`,`client_secret`,`redirect_uri`,`website`,`algo`) VALUES (:owner,:name,:description,:type,:client_id,:client_secret,:redirect_uri,:website,:algo)";
+		$sql = "INSERT INTO api_applications (`owner`,`name`,`description`,`grant_type`,`client_id`,`client_secret`,`redirect_uri`,`website`,`algo`,`allowed_scopes`) VALUES (:owner,:name,:description,:type,:client_id,:client_secret,:redirect_uri,:website,:algo,:allowed_scopes)";
 		$sth = $this->database->prepare($sql);
 		$sth->execute([
 			":owner" => $ownerid,
@@ -48,9 +48,10 @@ class Applications {
 			":client_secret" => ($type !== "browser") ? hash($this->secretHashAlgo, $client_secret) : null,
 			":redirect_uri" => $redirect,
 			":website" => $website,
-			":algo" => $this->secretHashAlgo
+			":algo" => $this->secretHashAlgo,
+			":allowed_scopes" => $allowed_scopes
 		]);
-		return ["client_id" => $client_id, "client_secret" => $client_secret, "id" => $this->database->lastInsertId(), "name" => $name, "description" => $description];
+		return ["client_id" => $client_id, "owner" => $ownerid, "type" => $type, "client_secret" => $client_secret, "id" => $this->database->lastInsertId(), "name" => $name, "description" => $description, "allowed_scopes" => $allowed_scopes];
 	}
 
 	public function getAll() {

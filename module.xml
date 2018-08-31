@@ -31,27 +31,28 @@
 	<database>
 		<table name="api_applications">
 			<field name="id" type="integer" unsigned="true" primarykey="true" autoincrement="true"/>
-	    <field name="owner" type="integer" notnull="false"/>
-	    <field name="name" type="string" length="50" default=""/>
-	    <field name="description" type="text" notnull="false"/>
-	    <field name="grant_type" type="string" length="20" default=""/>
-	    <field name="client_id" type="string" length="128" default=""/>
-	    <field name="client_secret" type="string" length="64" notnull="false"/>
-	    <field name="redirect_uri" type="string" length="150" notnull="false"/>
-	    <field name="website" type="string" length="150" notnull="false"/>
-	    <field name="algo" type="string" length="10" notnull="false"/>
-	    <key name="client_id" type="unique">
-	      <column name="client_id"/>
-	    </key>
+			<field name="owner" type="integer" notnull="false"/>
+			<field name="name" type="string" length="50" default=""/>
+			<field name="description" type="text" notnull="false"/>
+			<field name="grant_type" type="string" length="20" default=""/>
+			<field name="client_id" type="string" length="128" default=""/>
+			<field name="client_secret" type="string" length="64" notnull="false"/>
+			<field name="redirect_uri" type="string" length="150" notnull="false"/>
+			<field name="website" type="string" length="150" notnull="false"/>
+			<field name="algo" type="string" length="10" notnull="false"/>
+			<field name="allowed_scopes" type="text" notnull="false"/>
+			<key name="client_id" type="unique">
+				<column name="client_id"/>
+			</key>
 		</table>
 		<table name="api_access_tokens">
 			<field name="token" type="string" length="80" default="" primarykey="true"/>
-	    <field name="aid" type="integer" unsigned="true"/>
-	    <field name="expiry" type="integer"/>
-	    <field name="scopes" type="blob"/>
-	    <field name="uid" type="integer" notnull="false"/>
-	    <field name="ip_address" type="string" length="80" default=""/>
-	    <field name="last_accessed" type="integer"/>
+			<field name="aid" type="integer" unsigned="true"/>
+			<field name="expiry" type="integer"/>
+			<field name="scopes" type="blob"/>
+			<field name="uid" type="integer" notnull="false"/>
+			<field name="ip_address" type="string" length="80" default=""/>
+			<field name="last_accessed" type="integer"/>
 		</table>
 		<table name="api_auth_codes">
 			<field name="code" type="string" length="80" default="" primarykey="true"/>
@@ -64,10 +65,10 @@
 		</table>
 		<table name="api_refresh_tokens">
 			<field name="token" type="string" length="80" default="" primarykey="true"/>
-	    <field name="access_token" type="string" length="80" default=""/>
-	    <field name="expiry" type="integer"/>
-	    <field name="ip_address" type="string" length="80" default=""/>
-	    <field name="last_accessed" type="integer"/>
+			<field name="access_token" type="string" length="80" default=""/>
+			<field name="expiry" type="integer"/>
+			<field name="ip_address" type="string" length="80" default=""/>
+			<field name="last_accessed" type="integer"/>
 		</table>
 	</database>
 	<supported>

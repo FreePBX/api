@@ -168,8 +168,8 @@ class Api extends \FreePBX_Helpers implements \BMO {
 				return $this->applications->getAll();
 			break;
 			case "add_application":
-				$res = $this->applications->add((!empty($_POST['user']) ? $_POST['user'] : null),$_POST['type'],$_POST['name'],$_POST['description'],$_POST['website'],$_POST['redirect']);
-				return ["status" => true, "client_id" => $res['client_id'], "client_secret" => $res['client_secret'], "id" => $res['id']];
+				$res = $this->applications->add((!empty($_POST['user']) ? $_POST['user'] : null),$_POST['type'],$_POST['name'],$_POST['description'],$_POST['website'],$_POST['redirect'],$_POST['allowed_scopes']);
+				return ["status" => true, "type" => $res['type'], "owner" => $res['owner'], "client_id" => $res['client_id'], "client_secret" => $res['client_secret'], "id" => $res['id'], "allowed_scopes" => $res['allowed_scopes']];
 			break;
 			case "remove_application":
 				$this->applications->remove((!empty($_POST['user']) ? $_POST['user'] : null),$_POST['client_id']);

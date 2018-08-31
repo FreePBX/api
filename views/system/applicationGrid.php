@@ -26,7 +26,7 @@
 	<thead>
 		<tr>
 			<th data-field="name"><?php echo _("Application name")?></th>
-			<th data-field="username" data-formatter="apiUsername"><?php echo _("Application Owner")?></th>
+			<!--<th data-field="username" data-formatter="apiUsername"><?php echo _("Application Owner")?></th>-->
 			<th data-field="description"><?php echo _("Application Description")?></th>
 			<th data-field="grant_type" data-formatter="grantType"><?php echo _("Application Type")?></th>
 			<th data-field="id" data-formatter="apiActions"><?php echo _("Actions")?></th>

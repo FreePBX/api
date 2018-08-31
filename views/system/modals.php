@@ -36,6 +36,12 @@
 					<br>
 					<small><?php echo _("The redirect uri specifies where we redirect users after they have chosen whether or not to authenticate your application")?></small>
 				</div>
+				<div class="form-group">
+					<label for="api_app_allowed_scopes"><?php echo _("Allowed Scopes")?></label>
+					<textarea class="form-control app_reset" id="api_app_allowed_scopes"></textarea>
+					<br>
+					<small><?php echo _("Use the Scope Visualizer to paste valid scopes into this text box to restrict this application to be only able to use these scopes. Leave blank to not have any scope restrictions")?></small>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close")?></button>
@@ -57,6 +63,7 @@
 				<strong><?php echo ('GraphQL URL')?></strong>:<span><?php echo $url?>/api/api/gql</span><br/>
 				<strong><?php echo ('Rest URL')?></strong>:<span><?php echo $url?>/api/api/rest</span><br/>
 				<strong><?php echo ('Client ID')?></strong>:<span class="client_id"></span><br/>
+				<strong><?php echo ('Allowed Scopes')?></strong>:<span class="allowed_scopes"></span><br/>
 				<div class="client_secret_container">
 					<div class='alert alert-info'><?php echo _("Please copy your secret as you will not be able to retrieve it later")?></div>
 					<strong><?php echo ('Client Secret')?></strong>:<span class="client_secret"></span>

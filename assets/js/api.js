@@ -19,6 +19,7 @@ $('#api-save-app').click(function () {
 		description: $("#api_app_description").val(),
 		website: $("#api_app_website").val(),
 		redirect: $("#api_app_redirect").val(),
+		allowed_scopes: $("#api_app_allowed_scopes").val(),
 		user: $("input[name=user]").length ? $("input[name=user]").val() : null
 	}
 	$.post("ajax.php?module=api&command=add_application",data)
@@ -30,7 +31,11 @@ $('#api-save-app').click(function () {
 				row: {
 					name: data.name,
 					description: data.description,
-					id: res.client_id
+					id: res.client_id,
+					username: res.owner,
+					grant_type: res.type,
+					client_id: res.client_id,
+					allowed_scopes: res.allowed_scopes
 				}
 			})
 			$('#api-app').modal('hide')
@@ -103,6 +108,7 @@ $('#api_application_list').on('post-body.bs.table', function() {
 		$('#api-info').modal('show')
 		$("#api-info .client_secret_container").addClass("hidden")
 		$("#api-info .client_id").text($(this).data("client_id"));
+		$("#api-info .allowed_scopes").text($(this).data("allowed_scopes"));
 	})
 });
 
@@ -176,6 +182,7 @@ function apiUpdateapplicationCredentials(res) {
 		$("#api-info .client_secret").text("");
 	}
 	$("#api-info .client_id").text(res.client_id);
+	$("#api-info .allowed_scopes").text(res.allowed_scopes);
 }
 
 function grantType(value, row, index, field) {
@@ -200,7 +207,7 @@ function apiUsername(value, row, index, field) {
 }
 
 function apiActions(value, row, index, field) {
-	return '<a class="clickable api-delete" data-id="'+value+'" data-client_id="'+row.client_id+'" data-user="'+row.owner+'" data-index="'+index+'"><i class="fa fa-trash"></i></a> <a class="clickable api-view" data-id="'+value+'" data-index="'+index+'" data-client_id="'+row.client_id+'" data-user="'+row.owner+'"><i class="fa fa-eye"></i></a>';
+	return '<a class="clickable api-delete" data-id="'+value+'" data-client_id="'+row.client_id+'" data-user="'+row.owner+'" data-index="'+index+'"><i class="fa fa-trash"></i></a> <a class="clickable api-view" data-id="'+value+'" data-index="'+index+'" data-client_id="'+row.client_id+'" data-user="'+row.owner+'" data-allowed_scopes="'+row.allowed_scopes+'"><i class="fa fa-eye"></i></a>';
 }
 
 function apiTime(value, row, index, field) {
