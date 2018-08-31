@@ -42,19 +42,17 @@ class ScopeRepository implements ScopeRepositoryInterface {
 
 	private function checkScope($scope,$applicationScopes) {
 		$parts = explode(":",$scope);
-		//all of API type
-		if(in_array($parts[0],$applicationScopes)) {
-			return true;
+		$scopeString = '';
+		foreach($parts as $part) {
+			if(empty($scopeString)) {
+				$scopeString = $part;
+			} else {
+				$scopeString .= ':'.$part;
+			}
+			if(in_array($scopeString,$applicationScopes)) {
+				return true;
+			}
 		}
-		//all of api type + module
-		if(in_array($parts[0].":".$parts[1],$applicationScopes)) {
-			return true;
-		}
-		//all of api type + module + write/read
-		if(in_array($parts[0].":".$parts[1].":".$parts[2],$applicationScopes)) {
-			return true;
-		}
-		//specific query
-		return in_array($scope,$applicationScopes);
+		return false;
 	}
 }
