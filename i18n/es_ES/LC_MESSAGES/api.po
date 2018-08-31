@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-23 16:39-0400\n"
+"POT-Creation-Date: 2018-08-31 14:10-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: views/system/modals.php:81 views/system/modals.php:89
-#: views/system/modals.php:95
+#: views/system/modals.php:88 views/system/modals.php:96
+#: views/system/modals.php:102
 #, php-format
 msgid "%s URLs"
 msgstr ""
@@ -36,7 +36,7 @@ msgstr ""
 msgid "API URL List"
 msgstr ""
 
-#: views/system/modals.php:77
+#: views/system/modals.php:84
 msgid "API URLs"
 msgstr ""
 
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: views/system/applicationGrid.php:4 views/system/modals.php:42
+#: views/system/applicationGrid.php:4 views/system/modals.php:48
 #: views/user/grid.php:4 views/user/modals.php:42
 msgid "Add Application"
 msgstr ""
@@ -57,6 +57,10 @@ msgstr ""
 #: Api.class.php:232 Api.class.php:247
 #, php-format
 msgid "All %s for %s"
+msgstr ""
+
+#: views/system/modals.php:40
+msgid "Allowed Scopes"
 msgstr ""
 
 #: views/system/applicationGrid.php:30 views/user/grid.php:25
@@ -83,19 +87,19 @@ msgstr ""
 msgid "Applications"
 msgstr ""
 
-#: assets/js/api.js:111
+#: assets/js/api.js:117
 msgid "Are you sure you wish to delete this access token?"
 msgstr ""
 
-#: assets/js/api.js:80
+#: assets/js/api.js:85
 msgid "Are you sure you wish to delete this application?"
 msgstr ""
 
-#: assets/js/api.js:133
+#: assets/js/api.js:139
 msgid "Are you sure you wish to delete this refresh token?"
 msgstr ""
 
-#: assets/js/api.js:153
+#: assets/js/api.js:159
 msgid ""
 "Are you sure you wish to regenerate this application? This will break any "
 "clients using the old credentials"
@@ -106,16 +110,16 @@ msgstr ""
 msgid "Authorize %s to use your %s account?"
 msgstr ""
 
-#: views/system/applicationGrid.php:9 views/user/grid.php:8 assets/js/api.js:60
-#: assets/js/api.js:184
+#: views/system/applicationGrid.php:9 views/user/grid.php:8 assets/js/api.js:65
+#: assets/js/api.js:191
 msgid "Browser-based/Single Page app"
 msgstr ""
 
-#: views/system/modals.php:52 views/user/modals.php:52
+#: views/system/modals.php:58 views/user/modals.php:52
 msgid "Client Credentials"
 msgstr ""
 
-#: views/system/modals.php:41 views/system/modals.php:67
+#: views/system/modals.php:47 views/system/modals.php:74
 #: views/user/modals.php:41 views/user/modals.php:63
 msgid "Close"
 msgstr ""
@@ -165,7 +169,7 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
-#: assets/js/api.js:61
+#: assets/js/api.js:66
 msgid ""
 "It is intended to be used for user-agent-based clients (e.g. single page web "
 "apps) that can’t keep a client secret because all of the application code "
@@ -181,7 +185,7 @@ msgid "Learn more about this API type"
 msgstr ""
 
 #: views/system/applicationGrid.php:11 views/user/grid.php:10
-#: assets/js/api.js:72 assets/js/api.js:193
+#: assets/js/api.js:77 assets/js/api.js:200
 msgid "Machine-to-Machine app"
 msgstr ""
 
@@ -198,7 +202,7 @@ msgid "Module to place the API file if using generatefromtable"
 msgstr ""
 
 #: views/system/applicationGrid.php:10 views/user/grid.php:9
-#: assets/js/api.js:68 assets/js/api.js:190
+#: assets/js/api.js:73 assets/js/api.js:197
 msgid "Native app"
 msgstr ""
 
@@ -211,7 +215,7 @@ msgid ""
 "Paste Scope(s) Here (You can generate scopes in the Scope Visualizer Tab)"
 msgstr ""
 
-#: views/system/modals.php:61 views/user/modals.php:57
+#: views/system/modals.php:68 views/user/modals.php:57
 msgid "Please copy your secret as you will not be able to retrieve it later"
 msgstr ""
 
@@ -233,7 +237,7 @@ msgstr ""
 msgid "Refresh Tokens"
 msgstr ""
 
-#: views/system/modals.php:66 views/user/modals.php:62
+#: views/system/modals.php:73 views/user/modals.php:62
 msgid "Regenerate Credentials"
 msgstr ""
 
@@ -257,7 +261,7 @@ msgstr ""
 msgid "Scope Visualizer"
 msgstr ""
 
-#: assets/js/api.js:61
+#: assets/js/api.js:66
 msgid ""
 "Secondly instead of the authorization server returning an authorization code "
 "which is exchanged for an access token, the authorization server returns an "
@@ -272,13 +276,13 @@ msgstr ""
 msgid "Show API types"
 msgstr ""
 
-#: assets/js/api.js:61
+#: assets/js/api.js:66
 msgid ""
 "The 'Browser-based/Single Page app', also known as 'Implicit Code Grant', is "
 "similar to the 'Web-server App' with two distinct differences"
 msgstr ""
 
-#: assets/js/api.js:65
+#: assets/js/api.js:70
 msgid ""
 "The 'Web-server App', also known as 'Authorization Code Grant', should be "
 "very familiar if you’ve ever signed into a web app using your Facebook or "
@@ -299,7 +303,14 @@ msgstr ""
 msgid "Token"
 msgstr ""
 
-#: assets/js/api.js:64 assets/js/api.js:187
+#: views/system/modals.php:43
+msgid ""
+"Use the Scope Visualizer to paste valid scopes into this text box to "
+"restrict this application to be only able to use these scopes. Leave blank "
+"to not have any scope restrictions"
+msgstr ""
+
+#: assets/js/api.js:69 assets/js/api.js:194
 msgid "Web-server App"
 msgstr ""
 
