@@ -34,7 +34,7 @@ class Api {
 
 		$config = [
 			'settings' => [
-				'displayErrorDetails' => !empty($_REQUEST['debug']),
+				'displayErrorDetails' => !empty($_REQUEST['debug'])
 			]
 		];
 
@@ -47,14 +47,14 @@ class Api {
 
 		$app = new App($config);
 
-		$container = $app->getContainer();
-
 		$app->add(new ResourceServerMiddleware($server));
 
 		$container = $app->getContainer();
 		$container['setupRest'] = $container->protect(function($app) {
 			return $this->setupRest($app);
 		});
+
+		$container['freepbx'] = $this->freepbx;
 
 		$app->group('/api/rest', function () {
 			$this->setupRest($this);
