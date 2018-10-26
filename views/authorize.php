@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Authorize your account</title>
-		<link href="http://andrew15.sangoma.tech/admin/assets/css/bootstrap-3.3.7.min.css" rel="stylesheet" type="text/css">
-		<link href="http://andrew15.sangoma.tech/admin/assets/css/font-awesome.min-4.7.0.css" rel="stylesheet" type="text/css">
+		<title><?php echo _("Authorize your account")?></title>
+		<link href="/admin/assets/css/bootstrap-3.3.7.min.css" rel="stylesheet" type="text/css">
+		<link href="/admin/assets/css/font-awesome.min-4.7.0.css" rel="stylesheet" type="text/css">
 	</head>
 	<body style="padding: 5px;">
 		<div class="container-fluid">
@@ -21,15 +21,12 @@
 						<div class="form-group">
 							<input type="password" name="password" class="form-control" placeholder="Password">
 						</div>
-						<br>
-						<button class="btn btn-primary">Submit</button>
-						<button class="btn btn-default">Cancel</button>
+						<button class="btn btn-primary"><?php echo _("Submit")?></button>
+						<button class="btn btn-default"><?php echo _("Cancel")?></button>
 					</form>
-				</div>
-				<div class="col-xs-8 pull-right text-right">
-					<img src="http://andrew15.sangoma.tech/admin/<?php echo $image?>">
 					<br>
-					<strong><?php echo $app_name?></strong>
+					<img src="/admin/<?php echo $image?>">
+					<br>
 				</div>
 			</div>
 			<div class="row">
