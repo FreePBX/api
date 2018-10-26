@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-31 14:10-0400\n"
+"POT-Creation-Date: 2018-10-26 17:34-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,9 +110,17 @@ msgstr ""
 msgid "Authorize %s to use your %s account?"
 msgstr ""
 
+#: views/authorize.php:4
+msgid "Authorize your account"
+msgstr ""
+
 #: views/system/applicationGrid.php:9 views/user/grid.php:8 assets/js/api.js:65
 #: assets/js/api.js:191
 msgid "Browser-based/Single Page app"
+msgstr ""
+
+#: views/authorize.php:25
+msgid "Cancel"
 msgstr ""
 
 #: views/system/modals.php:58 views/user/modals.php:52
@@ -276,6 +284,10 @@ msgstr ""
 msgid "Show API types"
 msgstr ""
 
+#: views/authorize.php:24
+msgid "Submit"
+msgstr ""
+
 #: assets/js/api.js:66
 msgid ""
 "The 'Browser-based/Single Page app', also known as 'Implicit Code Grant', is "
@@ -295,7 +307,7 @@ msgid ""
 "whether or not to authenticate your application"
 msgstr ""
 
-#: views/authorize.php:38
+#: views/authorize.php:35
 msgid "This application is requesting being able to:"
 msgstr ""
 
