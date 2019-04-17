@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.2.1</version>
+	<version>15.0.3</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,12 +11,16 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.3* Depend on PM2
 		*15.0.2.1* Fix authorize screen
 		*15.0.2* Add freepbx to rest container
 		*15.0.1alpha4* Allow defining scope restrictions on application creation
 	</changelog>
 	<description>
 	</description>
+	<depends>
+		<module>pm2 ge 15.0.1</module>
+	</depends>
 	<hooks>
 		<framework class="Chown" namespace="FreePBX\Console\Command">
 			<method callingMethod="fwcChownFiles" class="Api" namespace="FreePBX\modules">chownFreepbx</method>
