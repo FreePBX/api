@@ -1,3 +1,4 @@
+<div class="alert alert-info" role="alert"><?php echo _("The tokens listed below are encrypted and therefore you can not copy them below and expect to use them in your application. You can only use the token(s) that are presented to you in your application. This is a security mechanisim so that someone can't steal your credentials by just looking at this page")?></div>
 <table id="api_refresh_token_list" class="table table-condensed table-striped"
 	data-cache="false"
 	data-show-columns="true"
