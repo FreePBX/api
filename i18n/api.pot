@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-17 14:32-0400\n"
+"POT-Creation-Date: 2019-04-26 12:28-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,9 +47,9 @@ msgstr ""
 msgid "Access Tokens"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:18
+#: views/system/accessTokenGrid.php:19
 #: views/system/applicationGrid.php:32
-#: views/system/refreshTokenGrid.php:18
+#: views/system/refreshTokenGrid.php:19
 #: views/user/grid.php:26
 msgid "Actions"
 msgstr ""
@@ -76,8 +76,8 @@ msgstr ""
 msgid "Application Description"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:14
-#: views/system/refreshTokenGrid.php:14
+#: views/system/accessTokenGrid.php:15
+#: views/system/refreshTokenGrid.php:15
 msgid "Application Name"
 msgstr ""
 
@@ -158,8 +158,8 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:16
-#: views/system/refreshTokenGrid.php:16
+#: views/system/accessTokenGrid.php:17
+#: views/system/refreshTokenGrid.php:17
 msgid "Expiry Time"
 msgstr ""
 
@@ -192,8 +192,8 @@ msgstr ""
 msgid "GraphQL Explorer"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:15
-#: views/system/refreshTokenGrid.php:15
+#: views/system/accessTokenGrid.php:16
+#: views/system/refreshTokenGrid.php:16
 msgid "IP Address"
 msgstr ""
 
@@ -204,8 +204,8 @@ msgid ""
 "and storage is easily accessible"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:17
-#: views/system/refreshTokenGrid.php:17
+#: views/system/accessTokenGrid.php:18
+#: views/system/refreshTokenGrid.php:18
 msgid "Last Accessed Time"
 msgstr ""
 
@@ -339,12 +339,22 @@ msgid ""
 "whether or not to authenticate your application"
 msgstr ""
 
+#: views/system/accessTokenGrid.php:1
+#: views/system/refreshTokenGrid.php:1
+msgid ""
+"The tokens listed below are encrypted and therefore you can not copy them "
+"below and expect to use them in your application. You can only use the "
+"token(s) that are presented to you in your application. This is a security "
+"mechanisim so that someone can't steal your credentials by just looking at "
+"this page"
+msgstr ""
+
 #: views/authorize.php:35
 msgid "This application is requesting being able to:"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:13
-#: views/system/refreshTokenGrid.php:13
+#: views/system/accessTokenGrid.php:14
+#: views/system/refreshTokenGrid.php:14
 msgid "Token"
 msgstr ""
 
