@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.3.1</version>
+	<version>15.0.3.2</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.3.2* FREEPBX-19914 
 		*15.0.3.1* FREEPBX-18907
 		*15.0.3* Depend on PM2
 		*15.0.2.1* Fix authorize screen
