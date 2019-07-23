@@ -1,4 +1,4 @@
-var host = window.location.protocol+"//"+window.location.host+(window.location.port ? ":"+window.location.port : '')
+var host = window.location.protocol+"//"+window.location.host;
 
 var app_type;
 $(".api-add-app").click(function() {
