@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-26 12:28-0400\n"
+"POT-Creation-Date: 2019-07-23 13:00+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Authorize your account"
 msgstr ""
 
-#: views/system/applicationGrid.php:9 views/user/grid.php:8 assets/js/api.js:65
+#: views/system/applicationGrid.php:9 views/user/grid.php:8
 #: assets/js/api.js:191
 msgid "Browser-based/Single Page app"
 msgstr ""
@@ -225,6 +225,14 @@ msgstr ""
 
 #: views/system/modals.php:68 views/user/modals.php:57
 msgid "Please copy your secret as you will not be able to retrieve it later"
+msgstr ""
+
+#: assets/js/api.js:13
+msgid "Please enter a valid application description"
+msgstr ""
+
+#: assets/js/api.js:9
+msgid "Please enter a valid application name"
 msgstr ""
 
 #: Api.class.php:222
