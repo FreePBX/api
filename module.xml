@@ -28,15 +28,6 @@
 		<framework class="Chown" namespace="FreePBX\Console\Command">
 			<method callingMethod="fwcChownFiles" class="Api" namespace="FreePBX\modules">chownFreepbx</method>
 		</framework>
-		<userman class="Userman" namespace="FreePBX\modules">
-			<method callingMethod="delGroup" class="Api" namespace="FreePBX\modules">usermanDelGroup</method>
-			<method callingMethod="addGroup" class="Api" namespace="FreePBX\modules">usermanAddGroup</method>
-			<method callingMethod="updateGroup" class="Api" namespace="FreePBX\modules">usermanUpdateGroup</method>
-			<method callingMethod="delUser" class="Api" namespace="FreePBX\modules">usermanDelUser</method>
-			<method callingMethod="addUser" class="Api" namespace="FreePBX\modules">usermanAddUser</method>
-			<method callingMethod="updateUser" class="Api" namespace="FreePBX\modules">usermanUpdateUser</method>
-			<method callingMethod="myShowPage" class="Api" namespace="FreePBX\modules">usermanShowPage</method>
-		</userman>
 	</hooks>
 	<database>
 		<table name="api_applications">
