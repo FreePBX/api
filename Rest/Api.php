@@ -71,7 +71,10 @@ class Api {
 			$classes = [];
 
 			foreach (new DirectoryIterator($fwcpath) as $fileInfo) {
+				// skip '.' and '..' entries in the directory
 				if($fileInfo->isDot()) { continue; };
+				// skip files that begin with '.', such as '.Donotdisturb.php.swp'
+				if(substr($fileInfo->getBasename(),0,1)=='.') { continue; };
 				$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 				$class = "FreePBX\\Api\\Rest\\".$name;
 				$classes[] = [
