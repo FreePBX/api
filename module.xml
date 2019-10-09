@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.3.4</version>
+	<version>15.0.3.5</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.3.5* Skip "hidden" files that begin with a "dot" 
 		*15.0.3.4* FREEPBX-20346 
 		*15.0.3.3* FREEPBX-20282 Whoops error when using GraphQL Documentation tab of API module 
 		*15.0.3.2* FREEPBX-19914 
