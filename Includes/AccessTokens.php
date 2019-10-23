@@ -74,11 +74,11 @@ class AccessTokens {
 		$sth->execute([
 			":token" => $token,
 		]);
-		$token = $sth->fetch(PDO::FETCH_ASSOC);
-		if(!empty($token)) {
-			$token['scopes'] = json_decode($token['scopes'],true);
+		$tokenResult = $sth->fetch(PDO::FETCH_ASSOC);
+		if(!empty($tokenResult)) {
+			$tokenResult['scopes'] = json_decode($tokenResult['scopes'], true);
 		}
-		return $token;
+		return $tokenResult;
 	}
 
 	public function isRevoked($token) {
