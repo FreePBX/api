@@ -63,55 +63,55 @@ class Api {
 	}
 
 	public function getAPIClasses() {
-		if(empty($this->classes)) {
-			$webrootpath = $this->freepbx->Config->get('AMPWEBROOT');
-
-			$fwcpath = $webrootpath . '/admin/libraries/Api/Rest';
-
-			$classes = [];
-
-			foreach (new DirectoryIterator($fwcpath) as $fileInfo) {
-				// skip '.' and '..' entries in the directory
-				if($fileInfo->isDot()) { continue; };
-				// skip files that begin with '.', such as '.Donotdisturb.php.swp'
-				if(substr($fileInfo->getBasename(),0,1)=='.') { continue; };
-				$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
-				$class = "FreePBX\\Api\\Rest\\".$name;
-				$classes[] = [
-					'modname' => 'framework',
-					'class' => $class,
-					'name' => $name
-				];
-			}
-
-			$amodules = $this->freepbx->Modules->getActiveModules();
-			foreach($amodules as $module){
-				//Module Path
-				$mpath = $webrootpath . '/admin/modules/' . $module['rawname'] . '/Api/Rest/';
-				if (file_exists($mpath)){
-					//Class files
-					foreach (new DirectoryIterator($mpath) as $fileInfo) {
-						if($fileInfo->isDot()) { continue; };
-						$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
-						$class = "FreePBX\\modules\\".$module['rawname']."\\Api\\Rest\\".$name;
-						$classes[] = [
-							'modname' => $module['rawname'],
-							'class' => $class,
-							'name' => $name
-						];
-					}
-				}
-			}
-			ksort($classes);
-			foreach($classes as $class) {
-				$cls = $class['class'];
-				$class['object'] = new $cls($this->freepbx,$class['modname']);
-				$this->classes[] = $class;
-			}
-			return $this->classes;
-		} else {
+		if(!empty($this->classes)) {
 			return $this->classes;
 		}
+
+		$webrootpath = $this->freepbx->Config->get('AMPWEBROOT');
+
+		$fwcpath = $webrootpath . '/admin/libraries/Api/Rest';
+
+		$classes = [];
+
+		foreach (new DirectoryIterator($fwcpath) as $fileInfo) {
+			// skip '.' and '..' entries in the directory
+			if($fileInfo->isDot()) { continue; };
+			// skip files that begin with '.', such as '.Donotdisturb.php.swp'
+			if(substr($fileInfo->getBasename(),0,1)=='.') { continue; };
+			$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
+			$class = "FreePBX\\Api\\Rest\\".$name;
+			$classes[] = [
+				'modname' => 'framework',
+				'class' => $class,
+				'name' => $name
+			];
+		}
+
+		$amodules = $this->freepbx->Modules->getActiveModules();
+		foreach($amodules as $module){
+			//Module Path
+			$mpath = $webrootpath . '/admin/modules/' . $module['rawname'] . '/Api/Rest/';
+			if (file_exists($mpath)){
+				//Class files
+				foreach (new DirectoryIterator($mpath) as $fileInfo) {
+					if($fileInfo->isDot()) { continue; };
+					$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
+					$class = "FreePBX\\modules\\".$module['rawname']."\\Api\\Rest\\".$name;
+					$classes[] = [
+						'modname' => $module['rawname'],
+						'class' => $class,
+						'name' => $name
+					];
+				}
+			}
+		}
+		ksort($classes);
+		foreach($classes as $class) {
+			$cls = $class['class'];
+			$class['object'] = new $cls($this->freepbx,$class['modname']);
+			$this->classes[] = $class;
+		}
+		return $this->classes;
 	}
 
 	private function setupRest($app) {

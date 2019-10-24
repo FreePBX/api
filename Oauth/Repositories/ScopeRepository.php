@@ -27,16 +27,30 @@ class ScopeRepository implements ScopeRepositoryInterface {
 		$userIdentifier = null
 	) {
 		$application = $this->api->applications->getByClientId($clientEntity->getIdentifier());
-		if(empty($application['allowed_scopes'])) {
-			//no scope restrictions
+		$applicationAllowedScopes = trim($application['allowed_scopes']);
+
+		// If application scope is empty, then that means there are no restrictions
+		if (empty($applicationAllowedScopes)) {
+			// Allow access to both GraphQL and Rest
+			$applicationScopes = ['gql', 'rest'];
+		} else {
+			$applicationScopes = explode(" ", $applicationAllowedScopes);
+		}
+
+		// If no scopes are defined, then use the scopes from the application
+		if (empty($scopes)) {
+			foreach($applicationScopes as $scopeIdentifier) {
+				$scopes[] = $this->getScopeEntityByIdentifier($scopeIdentifier);
+			}
 			return $scopes;
 		}
-		$applicationScopes = explode(" ",$application['allowed_scopes']);
+
 		foreach($scopes as $scope) {
 			if(!$this->checkScope($scope->getIdentifier(),$applicationScopes)) {
 				throw OAuthServerException::invalidScope($scope->getIdentifier());
 			}
 		}
+
 		return $scopes;
 	}
 
