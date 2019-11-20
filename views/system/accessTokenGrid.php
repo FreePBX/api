@@ -6,6 +6,7 @@
 	data-pagination="true"
 	data-search="true"
 	data-show-refresh="true"
+	data-escape="true" 
 	data-url="ajax.php?module=api&amp;command=getTokens"
 	data-unique-id="id"
 	data-toggle="table">
