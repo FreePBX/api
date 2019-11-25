@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.3.6</version>
+	<version>15.0.3.7</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.3.7* FREEI-890 Fix XSS Bootstrap Datatable Issues 
 		*15.0.3.6* FREEI-813 Properly scope tokens
 		*15.0.3.5* Skip "hidden" files that begin with a "dot" 
 		*15.0.3.4* FREEPBX-20346 

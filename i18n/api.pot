@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-24 22:56+0000\n"
+"POT-Creation-Date: 2019-11-25 17:38+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,7 +31,7 @@ msgstr ""
 msgid "API"
 msgstr ""
 
-#: views/system/scopeVisualizer.php:39
+#: views/system/scopeVisualizer.php:40
 msgid "API Type"
 msgstr ""
 
@@ -47,10 +47,10 @@ msgstr ""
 msgid "Access Tokens"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:19
-#: views/system/applicationGrid.php:32
-#: views/system/refreshTokenGrid.php:19
-#: views/user/grid.php:26
+#: views/system/accessTokenGrid.php:20
+#: views/system/applicationGrid.php:33
+#: views/system/refreshTokenGrid.php:20
+#: views/user/grid.php:27
 msgid "Actions"
 msgstr ""
 
@@ -71,26 +71,26 @@ msgstr ""
 msgid "Allowed Scopes"
 msgstr ""
 
-#: views/system/applicationGrid.php:30
-#: views/user/grid.php:25
+#: views/system/applicationGrid.php:31
+#: views/user/grid.php:26
 msgid "Application Description"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:15
-#: views/system/refreshTokenGrid.php:15
+#: views/system/accessTokenGrid.php:16
+#: views/system/refreshTokenGrid.php:16
 msgid "Application Name"
 msgstr ""
 
-#: views/system/applicationGrid.php:29
+#: views/system/applicationGrid.php:30
 msgid "Application Owner"
 msgstr ""
 
-#: views/system/applicationGrid.php:31
+#: views/system/applicationGrid.php:32
 msgid "Application Type"
 msgstr ""
 
-#: views/system/applicationGrid.php:28
-#: views/user/grid.php:24
+#: views/system/applicationGrid.php:29
+#: views/user/grid.php:25
 msgid "Application name"
 msgstr ""
 
@@ -152,13 +152,13 @@ msgid "Connectivity"
 msgstr ""
 
 #: views/system/modals.php:26
-#: views/system/scopeVisualizer.php:41
+#: views/system/scopeVisualizer.php:42
 #: views/user/modals.php:26
 msgid "Description"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:17
-#: views/system/refreshTokenGrid.php:17
+#: views/system/accessTokenGrid.php:18
+#: views/system/refreshTokenGrid.php:18
 msgid "Expiry Time"
 msgstr ""
 
@@ -191,8 +191,8 @@ msgstr ""
 msgid "GraphQL Explorer"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:16
-#: views/system/refreshTokenGrid.php:16
+#: views/system/accessTokenGrid.php:17
+#: views/system/refreshTokenGrid.php:17
 msgid "IP Address"
 msgstr ""
 
@@ -203,8 +203,8 @@ msgid ""
 "and storage is easily accessible"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:18
-#: views/system/refreshTokenGrid.php:18
+#: views/system/accessTokenGrid.php:19
+#: views/system/refreshTokenGrid.php:19
 msgid "Last Accessed Time"
 msgstr ""
 
@@ -220,7 +220,7 @@ msgstr ""
 msgid "Machine-to-Machine app"
 msgstr ""
 
-#: views/system/scopeVisualizer.php:40
+#: views/system/scopeVisualizer.php:41
 msgid "Module"
 msgstr ""
 
@@ -291,7 +291,7 @@ msgstr ""
 msgid "Reload Explorer (If scope was changed)"
 msgstr ""
 
-#: views/system/scopeVisualizer.php:38
+#: views/system/scopeVisualizer.php:39
 msgid "Scope"
 msgstr ""
 
@@ -360,8 +360,8 @@ msgstr ""
 msgid "This application is requesting being able to:"
 msgstr ""
 
-#: views/system/accessTokenGrid.php:14
-#: views/system/refreshTokenGrid.php:14
+#: views/system/accessTokenGrid.php:15
+#: views/system/refreshTokenGrid.php:15
 msgid "Token"
 msgstr ""
 
