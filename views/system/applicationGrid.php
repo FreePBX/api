@@ -18,6 +18,7 @@
 	data-show-toggle="true"
 	data-pagination="true"
 	data-search="true"
+	data-escape="true" 
 	data-show-refresh="true"
 	data-toolbar="#toolbar-api-applications"
 	data-url="ajax.php?module=api&amp;command=getApplications"

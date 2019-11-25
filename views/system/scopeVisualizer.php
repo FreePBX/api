@@ -28,6 +28,7 @@
 			data-show-toggle="true"
 			data-pagination="true"
 			data-search="true"
+			data-escape="true" 
 			data-show-refresh="false"
 			data-url="ajax.php?module=api&amp;command=getScopes"
 			data-unique-id="scope"

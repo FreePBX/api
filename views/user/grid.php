@@ -16,6 +16,7 @@
 	data-show-columns="true"
 	data-show-toggle="true"
 	data-pagination="true"
+	data-escape="true" 
 	data-search="true"
 	data-toolbar="#toolbar-api-applications"
 	data-toggle="table">

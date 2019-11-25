@@ -5,6 +5,7 @@
 	data-show-toggle="true"
 	data-pagination="true"
 	data-search="true"
+	data-escape="true" 
 	data-show-refresh="true"
 	data-url="ajax.php?module=api&amp;command=getRefreshTokens"
 	data-unique-id="id"
