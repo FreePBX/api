@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.3.7</version>
+	<version>16.0.1</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,17 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
-		*15.0.3.7* FREEI-890 Fix XSS Bootstrap Datatable Issues 
-		*15.0.3.6* FREEI-813 Properly scope tokens
-		*15.0.3.5* Skip "hidden" files that begin with a "dot" 
-		*15.0.3.4* FREEPBX-20346 
-		*15.0.3.3* FREEPBX-20282 Whoops error when using GraphQL Documentation tab of API module 
-		*15.0.3.2* FREEPBX-19914 
-		*15.0.3.1* FREEPBX-18907
-		*15.0.3* Depend on PM2
-		*15.0.2.1* Fix authorize screen
-		*15.0.2* Add freepbx to rest container
-		*15.0.1alpha4* Allow defining scope restrictions on application creation
+		*16.0.1alpha* 16.0.1 alpha release
 	</changelog>
 	<description>
 	</description>
@@ -77,6 +67,6 @@
 		</table>
 	</database>
 	<supported>
-		<version>15.0</version>
+		<version>16.0</version>
 	</supported>
 </module>
