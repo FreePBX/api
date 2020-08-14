@@ -23,8 +23,8 @@
 		*15.0.2* Add freepbx to rest container
 		*15.0.1alpha4* Allow defining scope restrictions on application creation
 	</changelog>
-	<description>
-	</description>
+	<description>The API module allows administrators to configure and manage FreePBX remotely through automated. As an administrator you can use other languages to control your PBX systems.</description>
+    <more-info>https://wiki.freepbx.org/display/FPG/API</more-info>
 	<depends>
 		<module>pm2 ge 15.0.1</module>
 	</depends>
