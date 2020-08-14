@@ -3,13 +3,13 @@
 # For licensing information, please see the file named LICENSE located in the module directory
 #
 # FreePBX language template for api
-# Copyright (C) 2008-2019 Sangoma Technologies, Inc.
+# Copyright (C) 2008-2020 Sangoma Technologies, Inc.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 17:38+0530\n"
+"POT-Creation-Date: 2020-08-14 07:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -337,6 +337,13 @@ msgid ""
 "The 'Web-server App', also known as 'Authorization Code Grant', should be "
 "very familiar if you’ve ever signed into a web app using your Facebook or "
 "Google account"
+msgstr ""
+
+#: api.i18n.php:8
+msgid ""
+"The API module allows administrators to configure and manage FreePBX "
+"remotely through automated. As an administrator you can use other languages "
+"to control your PBX systems."
 msgstr ""
 
 #: views/system/modals.php:37
