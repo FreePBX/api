@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "97004b139042e0a2c2c7ca79c1688d64",
+    "content-hash": "8e63aa7ca73f25544bd3f558acd9489a",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -252,16 +252,16 @@
         },
         {
             "name": "ivome/graphql-relay-php",
-            "version": "v0.4.1",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ivome/graphql-relay-php.git",
-                "reference": "219d391ab2e57579f0e6db37a083b3afef614f38"
+                "reference": "b227c17e79564d147db2162329f5bdbe19192313"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ivome/graphql-relay-php/zipball/219d391ab2e57579f0e6db37a083b3afef614f38",
-                "reference": "219d391ab2e57579f0e6db37a083b3afef614f38",
+                "url": "https://api.github.com/repos/ivome/graphql-relay-php/zipball/b227c17e79564d147db2162329f5bdbe19192313",
+                "reference": "b227c17e79564d147db2162329f5bdbe19192313",
                 "shasum": ""
             },
             "require": {
@@ -280,7 +280,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD"
+                "BSD-3-Clause"
             ],
             "description": "A PHP port of GraphQL Relay reference implementation",
             "homepage": "https://github.com/ivome/graphql-relay-php",
@@ -289,7 +289,7 @@
                 "api",
                 "graphql"
             ],
-            "time": "2017-05-09T16:33:57+00:00"
+            "time": "2018-05-10T20:18:11+00:00"
         },
         {
             "name": "lcobucci/jwt",
@@ -401,21 +401,21 @@
         },
         {
             "name": "league/oauth2-client",
-            "version": "2.3.0",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth2-client.git",
-                "reference": "aa2e3df188f0bfd87f7880cc880e906e99923580"
+                "reference": "d9f2a1e000dc14eb3c02e15d15759385ec7ff0fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-client/zipball/aa2e3df188f0bfd87f7880cc880e906e99923580",
-                "reference": "aa2e3df188f0bfd87f7880cc880e906e99923580",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-client/zipball/d9f2a1e000dc14eb3c02e15d15759385ec7ff0fb",
+                "reference": "d9f2a1e000dc14eb3c02e15d15759385ec7ff0fb",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "^6.0",
-                "paragonie/random_compat": "^1|^2",
+                "guzzlehttp/guzzle": "^6.0 || ^7.0",
+                "paragonie/random_compat": "^1|^2|^9.99",
                 "php": "^5.6|^7.0"
             },
             "require-dev": {
@@ -464,7 +464,7 @@
                 "oauth2",
                 "single sign on"
             ],
-            "time": "2018-01-13T05:27:58+00:00"
+            "time": "2020-07-18T17:54:32+00:00"
         },
         {
             "name": "league/oauth2-server",
@@ -685,5 +685,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

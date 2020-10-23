@@ -253,17 +253,17 @@
     },
     {
         "name": "ivome/graphql-relay-php",
-        "version": "v0.4.1",
-        "version_normalized": "0.4.1.0",
+        "version": "v0.5.0",
+        "version_normalized": "0.5.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ivome/graphql-relay-php.git",
-            "reference": "219d391ab2e57579f0e6db37a083b3afef614f38"
+            "reference": "b227c17e79564d147db2162329f5bdbe19192313"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ivome/graphql-relay-php/zipball/219d391ab2e57579f0e6db37a083b3afef614f38",
-            "reference": "219d391ab2e57579f0e6db37a083b3afef614f38",
+            "url": "https://api.github.com/repos/ivome/graphql-relay-php/zipball/b227c17e79564d147db2162329f5bdbe19192313",
+            "reference": "b227c17e79564d147db2162329f5bdbe19192313",
             "shasum": ""
         },
         "require": {
@@ -274,7 +274,7 @@
             "phpunit/phpunit": "^4.8",
             "satooshi/php-coveralls": "~1.0"
         },
-        "time": "2017-05-09T16:33:57+00:00",
+        "time": "2018-05-10T20:18:11+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -284,7 +284,7 @@
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "BSD"
+            "BSD-3-Clause"
         ],
         "description": "A PHP port of GraphQL Relay reference implementation",
         "homepage": "https://github.com/ivome/graphql-relay-php",
@@ -408,22 +408,22 @@
     },
     {
         "name": "league/oauth2-client",
-        "version": "2.3.0",
-        "version_normalized": "2.3.0.0",
+        "version": "2.5.0",
+        "version_normalized": "2.5.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/oauth2-client.git",
-            "reference": "aa2e3df188f0bfd87f7880cc880e906e99923580"
+            "reference": "d9f2a1e000dc14eb3c02e15d15759385ec7ff0fb"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/oauth2-client/zipball/aa2e3df188f0bfd87f7880cc880e906e99923580",
-            "reference": "aa2e3df188f0bfd87f7880cc880e906e99923580",
+            "url": "https://api.github.com/repos/thephpleague/oauth2-client/zipball/d9f2a1e000dc14eb3c02e15d15759385ec7ff0fb",
+            "reference": "d9f2a1e000dc14eb3c02e15d15759385ec7ff0fb",
             "shasum": ""
         },
         "require": {
-            "guzzlehttp/guzzle": "^6.0",
-            "paragonie/random_compat": "^1|^2",
+            "guzzlehttp/guzzle": "^6.0 || ^7.0",
+            "paragonie/random_compat": "^1|^2|^9.99",
             "php": "^5.6|^7.0"
         },
         "require-dev": {
@@ -433,7 +433,7 @@
             "phpunit/phpunit": "^5.7|^6.0",
             "squizlabs/php_codesniffer": "^2.3|^3.0"
         },
-        "time": "2018-01-13T05:27:58+00:00",
+        "time": "2020-07-18T17:54:32+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
