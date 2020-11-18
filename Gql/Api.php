@@ -90,7 +90,33 @@ class Api {
 				'schema' => call_user_func($this->setupGql, $request, $response, $args),
 				'debug' => true
 			]);
-			$server->processPsrRequest($request, $response, $response->getBody());
+	
+			$newResponse = $server->processPsrRequest($request, $response, $response->getBody());
+
+			//handling the exception error response
+			if (isset(json_decode($newResponse->getBody())->errors[0])) {
+				$data['errors'][] = array("message" => json_decode($newResponse->getBody())->errors[0]->message,"status"=> false);
+				return  $response->withJson($data, 400);
+			}//handling the error response defined 
+			elseif (isset(json_decode($newResponse->getBody())->data)) {
+				$value = key(json_decode($newResponse->getBody())->data);
+				if($value == 'extension' || $value == 'allExtensions') return;
+				$res = json_decode($newResponse->getBody())->data->$value;
+				//checking for the error case where status is false
+				if (json_decode($res->status) == false) {
+					$httpCode = 400; 
+					$status = array("status"=> $res->status);
+					if (isset($res->message)) {
+						$message = array("message" => $res->message);
+						$data['errors'][] = array_merge($message,$status);
+					} else {
+						$data['errors'][] = $status;
+					}
+				    return  $response->withJson($data, $httpCode);
+				}
+			}
+			//default when proper response is true
+			return $newResponse;
 		});
 		$app->run();
 
