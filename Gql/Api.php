@@ -59,7 +59,7 @@ class Api {
 		return $scopes;
 	}
 
-	public function execute() {
+	public function buildSlimApp() {
 		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',$_SERVER['QUERY_STRING']);
 		$_SERVER['REQUEST_URI'] = '/api/gql'.(!empty($_GET['route']) ? '/'.$_GET['route'] : '');
 
@@ -92,6 +92,12 @@ class Api {
 			]);
 			$server->processPsrRequest($request, $response, $response->getBody());
 		});
+
+		return $app;
+	}
+
+	public function execute() {
+		$app = $this->buildSlimApp();
 		$app->run();
 
 	}
