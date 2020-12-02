@@ -432,4 +432,20 @@ class Api extends \FreePBX_Helpers implements \BMO {
 
 		file_put_contents(__DIR__."/docs/.htaccess",$ht);
 	}
+
+	public function setTransactionStatus($transactionId,$status,$failureReason) {
+		$this->transactionStatus = new Api\Includes\TransactionStatus($this->freepbx->Database);
+		return $this->transactionStatus->updateStatus($transactionId,$status,$failureReason);	
+	}
+
+	public function addTransaction($status,$moduleName,$eventName) {
+		$this->transactionStatus = new Api\Includes\TransactionStatus($this->freepbx->Database);
+		return $this->transactionStatus->add($status,$moduleName,$eventName);	
+	}
+
+	public function getTransactionStatus($txnId) {
+		$this->transactionStatus = new Api\Includes\TransactionStatus($this->freepbx->Database);
+		$response = $this->transactionStatus->get($txnId);	
+		return $response['event_status'];
+	}
 }
