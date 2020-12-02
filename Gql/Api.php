@@ -100,10 +100,9 @@ class Api {
 			}//handling the error response defined 
 			elseif (isset(json_decode($newResponse->getBody())->data)) {
 				$value = key(json_decode($newResponse->getBody())->data);
-				if($value == 'extension' || $value == 'allExtensions') return;
 				$res = json_decode($newResponse->getBody())->data->$value;
 				//checking for the error case where status is false
-				if (json_decode($res->status) == false) {
+				if (isset($res->status) && json_decode($res->status) == false) {
 					$httpCode = 400; 
 					$status = array("status"=> $res->status);
 					if (isset($res->message)) {
