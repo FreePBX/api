@@ -95,6 +95,7 @@ class Api {
 
 			//handling the exception error response
 			if (isset(json_decode($newResponse->getBody())->errors[0])) {
+				dbug(json_decode($newResponse->getBody())->errors[0]);
 				$data['errors'][] = array("message" => json_decode($newResponse->getBody())->errors[0]->message,"status"=> false);
 				return  $response->withJson($data, 400);
 			}//handling the error response defined 
