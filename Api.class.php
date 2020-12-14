@@ -15,6 +15,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 class Api extends \FreePBX_Helpers implements \BMO {
 	private $oauthKey = 'api_oauth';
 	private $flattenedScopes = [];
+	private static $gqlApi = false;
 
 	public function __construct($freepbx = null) {
 		if ($freepbx == null) {
@@ -447,5 +448,23 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		$this->transactionStatus = new Api\Includes\TransactionStatus($this->freepbx->Database);
 		$response = $this->transactionStatus->get($txnId);	
 		return $response['event_status'];
+	}
+
+		//injecting for utest
+	public function setObj($obj){
+		self::$gqlApi = $obj;
+	}
+
+	public function setGqlApiHelper() {
+		if(!self::$gqlApi){
+			 self::$gqlApi = \FreePBX::Api();	
+		}
+		return self::$gqlApi;
+	}
+
+	// run as background job	
+	public function initiateGqlAPIProcess($args) {
+		$bin = $this->freepbx->Config()->get('AMPSBIN');
+		shell_exec($bin.'/fwconsole api gql '.$args[0].' '.$args[1].' '.$args[2].' '.$args[3].' >/dev/null 2>/dev/null &');
 	}
 }

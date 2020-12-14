@@ -26,13 +26,24 @@ class Api extends Command {
 				new InputOption('generatefromtable', null, InputOption::VALUE_REQUIRED, _('Generate GQL from a database table')),
 				new InputOption('module', null, InputOption::VALUE_REQUIRED, _('Module to place the API file if using generatefromtable')),
 				new InputOption('generatefrommodule', null, InputOption::VALUE_REQUIRED, _('Generate GQL from a modules xml database definition')),
-				new InputOption('path', null, InputOption::VALUE_REQUIRED, _('Module location path'),\FreePBX::Config()->get('AMPWEBROOT').'/admin/modules')
+				new InputOption('path', null, InputOption::VALUE_REQUIRED, _('Module location path'),\FreePBX::Config()->get('AMPWEBROOT').'/admin/modules'),
+				new InputArgument('args', InputArgument::IS_ARRAY, _('Execute Gql command'),null)
 			));
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output){
+
+		$this->input = $input;
+	
+		$args = $input->getArgument('args');
+		if (!empty($args) && $args[0] == 'gql') {
+			/* API module normal console command handling */
+			$this->handleArgs($args,$output);
+			return;
+		}	
+
 		if($input->getOption('type') !== "gql") {
-			$this->writeln("Only GQL is supported at this time");
+			$output->writeln(_("Only GQL type is supported at this time"));
 			return;
 		}
 		if($input->getOption('generatefromtable') && $input->getOption('module')) {
@@ -81,6 +92,15 @@ class Api extends Command {
 		$this->outputHelp($input,$output);
 	}
 
+	private function handleArgs($args,$output){
+		$action = array_shift($args);
+		switch($action){
+				case 'gql': 
+				include_once __DIR__ . '/../ApiGqlHelper.class.php';
+				\FreePBX::ApiGqlHelper()->execGqlApi($args);
+				break;
+		}
+	}
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
