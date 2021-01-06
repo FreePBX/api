@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-14 07:21+0000\n"
+"POT-Creation-Date: 2021-01-06 12:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Add Application"
 msgstr ""
 
-#: Api.class.php:232 Api.class.php:247
+#: Api.class.php:233 Api.class.php:248
 #, php-format
 msgid "All %s for %s"
 msgstr ""
@@ -141,6 +141,10 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+#: Console/Api.class.php:30
+msgid "Execute Gql command"
+msgstr ""
+
 #: views/system/accessTokenGrid.php:18 views/system/refreshTokenGrid.php:18
 msgid "Expiry Time"
 msgstr ""
@@ -214,6 +218,10 @@ msgstr ""
 msgid "Native app"
 msgstr ""
 
+#: Console/Api.class.php:46
+msgid "Only GQL type is supported at this time"
+msgstr ""
+
 #: api.i18n.php:4
 msgid "PBX API"
 msgstr ""
@@ -235,12 +243,12 @@ msgstr ""
 msgid "Please enter a valid application name"
 msgstr ""
 
-#: Api.class.php:222
+#: Api.class.php:223
 #, php-format
 msgid "Read/Write for %s"
 msgstr ""
 
-#: Api.class.php:201 Api.class.php:208
+#: Api.class.php:202 Api.class.php:209
 #, php-format
 msgid "Read/Write for all modules [%s]"
 msgstr ""
