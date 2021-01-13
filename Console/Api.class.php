@@ -36,7 +36,7 @@ class Api extends Command {
 		$this->input = $input;
 	
 		$args = $input->getArgument('args');
-		if (!empty($args) && $args[0] == 'gql') {
+		if(!empty($args) && $args[0] == 'gql'){
 			/* API module normal console command handling */
 			$this->handleArgs($args,$output);
 			return;
@@ -95,12 +95,49 @@ class Api extends Command {
 	private function handleArgs($args,$output){
 		$action = array_shift($args);
 		switch($action){
-				case 'gql': 
+			case 'gql':
+			if(isset($args[0]) && $args[0] == 'genclientcred'){
+				 $output->writeln(json_encode($this->generateAPICredentials($args),JSON_UNESCAPED_SLASHES));
+				break;
+			}else{ 
 				include_once __DIR__ . '/../ApiGqlHelper.class.php';
 				\FreePBX::ApiGqlHelper()->execGqlApi($args);
 				break;
+			}
 		}
 	}
+	
+	/**
+	 * generateAPICredentials
+	 *
+	 * @param  mixed $args
+	 * @return void
+	 */
+	private function generateAPICredentials($args){
+		$this->freepbx = \FreePBX::Api();
+		$this->db = \FreePBX::Database();
+   	//clear all before generate new
+      $query = "DELETE from api_applications Where `name`='System_Internal_GqlAll' And `grant_type`='client_credentials' AND `allowed_scopes`='gql'";
+      $stmt = $this->db->prepare($query);
+      $stmt->execute();
+      //generate the api
+      $res = $this->freepbx->applications->add('','client_credentials','System_Internal_GqlAll','System internal generated token so please do not delete','','','gql');
+		
+		$protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+		$serverip = $protocol.'://'. $args[1] ;
+
+		$obj = new \stdClass();
+		$obj->token_url = $serverip.'/admin/api/api/token';
+		$obj->authorization_url = $serverip.'/admin/api/api/authorize';
+		$obj->graphql_url = $serverip.'/admin/api/api/gql';
+		$obj->rest_url = $serverip.'/admin/api/api/rest';
+		$obj->client_id = $res['client_id'];
+		$obj->allowed_scopes = $res['allowed_scopes'];
+		$obj->client_secret = $res['client_secret'];
+
+		return $obj;
+	}
+	 
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
