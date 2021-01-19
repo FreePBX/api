@@ -26,13 +26,24 @@ class Api extends Command {
 				new InputOption('generatefromtable', null, InputOption::VALUE_REQUIRED, _('Generate GQL from a database table')),
 				new InputOption('module', null, InputOption::VALUE_REQUIRED, _('Module to place the API file if using generatefromtable')),
 				new InputOption('generatefrommodule', null, InputOption::VALUE_REQUIRED, _('Generate GQL from a modules xml database definition')),
-				new InputOption('path', null, InputOption::VALUE_REQUIRED, _('Module location path'),\FreePBX::Config()->get('AMPWEBROOT').'/admin/modules')
+				new InputOption('path', null, InputOption::VALUE_REQUIRED, _('Module location path'),\FreePBX::Config()->get('AMPWEBROOT').'/admin/modules'),
+				new InputArgument('args', InputArgument::IS_ARRAY, _('Execute Gql command'),null)
 			));
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output){
+
+		$this->input = $input;
+	
+		$args = $input->getArgument('args');
+		if(!empty($args) && $args[0] == 'gql'){
+			/* API module normal console command handling */
+			$this->handleArgs($args,$output);
+			return;
+		}	
+
 		if($input->getOption('type') !== "gql") {
-			$this->writeln("Only GQL is supported at this time");
+			$output->writeln(_("Only GQL type is supported at this time"));
 			return;
 		}
 		if($input->getOption('generatefromtable') && $input->getOption('module')) {
@@ -81,6 +92,52 @@ class Api extends Command {
 		$this->outputHelp($input,$output);
 	}
 
+	private function handleArgs($args,$output){
+		$action = array_shift($args);
+		switch($action){
+			case 'gql':
+			if(isset($args[0]) && $args[0] == 'genclientcred'){
+				 $output->writeln(json_encode($this->generateAPICredentials($args),JSON_UNESCAPED_SLASHES));
+				break;
+			}else{ 
+				include_once __DIR__ . '/../ApiGqlHelper.class.php';
+				\FreePBX::ApiGqlHelper()->execGqlApi($args);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * generateAPICredentials
+	 *
+	 * @param  mixed $args
+	 * @return void
+	 */
+	private function generateAPICredentials($args){
+		$this->freepbx = \FreePBX::Api();
+		$this->db = \FreePBX::Database();
+   	//clear all before generate new
+      $query = "DELETE from api_applications Where `name`='System_Internal_GqlAll' And `grant_type`='client_credentials' AND `allowed_scopes`='gql'";
+      $stmt = $this->db->prepare($query);
+      $stmt->execute();
+      //generate the api
+      $res = $this->freepbx->applications->add('','client_credentials','System_Internal_GqlAll','System internal generated token so please do not delete','','','gql');
+		
+		$protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+		$serverip = $protocol.'://'. $args[1] ;
+
+		$obj = new \stdClass();
+		$obj->token_url = $serverip.'/admin/api/api/token';
+		$obj->authorization_url = $serverip.'/admin/api/api/authorize';
+		$obj->graphql_url = $serverip.'/admin/api/api/gql';
+		$obj->rest_url = $serverip.'/admin/api/api/rest';
+		$obj->client_id = $res['client_id'];
+		$obj->allowed_scopes = $res['allowed_scopes'];
+		$obj->client_secret = $res['client_secret'];
+
+		return $obj;
+	}
+	 
 	/**
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
