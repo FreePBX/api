@@ -467,4 +467,15 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		$bin = $this->freepbx->Config()->get('AMPSBIN');
 		shell_exec($bin.'/fwconsole api gql '.$args[0].' '.$args[1].' '.$args[2].' '.$args[3].' >/dev/null 2>/dev/null &');
 	}
+	
+	/**
+	 * doreload
+	 *
+	 * @param  mixed $txnId
+	 * @return void
+	 */
+	public function doreload($txnId){
+		$bin = $this->freepbx->Config()->get('AMPSBIN');
+		shell_exec($bin.'/fwconsole api doreload '.$txnId.' >/dev/null 2>/dev/null &');
+	}
 }

@@ -40,8 +40,23 @@ class Api extends Command {
 			/* API module normal console command handling */
 			$this->handleArgs($args,$output);
 			return;
-		}	
-
+		}
+		if(!empty($args) && $args[0] == 'doreload'){
+			$res = do_reload();
+			$txnId = !empty($args[1]) ? $args[1] : '';
+			if(!empty($txnId)){
+				if($res['status'] == true){
+				$status ="Executed";
+			}else{
+				$status ="Failed";
+			}
+			$this->freepbx = \FreePBX::Api();
+			$this->freepbx->setTransactionStatus($txnId,$status,$res['message']);
+			}else{
+				$output->writeln($res['status']);
+			}
+			return;
+		}
 		if($input->getOption('type') !== "gql") {
 			$output->writeln(_("Only GQL type is supported at this time"));
 			return;

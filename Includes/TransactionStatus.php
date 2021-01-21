@@ -21,7 +21,7 @@ class TransactionStatus {
 		return $this->database->lastInsertId();
 	}
 
-	public function updateStatus($txnId, $status ,$failureReason) {
+	public function updateStatus($txnId, $status ,$failure_reason ='') {
 		$sql = "UPDATE IGNORE api_asynchronous_transaction_history SET event_status = :event_status , failure_reason =:failure_reason, process_end_time =:end_time WHERE `txn_id` = :txn_id";
 		$sth = $this->database->prepare($sql);
 		return $sth->execute([
