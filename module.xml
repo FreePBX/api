@@ -66,6 +66,15 @@
 			<field name="ip_address" type="string" length="80" default=""/>
 			<field name="last_accessed" type="integer"/>
 		</table>
+		<table name="api_asynchronous_transaction_history">
+			<field name="txn_id" type="integer" unsigned="true" autoincrement="true" primarykey="true"/>
+			<field name="module_name" type="string" length="80" default=""/>
+			<field name="event_name" type="string" length="80" default=""/>
+			<field name="event_status" type="string" length="10" default="Processing"/>
+			<field name="failure_reason" type="string"/>
+			<field name="process_start_time" type="integer"/>
+			<field name="process_end_time" type="integer"/>
+		</table>
 	</database>
 	<supported>
 		<version>16.0</version>
