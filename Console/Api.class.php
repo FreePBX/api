@@ -114,7 +114,24 @@ class Api extends Command {
 			if(isset($args[0]) && $args[0] == 'genclientcred'){
 				 $output->writeln(json_encode($this->generateAPICredentials($args),JSON_UNESCAPED_SLASHES));
 				break;
-			}else{ 
+			}elseif(isset($args[0]) && $args[0] == 'yumupgrade'){
+				$this->sysUpdate = new \FreePBX\Builtin\SystemUpdates(true);
+				$this->sysUpdate->startYumUpdate();
+				$txnId = !empty($args[1]) ? $args[1] : '';
+				if(!empty($txnId)){
+				if($res){
+					$status ="Executed";
+					$message = "yum upgrade processed";
+				}else{
+					$status ="Failed";
+					$message = "Failed to process yum upgrade";
+				}
+					$this->freepbx = \FreePBX::Api();
+					$this->freepbx->setTransactionStatus($txnId,$status,$message);
+				}
+				break;
+			}
+			else{ 
 				include_once __DIR__ . '/../ApiGqlHelper.class.php';
 				\FreePBX::ApiGqlHelper()->execGqlApi($args);
 				break;
