@@ -7,7 +7,7 @@
 # About GraphQL
 
 GraphQL is a modern way to build HTTP APIs consumed by the web and mobile clients.
-It is intended to be a replacement for REST and SOAP APIs (even for **existing applications**).
+It is intended to be an alternative to REST and SOAP APIs (even for **existing applications**).
 
 GraphQL itself is a [specification](https://github.com/facebook/graphql) designed by Facebook
 engineers. Various implementations of this specification were written 
@@ -44,8 +44,8 @@ existing PHP frameworks, add support for Relay, etc.
 ## Current Status
 The first version of this library (v0.1) was released on August 10th 2015.
 
-The current version (v0.10) supports all features described by GraphQL specification 
-(including April 2016 add-ons) as well as some experimental features like 
+The current version supports all features described by GraphQL specification 
+as well as some experimental features like 
 [Schema Language parser](type-system/type-language.md) and 
 [Schema printer](reference.md#graphqlutilsschemaprinter).
 
