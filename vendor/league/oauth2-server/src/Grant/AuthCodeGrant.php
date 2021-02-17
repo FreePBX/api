@@ -134,15 +134,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code_verifier');
             }
 
-            // Validate code_verifier according to RFC-7636
-            // @see: https://tools.ietf.org/html/rfc7636#section-4.1
-            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
-                throw OAuthServerException::invalidRequest(
-                    'code_verifier',
-                    'Code Verifier must follow the specifications of RFC-7636.'
-                );
-            }
-
             switch ($authCodePayload->code_challenge_method) {
                 case 'plain':
                     if (hash_equals($codeVerifier, $authCodePayload->code_challenge) === false) {
@@ -153,7 +144,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 case 'S256':
                     if (
                         hash_equals(
-                            strtr(rtrim(base64_encode(hash('sha256', $codeVerifier, true)), '='), '+/', '-_'),
+                            hash('sha256', strtr(rtrim(base64_encode($codeVerifier), '='), '+/', '-_')),
                             $authCodePayload->code_challenge
                         ) === false
                     ) {
@@ -244,24 +235,23 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidClient();
             } elseif (
                 is_array($client->getRedirectUri())
-                && in_array($redirectUri, $client->getRedirectUri(), true) === false
+                && in_array($redirectUri, $client->getRedirectUri()) === false
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
                 throw OAuthServerException::invalidClient();
             }
         } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
-            || empty($client->getRedirectUri())) {
+            || empty($client->getRedirectUri())
+        ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
-        } else {
-            $redirectUri = is_array($client->getRedirectUri())
-                ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri();
         }
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $redirectUri
+            is_array($client->getRedirectUri())
+                ? $client->getRedirectUri()[0]
+                : $client->getRedirectUri()
         );
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
@@ -279,20 +269,18 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code_challenge');
             }
 
-            $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
-            if (in_array($codeChallengeMethod, ['plain', 'S256'], true) === false) {
+            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
                 throw OAuthServerException::invalidRequest(
-                    'code_challenge_method',
-                    'Code challenge method must be `plain` or `S256`'
+                    'code_challenge',
+                    'The code_challenge must be between 43 and 128 characters'
                 );
             }
 
-            // Validate code_challenge according to RFC-7636
-            // @see: https://tools.ietf.org/html/rfc7636#section-4.2
-            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
+            $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
+            if (in_array($codeChallengeMethod, ['plain', 'S256']) === false) {
                 throw OAuthServerException::invalidRequest(
-                    'code_challenged',
-                    'Code challenge must follow the specifications of RFC-7636.'
+                    'code_challenge_method',
+                    'Code challenge method must be `plain` or `S256`'
                 );
             }
 

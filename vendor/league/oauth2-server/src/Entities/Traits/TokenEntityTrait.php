@@ -25,7 +25,7 @@ trait TokenEntityTrait
     protected $expiryDateTime;
 
     /**
-     * @var string|int|null
+     * @var string|int
      */
     protected $userIdentifier;
 
@@ -77,7 +77,7 @@ trait TokenEntityTrait
     /**
      * Set the identifier of the user associated with the token.
      *
-     * @param string|int|null $identifier The identifier of the user
+     * @param string|int $identifier The identifier of the user
      */
     public function setUserIdentifier($identifier)
     {
@@ -87,7 +87,7 @@ trait TokenEntityTrait
     /**
      * Get the token user's identifier.
      *
-     * @return string|int|null
+     * @return string|int
      */
     public function getUserIdentifier()
     {

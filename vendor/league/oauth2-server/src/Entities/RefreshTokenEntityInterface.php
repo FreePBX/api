@@ -21,7 +21,7 @@ interface RefreshTokenEntityInterface
     /**
      * Set the token's identifier.
      *
-     * @param mixed $identifier
+     * @param $identifier
      */
     public function setIdentifier($identifier);
 

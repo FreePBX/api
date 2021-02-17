@@ -34,11 +34,6 @@ class OAuthServerException extends \Exception
     private $redirectUri;
 
     /**
-     * @var array
-     */
-    private $payload;
-
-    /**
      * Throw a new exception.
      *
      * @param string      $message        Error message
@@ -55,33 +50,6 @@ class OAuthServerException extends \Exception
         $this->errorType = $errorType;
         $this->hint = $hint;
         $this->redirectUri = $redirectUri;
-        $this->payload = [
-            'error'   => $errorType,
-            'message' => $message,
-        ];
-        if ($hint !== null) {
-            $this->payload['hint'] = $hint;
-        }
-    }
-
-    /**
-     * Returns the current payload.
-     *
-     * @return array
-     */
-    public function getPayload()
-    {
-        return $this->payload;
-    }
-
-    /**
-     * Updates the current payload.
-     *
-     * @param array $payload
-     */
-    public function setPayload(array $payload)
-    {
-        $this->payload = $payload;
     }
 
     /**
@@ -163,7 +131,7 @@ class OAuthServerException extends \Exception
     /**
      * Server error.
      *
-     * @param string $hint
+     * @param $hint
      *
      * @return static
      *
@@ -245,15 +213,21 @@ class OAuthServerException extends \Exception
      *
      * @param ResponseInterface $response
      * @param bool              $useFragment True if errors should be in the URI fragment instead of query string
-     * @param int               $jsonOptions options passed to json_encode
      *
      * @return ResponseInterface
      */
-    public function generateHttpResponse(ResponseInterface $response, $useFragment = false, $jsonOptions = 0)
+    public function generateHttpResponse(ResponseInterface $response, $useFragment = false)
     {
         $headers = $this->getHttpHeaders();
 
-        $payload = $this->getPayload();
+        $payload = [
+            'error'   => $this->getErrorType(),
+            'message' => $this->getMessage(),
+        ];
+
+        if ($this->hint !== null) {
+            $payload['hint'] = $this->hint;
+        }
 
         if ($this->redirectUri !== null) {
             if ($useFragment === true) {
@@ -269,7 +243,7 @@ class OAuthServerException extends \Exception
             $response = $response->withHeader($header, $content);
         }
 
-        $response->getBody()->write(json_encode($payload, $jsonOptions));
+        $response->getBody()->write(json_encode($payload));
 
         return $response->withStatus($this->getHttpStatusCode());
     }

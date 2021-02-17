@@ -63,9 +63,7 @@ class ResourceServer
             $this->authorizationValidator = new BearerTokenValidator($this->accessTokenRepository);
         }
 
-        if ($this->authorizationValidator instanceof BearerTokenValidator === true) {
-            $this->authorizationValidator->setPublicKey($this->publicKey);
-        }
+        $this->authorizationValidator->setPublicKey($this->publicKey);
 
         return $this->authorizationValidator;
     }
