@@ -1,14 +1,5 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Server;
-
-use function array_change_key_case;
-use function is_string;
-use function json_decode;
-use function json_last_error;
-use const CASE_LOWER;
 
 /**
  * Structure representing parsed HTTP parameters for GraphQL operation
@@ -42,31 +33,33 @@ class OperationParams
 
     /**
      * @api
-     * @var mixed[]|null
+     * @var array
      */
     public $variables;
 
-    /** @var mixed[] */
+    /**
+     * @var array
+     */
     private $originalInput;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $readOnly;
 
     /**
      * Creates an instance from given array
      *
-     * @param mixed[] $params
-     * @param bool    $readonly
-     *
-     * @return OperationParams
-     *
      * @api
+     * @param array $params
+     * @param bool $readonly
+     * @return OperationParams
      */
     public static function create(array $params, $readonly = false)
     {
         $instance = new static();
 
-        $params                  = array_change_key_case($params, CASE_LOWER);
+        $params = array_change_key_case($params, CASE_LOWER);
         $instance->originalInput = $params;
 
         $params += [
@@ -75,48 +68,45 @@ class OperationParams
             'documentid' => null, // alias to queryid
             'id' => null, // alias to queryid
             'operationname' => null,
-            'variables' => null,
+            'variables' => null
         ];
 
-        if ($params['variables'] === '') {
+        if ($params['variables'] === "") {
             $params['variables'] = null;
         }
 
         if (is_string($params['variables'])) {
             $tmp = json_decode($params['variables'], true);
-            if (! json_last_error()) {
+            if (!json_last_error()) {
                 $params['variables'] = $tmp;
             }
         }
 
-        $instance->query     = $params['query'];
-        $instance->queryId   = $params['queryid'] ?: $params['documentid'] ?: $params['id'];
+        $instance->query = $params['query'];
+        $instance->queryId = $params['queryid'] ?: $params['documentid'] ?: $params['id'];
         $instance->operation = $params['operationname'];
         $instance->variables = $params['variables'];
-        $instance->readOnly  = (bool) $readonly;
+        $instance->readOnly = (bool) $readonly;
 
         return $instance;
     }
 
     /**
-     * @param string $key
-     *
-     * @return mixed
-     *
      * @api
+     * @param string $key
+     * @return mixed
      */
     public function getOriginalInput($key)
     {
-        return $this->originalInput[$key] ?? null;
+        return isset($this->originalInput[$key]) ? $this->originalInput[$key] : null;
     }
 
     /**
      * Indicates that operation is executed in read-only context
      * (e.g. via HTTP GET request)
      *
-     * @return bool
-     *
      * @api
+     * @return bool
      */
     public function isReadOnly()
     {

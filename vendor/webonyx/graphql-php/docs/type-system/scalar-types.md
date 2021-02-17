@@ -96,11 +96,10 @@ class EmailType extends ScalarType
      * }
      *
      * @param \GraphQL\Language\AST\Node $valueNode
-     * @param array|null $variables
      * @return string
      * @throws Error
      */
-    public function parseLiteral($valueNode, array $variables = null)
+    public function parseLiteral($valueNode)
     {
         // Note: throwing GraphQL\Error\Error vs \UnexpectedValueException to benefit from GraphQL
         // error location in query:
@@ -125,6 +124,6 @@ $emailType = new CustomScalarType([
     'name' => 'Email',
     'serialize' => function($value) {/* See function body above */},
     'parseValue' => function($value) {/* See function body above */},
-    'parseLiteral' => function($valueNode, array $variables = null) {/* See function body above */},
+    'parseLiteral' => function($valueNode) {/* See function body above */},
 ]);
 ```

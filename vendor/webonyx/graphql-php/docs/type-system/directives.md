@@ -58,4 +58,4 @@ $trackDirective = new Directive([
 ```
 
 See possible directive locations in 
-[`GraphQL\Language\DirectiveLocation`](../reference.md#graphqllanguagedirectivelocation).
+[`GraphQL\Type\Definition\DirectiveLocation`](../reference.md#graphqltypedefinitiondirectivelocation).

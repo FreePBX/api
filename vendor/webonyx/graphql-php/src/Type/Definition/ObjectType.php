@@ -1,19 +1,11 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Type\Definition;
 
-use Exception;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\ObjectTypeDefinitionNode;
 use GraphQL\Language\AST\ObjectTypeExtensionNode;
 use GraphQL\Utils\Utils;
-use function call_user_func;
-use function is_array;
-use function is_callable;
-use function is_string;
-use function sprintf;
+
 
 /**
  * Object Type Definition
@@ -53,49 +45,12 @@ use function sprintf;
  *          ];
  *        }
  *     ]);
+ *
  */
 class ObjectType extends Type implements OutputType, CompositeType, NamedType
 {
-    /** @var ObjectTypeDefinitionNode|null */
-    public $astNode;
-
-    /** @var ObjectTypeExtensionNode[] */
-    public $extensionASTNodes;
-
-    /** @var callable */
-    public $resolveFieldFn;
-
-    /** @var FieldDefinition[] */
-    private $fields;
-
-    /** @var InterfaceType[] */
-    private $interfaces;
-
-    /** @var InterfaceType[]|null */
-    private $interfaceMap;
-
-    /**
-     * @param mixed[] $config
-     */
-    public function __construct(array $config)
-    {
-        if (! isset($config['name'])) {
-            $config['name'] = $this->tryInferName();
-        }
-
-        Utils::invariant(is_string($config['name']), 'Must provide name.');
-
-        $this->name              = $config['name'];
-        $this->description       = $config['description'] ?? null;
-        $this->resolveFieldFn    = $config['resolveField'] ?? null;
-        $this->astNode           = $config['astNode'] ?? null;
-        $this->extensionASTNodes = $config['extensionASTNodes'] ?? [];
-        $this->config            = $config;
-    }
-
     /**
      * @param mixed $type
-     *
      * @return self
      */
     public static function assertObjectType($type)
@@ -109,73 +64,80 @@ class ObjectType extends Type implements OutputType, CompositeType, NamedType
     }
 
     /**
-     * @param string $name
-     *
-     * @return FieldDefinition
-     *
-     * @throws Exception
+     * @var FieldDefinition[]
      */
-    public function getField($name)
-    {
-        if ($this->fields === null) {
-            $this->getFields();
-        }
-        Utils::invariant(isset($this->fields[$name]), 'Field "%s" is not defined for type "%s"', $name, $this->name);
-
-        return $this->fields[$name];
-    }
+    private $fields;
 
     /**
-     * @param string $name
-     *
-     * @return bool
+     * @var InterfaceType[]
      */
-    public function hasField($name)
+    private $interfaces;
+
+    /**
+     * @var array
+     */
+    private $interfaceMap;
+
+    /**
+     * @var ObjectTypeDefinitionNode|null
+     */
+    public $astNode;
+
+    /**
+     * @var ObjectTypeExtensionNode[]
+     */
+    public $extensionASTNodes;
+
+    /**
+     * @var callable
+     */
+    public $resolveFieldFn;
+
+    /**
+     * ObjectType constructor.
+     * @param array $config
+     */
+    public function __construct(array $config)
     {
-        if ($this->fields === null) {
-            $this->getFields();
+        if (!isset($config['name'])) {
+            $config['name'] = $this->tryInferName();
         }
 
-        return isset($this->fields[$name]);
+        Utils::invariant(is_string($config['name']), 'Must provide name.');
+
+        $this->name = $config['name'];
+        $this->description = isset($config['description']) ? $config['description'] : null;
+        $this->resolveFieldFn = isset($config['resolveField']) ? $config['resolveField'] : null;
+        $this->astNode = isset($config['astNode']) ? $config['astNode'] : null;
+        $this->extensionASTNodes = isset($config['extensionASTNodes']) ? $config['extensionASTNodes'] : [];
+        $this->config = $config;
     }
 
     /**
      * @return FieldDefinition[]
-     *
      * @throws InvariantViolation
      */
     public function getFields()
     {
-        if ($this->fields === null) {
-            $fields       = $this->config['fields'] ?? [];
+        if (null === $this->fields) {
+            $fields = isset($this->config['fields']) ? $this->config['fields'] : [];
             $this->fields = FieldDefinition::defineFieldMap($this, $fields);
         }
-
         return $this->fields;
     }
 
     /**
-     * @param InterfaceType $iface
-     *
-     * @return bool
+     * @param string $name
+     * @return FieldDefinition
+     * @throws \Exception
      */
-    public function implementsInterface($iface)
+    public function getField($name)
     {
-        $map = $this->getInterfaceMap();
-
-        return isset($map[$iface->name]);
-    }
-
-    private function getInterfaceMap()
-    {
-        if (! $this->interfaceMap) {
-            $this->interfaceMap = [];
-            foreach ($this->getInterfaces() as $interface) {
-                $this->interfaceMap[$interface->name] = $interface;
-            }
+        if (null === $this->fields) {
+            $this->getFields();
         }
-
-        return $this->interfaceMap;
+        Utils::invariant(isset($this->fields[$name]), 'Field "%s" is not defined for type "%s"', $name, $this->name);
+        return $this->fields[$name];
     }
 
     /**
@@ -183,36 +145,51 @@ class ObjectType extends Type implements OutputType, CompositeType, NamedType
      */
     public function getInterfaces()
     {
-        if ($this->interfaces === null) {
-            $interfaces = $this->config['interfaces'] ?? [];
+        if (null === $this->interfaces) {
+            $interfaces = isset($this->config['interfaces']) ? $this->config['interfaces'] : [];
             $interfaces = is_callable($interfaces) ? call_user_func($interfaces) : $interfaces;
 
-            if ($interfaces !== null && ! is_array($interfaces)) {
+            if ($interfaces && !is_array($interfaces)) {
                 throw new InvariantViolation(
-                    sprintf('%s interfaces must be an Array or a callable which returns an Array.', $this->name)
+                    "{$this->name} interfaces must be an Array or a callable which returns an Array."
                 );
             }
 
             $this->interfaces = $interfaces ?: [];
         }
-
         return $this->interfaces;
     }
 
+    private function getInterfaceMap()
+    {
+        if (!$this->interfaceMap) {
+            $this->interfaceMap = [];
+            foreach ($this->getInterfaces() as $interface) {
+                $this->interfaceMap[$interface->name] = $interface;
+            }
+        }
+        return $this->interfaceMap;
+    }
+
     /**
-     * @param mixed[]      $value
-     * @param mixed[]|null $context
-     *
+     * @param InterfaceType $iface
+     * @return bool
+     */
+    public function implementsInterface($iface)
+    {
+        $map = $this->getInterfaceMap();
+        return isset($map[$iface->name]);
+    }
+
+    /**
+     * @param $value
+     * @param $context
+     * @param ResolveInfo $info
      * @return bool|null
      */
     public function isTypeOf($value, $context, ResolveInfo $info)
     {
-        return isset($this->config['isTypeOf']) ? call_user_func(
-            $this->config['isTypeOf'],
-            $value,
-            $context,
-            $info
-        ) : null;
+        return isset($this->config['isTypeOf']) ? call_user_func($this->config['isTypeOf'], $value, $context, $info) : null;
     }
 
     /**
@@ -226,23 +203,13 @@ class ObjectType extends Type implements OutputType, CompositeType, NamedType
         parent::assertValid();
 
         Utils::invariant(
-            $this->description === null || is_string($this->description),
-            sprintf(
-                '%s description must be string if set, but it is: %s',
-                $this->name,
-                Utils::printSafe($this->description)
-            )
+            null === $this->description || is_string($this->description),
+            "{$this->name} description must be string if set, but it is: " . Utils::printSafe($this->description)
         );
-
-        $isTypeOf = $this->config['isTypeOf'] ?? null;
 
         Utils::invariant(
-            $isTypeOf === null || is_callable($isTypeOf),
-            sprintf('%s must provide "isTypeOf" as a function, but got: %s', $this->name, Utils::printSafe($isTypeOf))
+            !isset($this->config['isTypeOf']) || is_callable($this->config['isTypeOf']),
+            "{$this->name} must provide 'isTypeOf' as a function"
         );
-
-        foreach ($this->getFields() as $field) {
-            $field->assertValid($this);
-        }
     }
 }

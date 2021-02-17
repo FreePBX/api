@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Executor\Promise\Adapter;
 
 use GraphQL\Executor\Promise\Promise;
@@ -9,9 +6,6 @@ use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Utils\Utils;
 use React\Promise\Promise as ReactPromise;
 use React\Promise\PromiseInterface as ReactPromiseInterface;
-use function React\Promise\all;
-use function React\Promise\reject;
-use function React\Promise\resolve;
 
 class ReactPromiseAdapter implements PromiseAdapter
 {
@@ -34,11 +28,10 @@ class ReactPromiseAdapter implements PromiseAdapter
     /**
      * @inheritdoc
      */
-    public function then(Promise $promise, ?callable $onFulfilled = null, ?callable $onRejected = null)
+    public function then(Promise $promise, callable $onFulfilled = null, callable $onRejected = null)
     {
-        /** @var ReactPromiseInterface $adoptedPromise */
+        /** @var $adoptedPromise ReactPromiseInterface */
         $adoptedPromise = $promise->adoptedPromise;
-
         return new Promise($adoptedPromise->then($onFulfilled, $onRejected), $this);
     }
 
@@ -48,7 +41,6 @@ class ReactPromiseAdapter implements PromiseAdapter
     public function create(callable $resolver)
     {
         $promise = new ReactPromise($resolver);
-
         return new Promise($promise, $this);
     }
 
@@ -57,8 +49,7 @@ class ReactPromiseAdapter implements PromiseAdapter
      */
     public function createFulfilled($value = null)
     {
-        $promise = resolve($value);
-
+        $promise = \React\Promise\resolve($value);
         return new Promise($promise, $this);
     }
 
@@ -67,8 +58,7 @@ class ReactPromiseAdapter implements PromiseAdapter
      */
     public function createRejected($reason)
     {
-        $promise = reject($reason);
-
+        $promise = \React\Promise\reject($reason);
         return new Promise($promise, $this);
     }
 
@@ -78,14 +68,11 @@ class ReactPromiseAdapter implements PromiseAdapter
     public function all(array $promisesOrValues)
     {
         // TODO: rework with generators when PHP minimum required version is changed to 5.5+
-        $promisesOrValues = Utils::map(
-            $promisesOrValues,
-            static function ($item) {
-                return $item instanceof Promise ? $item->adoptedPromise : $item;
-            }
-        );
+        $promisesOrValues = Utils::map($promisesOrValues, function ($item) {
+            return $item instanceof Promise ? $item->adoptedPromise : $item;
+        });
 
-        $promise = all($promisesOrValues)->then(static function ($values) use ($promisesOrValues) {
+        $promise = \React\Promise\all($promisesOrValues)->then(function($values) use ($promisesOrValues) {
             $orderedResults = [];
 
             foreach ($promisesOrValues as $key => $value) {
@@ -94,7 +81,6 @@ class ReactPromiseAdapter implements PromiseAdapter
 
             return $orderedResults;
         });
-
         return new Promise($promise, $this);
     }
 }

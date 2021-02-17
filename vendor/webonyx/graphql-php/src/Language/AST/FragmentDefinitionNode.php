@@ -1,15 +1,13 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Language\AST;
 
 class FragmentDefinitionNode extends Node implements ExecutableDefinitionNode, HasSelectionSet
 {
-    /** @var string */
     public $kind = NodeKind::FRAGMENT_DEFINITION;
 
-    /** @var NameNode */
+    /**
+     * @var NameNode
+     */
     public $name;
 
     /**
@@ -20,12 +18,18 @@ class FragmentDefinitionNode extends Node implements ExecutableDefinitionNode, H
      */
     public $variableDefinitions;
 
-    /** @var NamedTypeNode */
+    /**
+     * @var NamedTypeNode
+     */
     public $typeCondition;
 
-    /** @var DirectiveNode[]|NodeList */
+    /**
+     * @var DirectiveNode[]|NodeList
+     */
     public $directives;
 
-    /** @var SelectionSetNode */
+    /**
+     * @var SelectionSetNode
+     */
     public $selectionSet;
 }

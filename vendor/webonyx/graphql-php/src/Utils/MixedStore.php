@@ -1,21 +1,5 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Utils;
-
-use ArrayAccess;
-use GraphQL\Type\Definition\EnumValueDefinition;
-use InvalidArgumentException;
-use SplObjectStorage;
-use function array_key_exists;
-use function array_search;
-use function array_splice;
-use function is_array;
-use function is_float;
-use function is_int;
-use function is_object;
-use function is_string;
 
 /**
  * Similar to PHP array, but allows any type of data to act as key (including arrays, objects, scalars)
@@ -24,80 +8,108 @@ use function is_string;
  * (yet this should be really rare case and should be avoided when possible)
  *
  * Class MixedStore
+ * @package GraphQL\Utils
  */
-class MixedStore implements ArrayAccess
+class MixedStore implements \ArrayAccess
 {
-    /** @var EnumValueDefinition[] */
+    /**
+     * @var array
+     */
     private $standardStore;
 
-    /** @var mixed[] */
+    /**
+     * @var array
+     */
     private $floatStore;
 
-    /** @var SplObjectStorage */
+    /**
+     * @var \SplObjectStorage
+     */
     private $objectStore;
 
-    /** @var callable[] */
+    /**
+     * @var array
+     */
     private $arrayKeys;
 
-    /** @var EnumValueDefinition[] */
+    /**
+     * @var array
+     */
     private $arrayValues;
 
-    /** @var callable[] */
+    /**
+     * @var array
+     */
     private $lastArrayKey;
 
-    /** @var mixed */
+    /**
+     * @var mixed
+     */
     private $lastArrayValue;
 
-    /** @var mixed */
+    /**
+     * @var mixed
+     */
     private $nullValue;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $nullValueIsSet;
 
-    /** @var mixed */
+    /**
+     * @var mixed
+     */
     private $trueValue;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $trueValueIsSet;
 
-    /** @var mixed */
+    /**
+     * @var mixed
+     */
     private $falseValue;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $falseValueIsSet;
 
+    /**
+     * MixedStore constructor.
+     */
     public function __construct()
     {
-        $this->standardStore   = [];
-        $this->floatStore      = [];
-        $this->objectStore     = new SplObjectStorage();
-        $this->arrayKeys       = [];
-        $this->arrayValues     = [];
-        $this->nullValueIsSet  = false;
-        $this->trueValueIsSet  = false;
+        $this->standardStore = [];
+        $this->floatStore = [];
+        $this->objectStore = new \SplObjectStorage();
+        $this->arrayKeys = [];
+        $this->arrayValues = [];
+        $this->nullValueIsSet = false;
+        $this->trueValueIsSet = false;
         $this->falseValueIsSet = false;
     }
 
     /**
      * Whether a offset exists
-     *
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     *
      * @param mixed $offset <p>
      * An offset to check for.
      * </p>
-     *
-     * @return bool true on success or false on failure.
+     * @return boolean true on success or false on failure.
      * </p>
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
+     * @since 5.0.0
      */
     public function offsetExists($offset)
     {
-        if ($offset === false) {
+        if (false === $offset) {
             return $this->falseValueIsSet;
         }
-        if ($offset === true) {
+        if (true === $offset) {
             return $this->trueValueIsSet;
         }
         if (is_int($offset) || is_string($offset)) {
@@ -112,44 +124,40 @@ class MixedStore implements ArrayAccess
         if (is_array($offset)) {
             foreach ($this->arrayKeys as $index => $entry) {
                 if ($entry === $offset) {
-                    $this->lastArrayKey   = $offset;
+                    $this->lastArrayKey = $offset;
                     $this->lastArrayValue = $this->arrayValues[$index];
-
                     return true;
                 }
             }
         }
-        if ($offset === null) {
+        if (null === $offset) {
             return $this->nullValueIsSet;
         }
-
         return false;
     }
 
     /**
      * Offset to retrieve
-     *
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     *
      * @param mixed $offset <p>
      * The offset to retrieve.
      * </p>
-     *
      * @return mixed Can return all value types.
+     * @since 5.0.0
      */
     public function offsetGet($offset)
     {
-        if ($offset === true) {
+        if (true === $offset) {
             return $this->trueValue;
         }
-        if ($offset === false) {
+        if (false === $offset) {
             return $this->falseValue;
         }
         if (is_int($offset) || is_string($offset)) {
             return $this->standardStore[$offset];
         }
         if (is_float($offset)) {
-            return $this->floatStore[(string) $offset];
+            return $this->floatStore[(string)$offset];
         }
         if (is_object($offset)) {
             return $this->objectStore->offsetGet($offset);
@@ -165,86 +173,81 @@ class MixedStore implements ArrayAccess
                 }
             }
         }
-        if ($offset === null) {
+        if (null === $offset) {
             return $this->nullValue;
         }
-
         return null;
     }
 
     /**
      * Offset to set
-     *
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     *
      * @param mixed $offset <p>
      * The offset to assign the value to.
      * </p>
-     * @param mixed $value  <p>
-     *  The value to set.
-     *  </p>
-     *
+     * @param mixed $value <p>
+     * The value to set.
+     * </p>
      * @return void
+     * @since 5.0.0
      */
     public function offsetSet($offset, $value)
     {
-        if ($offset === false) {
-            $this->falseValue      = $value;
+        if (false === $offset) {
+            $this->falseValue = $value;
             $this->falseValueIsSet = true;
-        } elseif ($offset === true) {
-            $this->trueValue      = $value;
+        } else if (true === $offset) {
+            $this->trueValue = $value;
             $this->trueValueIsSet = true;
-        } elseif (is_int($offset) || is_string($offset)) {
+        } else if (is_int($offset) || is_string($offset)) {
             $this->standardStore[$offset] = $value;
-        } elseif (is_float($offset)) {
-            $this->floatStore[(string) $offset] = $value;
-        } elseif (is_object($offset)) {
+        } else if (is_float($offset)) {
+            $this->floatStore[(string)$offset] = $value;
+        } else if (is_object($offset)) {
             $this->objectStore[$offset] = $value;
-        } elseif (is_array($offset)) {
-            $this->arrayKeys[]   = $offset;
+        } else if (is_array($offset)) {
+            $this->arrayKeys[] = $offset;
             $this->arrayValues[] = $value;
-        } elseif ($offset === null) {
-            $this->nullValue      = $value;
+        } else if (null === $offset) {
+            $this->nullValue = $value;
             $this->nullValueIsSet = true;
         } else {
-            throw new InvalidArgumentException('Unexpected offset type: ' . Utils::printSafe($offset));
+            throw new \InvalidArgumentException("Unexpected offset type: " . Utils::printSafe($offset));
         }
     }
 
     /**
      * Offset to unset
-     *
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     *
      * @param mixed $offset <p>
      * The offset to unset.
      * </p>
-     *
      * @return void
+     * @since 5.0.0
      */
     public function offsetUnset($offset)
     {
-        if ($offset === true) {
-            $this->trueValue      = null;
+        if (true === $offset) {
+            $this->trueValue = null;
             $this->trueValueIsSet = false;
-        } elseif ($offset === false) {
-            $this->falseValue      = null;
+        } else if (false === $offset) {
+            $this->falseValue = null;
             $this->falseValueIsSet = false;
-        } elseif (is_int($offset) || is_string($offset)) {
+        } else if (is_int($offset) || is_string($offset)) {
             unset($this->standardStore[$offset]);
-        } elseif (is_float($offset)) {
-            unset($this->floatStore[(string) $offset]);
-        } elseif (is_object($offset)) {
+        } else if (is_float($offset)) {
+            unset($this->floatStore[(string)$offset]);
+        } else if (is_object($offset)) {
             $this->objectStore->offsetUnset($offset);
-        } elseif (is_array($offset)) {
+        } else if (is_array($offset)) {
             $index = array_search($offset, $this->arrayKeys, true);
 
-            if ($index !== false) {
+            if (false !== $index) {
                 array_splice($this->arrayKeys, $index, 1);
                 array_splice($this->arrayValues, $index, 1);
             }
-        } elseif ($offset === null) {
-            $this->nullValue      = null;
+        } else if (null === $offset) {
+            $this->nullValue = null;
             $this->nullValueIsSet = false;
         }
     }

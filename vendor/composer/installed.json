@@ -796,39 +796,32 @@
     },
     {
         "name": "webonyx/graphql-php",
-        "version": "v0.13.0",
-        "version_normalized": "0.13.0.0",
+        "version": "v0.12.0",
+        "version_normalized": "0.12.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/webonyx/graphql-php.git",
-            "reference": "9bb8e7327748fdc828f801001161e6b586ca96e5"
+            "reference": "01e084a9eebc94e1ec4c8b6d8d74ea3d0a9026f2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/9bb8e7327748fdc828f801001161e6b586ca96e5",
-            "reference": "9bb8e7327748fdc828f801001161e6b586ca96e5",
+            "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/01e084a9eebc94e1ec4c8b6d8d74ea3d0a9026f2",
+            "reference": "01e084a9eebc94e1ec4c8b6d8d74ea3d0a9026f2",
             "shasum": ""
         },
         "require": {
-            "ext-json": "*",
             "ext-mbstring": "*",
-            "php": "^7.1"
+            "php": ">=5.6"
         },
         "require-dev": {
-            "doctrine/coding-standard": "^5.0",
-            "phpbench/phpbench": "^0.14.0",
-            "phpstan/phpstan": "0.10.5",
-            "phpstan/phpstan-phpunit": "0.10.0",
-            "phpstan/phpstan-strict-rules": "0.10.1",
-            "phpunit/phpunit": "^7.2",
-            "psr/http-message": "^1.0",
-            "react/promise": "2.*"
+            "phpunit/phpunit": "^4.8",
+            "psr/http-message": "^1.0"
         },
         "suggest": {
             "psr/http-message": "To use standard GraphQL server",
             "react/promise": "To leverage async resolving on React PHP platform"
         },
-        "time": "2018-11-27T10:23:58+00:00",
+        "time": "2018-05-27T12:42:05+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

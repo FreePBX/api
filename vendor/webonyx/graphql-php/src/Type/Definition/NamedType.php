@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Type\Definition;
 
 /*
@@ -13,7 +10,6 @@ export type GraphQLNamedType =
   | GraphQLEnumType
   | GraphQLInputObjectType;
  */
-
 interface NamedType
 {
 }

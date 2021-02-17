@@ -1,8 +1,6 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Type\Definition;
+
 
 /*
 GraphQLScalarType |
@@ -13,7 +11,6 @@ GraphQLEnumType |
 GraphQLList |
 GraphQLNonNull;
 */
-
 interface OutputType
 {
 }

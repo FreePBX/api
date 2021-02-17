@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Utils;
 
 /**
@@ -10,9 +7,14 @@ namespace GraphQL\Utils;
  */
 class PairSet
 {
-    /** @var bool[][] */
+    /**
+     * @var array
+     */
     private $data;
 
+    /**
+     * PairSet constructor.
+     */
     public function __construct()
     {
         $this->data = [];
@@ -21,14 +23,13 @@ class PairSet
     /**
      * @param string $a
      * @param string $b
-     * @param bool   $areMutuallyExclusive
-     *
+     * @param bool $areMutuallyExclusive
      * @return bool
      */
     public function has($a, $b, $areMutuallyExclusive)
     {
-        $first  = $this->data[$a] ?? null;
-        $result = $first && isset($first[$b]) ? $first[$b] : null;
+        $first = isset($this->data[$a]) ? $this->data[$a] : null;
+        $result = ($first && isset($first[$b])) ? $first[$b] : null;
         if ($result === null) {
             return false;
         }
@@ -38,14 +39,13 @@ class PairSet
         if ($areMutuallyExclusive === false) {
             return $result === false;
         }
-
         return true;
     }
 
     /**
      * @param string $a
      * @param string $b
-     * @param bool   $areMutuallyExclusive
+     * @param bool $areMutuallyExclusive
      */
     public function add($a, $b, $areMutuallyExclusive)
     {
@@ -56,11 +56,11 @@ class PairSet
     /**
      * @param string $a
      * @param string $b
-     * @param bool   $areMutuallyExclusive
+     * @param bool $areMutuallyExclusive
      */
     private function pairSetAdd($a, $b, $areMutuallyExclusive)
     {
-        $this->data[$a]     = $this->data[$a] ?? [];
+        $this->data[$a] = isset($this->data[$a]) ? $this->data[$a] : [];
         $this->data[$a][$b] = $areMutuallyExclusive;
     }
 }

@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL;
 
 use GraphQL\Error\Error;
@@ -9,21 +6,15 @@ use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Executor;
 use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Executor\Promise\Promise;
-use GraphQL\Executor\Promise\PromiseAdapter;
-use GraphQL\Executor\ReferenceExecutor;
-use GraphQL\Experimental\Executor\CoroutineExecutor;
 use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Language\Parser;
 use GraphQL\Language\Source;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\Directive;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Schema as SchemaType;
 use GraphQL\Validator\DocumentValidator;
+use GraphQL\Validator\Rules\AbstractValidationRule;
 use GraphQL\Validator\Rules\QueryComplexity;
-use GraphQL\Validator\Rules\ValidationRule;
-use function array_values;
-use function trigger_error;
-use const E_USER_DEPRECATED;
 
 /**
  * This is the primary facade for fulfilling GraphQL operations.
@@ -66,37 +57,33 @@ class GraphQL
      *    Empty array would allow to skip query validation (may be convenient for persisted
      *    queries which are validated before persisting and assumed valid during execution)
      *
-     * @param string|DocumentNode $source
-     * @param mixed               $rootValue
-     * @param mixed               $context
-     * @param mixed[]|null        $variableValues
-     * @param ValidationRule[]    $validationRules
-     *
      * @api
+     * @param \GraphQL\Type\Schema $schema
+     * @param string|DocumentNode $source
+     * @param mixed $rootValue
+     * @param mixed $context
+     * @param array|null $variableValues
+     * @param string|null $operationName
+     * @param callable $fieldResolver
+     * @param array $validationRules
+     *
+     * @return ExecutionResult
      */
     public static function executeQuery(
-        SchemaType $schema,
+        \GraphQL\Type\Schema $schema,
         $source,
         $rootValue = null,
         $context = null,
         $variableValues = null,
-        ?string $operationName = null,
-        ?callable $fieldResolver = null,
-        ?array $validationRules = null
-    ) : ExecutionResult {
+        $operationName = null,
+        callable $fieldResolver = null,
+        array $validationRules = null
+    )
+    {
         $promiseAdapter = new SyncPromiseAdapter();
 
-        $promise = self::promiseToExecute(
-            $promiseAdapter,
-            $schema,
-            $source,
-            $rootValue,
-            $context,
-            $variableValues,
-            $operationName,
-            $fieldResolver,
-            $validationRules
-        );
+        $promise = self::promiseToExecute($promiseAdapter, $schema, $source, $rootValue, $context,
+            $variableValues, $operationName, $fieldResolver, $validationRules);
 
         return $promiseAdapter->wait($promise);
     }
@@ -105,25 +92,31 @@ class GraphQL
      * Same as executeQuery(), but requires PromiseAdapter and always returns a Promise.
      * Useful for Async PHP platforms.
      *
-     * @param string|DocumentNode   $source
-     * @param mixed                 $rootValue
-     * @param mixed                 $context
-     * @param mixed[]|null          $variableValues
-     * @param ValidationRule[]|null $validationRules
-     *
      * @api
+     * @param PromiseAdapter $promiseAdapter
+     * @param \GraphQL\Type\Schema $schema
+     * @param string|DocumentNode $source
+     * @param mixed $rootValue
+     * @param mixed $context
+     * @param array|null $variableValues
+     * @param string|null $operationName
+     * @param callable $fieldResolver
+     * @param array $validationRules
+     *
+     * @return Promise
      */
     public static function promiseToExecute(
         PromiseAdapter $promiseAdapter,
-        SchemaType $schema,
+        \GraphQL\Type\Schema $schema,
         $source,
         $rootValue = null,
         $context = null,
         $variableValues = null,
-        ?string $operationName = null,
-        ?callable $fieldResolver = null,
-        ?array $validationRules = null
-    ) : Promise {
+        $operationName = null,
+        callable $fieldResolver = null,
+        array $validationRules = null
+    )
+    {
         try {
             if ($source instanceof DocumentNode) {
                 $documentNode = $source;
@@ -132,38 +125,36 @@ class GraphQL
             }
 
             // FIXME
-            if (empty($validationRules)) {
+            if (!empty($validationRules)) {
+                foreach ($validationRules as $rule) {
+                    if ($rule instanceof QueryComplexity) {
+                        $rule->setRawVariableValues($variableValues);
+                    }
+                }
+            } else {
                 /** @var QueryComplexity $queryComplexity */
                 $queryComplexity = DocumentValidator::getRule(QueryComplexity::class);
                 $queryComplexity->setRawVariableValues($variableValues);
-            } else {
-                foreach ($validationRules as $rule) {
-                    if (! ($rule instanceof QueryComplexity)) {
-                        continue;
-                    }
-
-                    $rule->setRawVariableValues($variableValues);
-                }
             }
 
             $validationErrors = DocumentValidator::validate($schema, $documentNode, $validationRules);
 
-            if (! empty($validationErrors)) {
+            if (!empty($validationErrors)) {
                 return $promiseAdapter->createFulfilled(
                     new ExecutionResult(null, $validationErrors)
                 );
+            } else {
+                return Executor::promiseToExecute(
+                    $promiseAdapter,
+                    $schema,
+                    $documentNode,
+                    $rootValue,
+                    $context,
+                    $variableValues,
+                    $operationName,
+                    $fieldResolver
+                );
             }
-
-            return Executor::promiseToExecute(
-                $promiseAdapter,
-                $schema,
-                $documentNode,
-                $rootValue,
-                $context,
-                $variableValues,
-                $operationName,
-                $fieldResolver
-            );
         } catch (Error $e) {
             return $promiseAdapter->createFulfilled(
                 new ExecutionResult(null, [$e])
@@ -174,29 +165,29 @@ class GraphQL
     /**
      * @deprecated Use executeQuery()->toArray() instead
      *
+     * @param \GraphQL\Type\Schema $schema
      * @param string|DocumentNode $source
-     * @param mixed               $rootValue
-     * @param mixed               $contextValue
-     * @param mixed[]|null        $variableValues
-     *
-     * @return Promise|mixed[]
+     * @param mixed $rootValue
+     * @param mixed $contextValue
+     * @param array|null $variableValues
+     * @param string|null $operationName
+     * @return Promise|array
      */
     public static function execute(
-        SchemaType $schema,
+        \GraphQL\Type\Schema $schema,
         $source,
         $rootValue = null,
         $contextValue = null,
         $variableValues = null,
-        ?string $operationName = null
-    ) {
+        $operationName = null
+    )
+    {
         trigger_error(
             __METHOD__ . ' is deprecated, use GraphQL::executeQuery()->toArray() as a quick replacement',
             E_USER_DEPRECATED
         );
-
-        $promiseAdapter = Executor::getPromiseAdapter();
-        $result         = self::promiseToExecute(
-            $promiseAdapter,
+        $result = self::promiseToExecute(
+            $promiseAdapter = Executor::getPromiseAdapter(),
             $schema,
             $source,
             $rootValue,
@@ -208,40 +199,40 @@ class GraphQL
         if ($promiseAdapter instanceof SyncPromiseAdapter) {
             $result = $promiseAdapter->wait($result)->toArray();
         } else {
-            $result = $result->then(static function (ExecutionResult $r) {
+            $result = $result->then(function(ExecutionResult $r) {
                 return $r->toArray();
             });
         }
-
         return $result;
     }
 
     /**
      * @deprecated renamed to executeQuery()
      *
+     * @param \GraphQL\Type\Schema $schema
      * @param string|DocumentNode $source
-     * @param mixed               $rootValue
-     * @param mixed               $contextValue
-     * @param mixed[]|null        $variableValues
+     * @param mixed $rootValue
+     * @param mixed $contextValue
+     * @param array|null $variableValues
+     * @param string|null $operationName
      *
      * @return ExecutionResult|Promise
      */
     public static function executeAndReturnResult(
-        SchemaType $schema,
+        \GraphQL\Type\Schema $schema,
         $source,
         $rootValue = null,
         $contextValue = null,
         $variableValues = null,
-        ?string $operationName = null
-    ) {
+        $operationName = null
+    )
+    {
         trigger_error(
             __METHOD__ . ' is deprecated, use GraphQL::executeQuery() as a quick replacement',
             E_USER_DEPRECATED
         );
-
-        $promiseAdapter = Executor::getPromiseAdapter();
-        $result         = self::promiseToExecute(
-            $promiseAdapter,
+        $result = self::promiseToExecute(
+            $promiseAdapter = Executor::getPromiseAdapter(),
             $schema,
             $source,
             $rootValue,
@@ -249,22 +240,19 @@ class GraphQL
             $variableValues,
             $operationName
         );
-
         if ($promiseAdapter instanceof SyncPromiseAdapter) {
             $result = $promiseAdapter->wait($result);
         }
-
         return $result;
     }
 
     /**
      * Returns directives defined in GraphQL spec
      *
-     * @return Directive[]
-     *
      * @api
+     * @return Directive[]
      */
-    public static function getStandardDirectives() : array
+    public static function getStandardDirectives()
     {
         return array_values(Directive::getInternalDirectives());
     }
@@ -272,79 +260,48 @@ class GraphQL
     /**
      * Returns types defined in GraphQL spec
      *
+     * @api
      * @return Type[]
-     *
-     * @api
      */
-    public static function getStandardTypes() : array
+    public static function getStandardTypes()
     {
-        return array_values(Type::getStandardTypes());
-    }
-
-    /**
-     * Replaces standard types with types from this list (matching by name)
-     * Standard types not listed here remain untouched.
-     *
-     * @param Type[] $types
-     *
-     * @api
-     */
-    public static function overrideStandardTypes(array $types)
-    {
-        Type::overrideStandardTypes($types);
+        return array_values(Type::getInternalTypes());
     }
 
     /**
      * Returns standard validation rules implementing GraphQL spec
      *
-     * @return ValidationRule[]
-     *
      * @api
+     * @return AbstractValidationRule[]
      */
-    public static function getStandardValidationRules() : array
+    public static function getStandardValidationRules()
     {
         return array_values(DocumentValidator::defaultRules());
     }
 
     /**
-     * Set default resolver implementation
-     *
-     * @api
+     * @param callable $fn
      */
-    public static function setDefaultFieldResolver(callable $fn) : void
+    public static function setDefaultFieldResolver(callable $fn)
     {
         Executor::setDefaultFieldResolver($fn);
     }
 
-    public static function setPromiseAdapter(?PromiseAdapter $promiseAdapter = null) : void
+    /**
+     * @param PromiseAdapter|null $promiseAdapter
+     */
+    public static function setPromiseAdapter(PromiseAdapter $promiseAdapter = null)
     {
         Executor::setPromiseAdapter($promiseAdapter);
-    }
-
-    /**
-     * Experimental: Switch to the new executor
-     */
-    public static function useExperimentalExecutor()
-    {
-        Executor::setImplementationFactory([CoroutineExecutor::class, 'create']);
-    }
-
-    /**
-     * Experimental: Switch back to the default executor
-     */
-    public static function useReferenceExecutor()
-    {
-        Executor::setImplementationFactory([ReferenceExecutor::class, 'create']);
     }
 
     /**
      * Returns directives defined in GraphQL spec
      *
      * @deprecated Renamed to getStandardDirectives
-     *
      * @return Directive[]
      */
-    public static function getInternalDirectives() : array
+    public static function getInternalDirectives()
     {
         return self::getStandardDirectives();
     }

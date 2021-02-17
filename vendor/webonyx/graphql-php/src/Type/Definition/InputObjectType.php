@@ -1,67 +1,42 @@
 <?php
-
-declare(strict_types=1);
-
 namespace GraphQL\Type\Definition;
 
-use Exception;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\InputObjectTypeDefinitionNode;
-use GraphQL\Language\AST\InputObjectTypeExtensionNode;
 use GraphQL\Utils\Utils;
-use function call_user_func;
-use function is_array;
-use function is_callable;
-use function is_string;
-use function sprintf;
 
 /**
  * Class InputObjectType
+ * @package GraphQL\Type\Definition
  */
 class InputObjectType extends Type implements InputType, NamedType
 {
-    /** @var InputObjectTypeDefinitionNode|null */
-    public $astNode;
-
-    /** @var InputObjectField[] */
+    /**
+     * @var InputObjectField[]
+     */
     private $fields;
 
-    /** @var InputObjectTypeExtensionNode[] */
-    public $extensionASTNodes;
+    /**
+     * @var InputObjectTypeDefinitionNode|null
+     */
+    public $astNode;
 
     /**
-     * @param mixed[] $config
+     * InputObjectType constructor.
+     * @param array $config
      */
     public function __construct(array $config)
     {
-        if (! isset($config['name'])) {
+        if (!isset($config['name'])) {
             $config['name'] = $this->tryInferName();
         }
 
         Utils::invariant(is_string($config['name']), 'Must provide name.');
 
-        $this->config            = $config;
-        $this->name              = $config['name'];
-        $this->astNode           = $config['astNode'] ?? null;
-        $this->description       = $config['description'] ?? null;
-        $this->extensionASTNodes = $config['extensionASTNodes'] ?? null;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return InputObjectField
-     *
-     * @throws Exception
-     */
-    public function getField($name)
-    {
-        if ($this->fields === null) {
-            $this->getFields();
-        }
-        Utils::invariant(isset($this->fields[$name]), "Field '%s' is not defined for type '%s'", $name, $this->name);
-
-        return $this->fields[$name];
+        $this->config = $config;
+        $this->name = $config['name'];
+        $this->astNode = isset($config['astNode']) ? $config['astNode'] : null;
+        $this->description = isset($config['description']) ? $config['description'] : null;
     }
 
     /**
@@ -69,14 +44,14 @@ class InputObjectType extends Type implements InputType, NamedType
      */
     public function getFields()
     {
-        if ($this->fields === null) {
+        if (null === $this->fields) {
             $this->fields = [];
-            $fields       = $this->config['fields'] ?? [];
-            $fields       = is_callable($fields) ? call_user_func($fields) : $fields;
+            $fields = isset($this->config['fields']) ? $this->config['fields'] : [];
+            $fields = is_callable($fields) ? call_user_func($fields) : $fields;
 
-            if (! is_array($fields)) {
+            if (!is_array($fields)) {
                 throw new InvariantViolation(
-                    sprintf('%s fields must be an array or a callable which returns such an array.', $this->name)
+                    "{$this->name} fields must be an array or a callable which returns such an array."
                 );
             }
 
@@ -84,7 +59,7 @@ class InputObjectType extends Type implements InputType, NamedType
                 if ($field instanceof Type) {
                     $field = ['type' => $field];
                 }
-                $field                      = new InputObjectField($field + ['name' => $name]);
+                $field = new InputObjectField($field + ['name' => $name]);
                 $this->fields[$field->name] = $field;
             }
         }
@@ -93,25 +68,16 @@ class InputObjectType extends Type implements InputType, NamedType
     }
 
     /**
-     * Validates type config and throws if one of type options is invalid.
-     * Note: this method is shallow, it won't validate object fields and their arguments.
-     *
-     * @throws InvariantViolation
+     * @param string $name
+     * @return InputObjectField
+     * @throws \Exception
      */
-    public function assertValid()
+    public function getField($name)
     {
-        parent::assertValid();
-
-        Utils::invariant(
-            ! empty($this->getFields()),
-            sprintf(
-                '%s fields must be an associative array with field names as keys or a callable which returns such an array.',
-                $this->name
-            )
-        );
-
-        foreach ($this->getFields() as $field) {
-            $field->assertValid($this);
+        if (null === $this->fields) {
+            $this->getFields();
         }
+        Utils::invariant(isset($this->fields[$name]), "Field '%s' is not defined for type '%s'", $name, $this->name);
+        return $this->fields[$name];
     }
 }

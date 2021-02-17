@@ -4,7 +4,7 @@ first learn about GraphQL on [the official website](http://graphql.org/learn/).
 
 # Installation
 
-Using [composer](https://getcomposer.org/doc/00-intro.md), run:
+Using [composer](https://getcomposer.org/doc/00-intro.md), simply run:
 
 ```sh
 composer require webonyx/graphql-php
@@ -106,7 +106,7 @@ echo json_encode($output);
 
 Our example is finished. Try it by running:
 ```sh
-php -S localhost:8080 graphql.php
+php -S localhost:8000 graphql.php
 curl http://localhost:8080 -d '{"query": "query { echo(message: \"Hello World\") }" }'
 ```
 

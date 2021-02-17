@@ -1,84 +1,3 @@
-## Upgrade v0.12.x > v0.13.x
-
-### Breaking (major): minimum supported version of PHP
-New minimum required version of PHP is **7.1+**
-
-### Breaking (major): default errors formatting changed according to spec 
-**Category** and extensions assigned to errors are shown under `extensions` key
-```php
-$e = new Error(
-    'msg',
-    null,
-    null,
-    null,
-    null,
-    null,
-    ['foo' => 'bar']
-);
-```
-Formatting before the change:
-```
-'errors' => [
-    [
-        'message' => 'msg',
-        'category' => 'graphql',
-        'foo' => 'bar'
-    ]
-]
-```
-After the change:
-```
-'errors' => [
-    [
-        'message' => 'msg',
-        'extensions' => [
-            'category' => 'graphql',
-            'foo' => 'bar',
-        ],
-    ]
-]
-```
-
-Note: if error extensions contain `category` key - it has a priority over default category.
-
-You can always switch to [custom error formatting](https://webonyx.github.io/graphql-php/error-handling/#custom-error-handling-and-formatting) to revert to the old format.
-
-### Try it: Experimental Executor with improved performance
-It is disabled by default. To enable it, do the following
-```php
-<?php
-use GraphQL\Executor\Executor;
-use GraphQL\Experimental\Executor\CoroutineExecutor;
-
-Executor::setImplementationFactory([CoroutineExecutor::class, 'create']);
-```
-
-**Please post your feedback about new executor at https://github.com/webonyx/graphql-php/issues/397
-Especially if you had issues (because it may become the default in one of the next releases)**
-
-### Breaking: multiple interfaces separated with & in SDL
-Before the change:
-```graphql
-type Foo implements Bar, Baz { field: Type }
-```
-
-After the change:
-```graphql
-type Foo implements Bar & Baz { field: Type }
-```
-
-To allow for an adaptive migration, use `allowLegacySDLImplementsInterfaces` option of parser:
-```php
-Parser::parse($source, [ 'allowLegacySDLImplementsInterfaces' => true])
-```
-
-### Breaking: several classes renamed
-
-- `AbstractValidationRule` renamed to `ValidationRule` (NS `GraphQL\Validator\Rules`)
-- `AbstractQuerySecurity` renamed to `QuerySecurityRule` (NS `GraphQL\Validator\Rules`)
-- `FindBreakingChanges` renamed to `BreakingChangesFinder` (NS `GraphQL\Utils`)
-
-
 ## Upgrade v0.11.x > v0.12.x
 
 ### Breaking: Minimum supported version is PHP5.6
@@ -90,33 +9,6 @@ As null might be a valid value custom types need to throw an
 Exception inside `parseLiteral()`, `parseValue()` and `serialize()`. 
 
 Returning null from any of these methods will now be treated as valid result.
-
-### Breaking: Custom scalar types parseLiteral() declaration changed
-A new parameter was added to `parseLiteral()`, which also needs to be added to any custom scalar type extending from `ScalarType`
-
-Before:
-```php
-class MyType extends ScalarType {
-
-    ...
-
-    public function parseLiteral($valueNode) {
-        //custom implementation
-    }
-}
-```
-
-After:
-```php
-class MyType extends ScalarType {
-
-    ...
-
-    public function parseLiteral($valueNode, array $variables = null) {
-        //custom implementation
-    }
-}
-```
 
 ### Breaking: Descriptions in comments are not used as descriptions by default anymore
 Descriptions now need to be inside Strings or BlockStrings in order to be picked up as
@@ -149,10 +41,6 @@ type Dog {
   ...
 }
 ```
-
-### Breaking: Cached AST of version 0.11.x is not compatible with 0.12.x.
-That's because description in AST is now a separate node, not just a string. 
-Make sure to renew caches.
 
 ### Breaking: Most of previously deprecated classes and methods were removed
 See deprecation notices for previous versions in details.
