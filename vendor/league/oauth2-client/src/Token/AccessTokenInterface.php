@@ -34,7 +34,7 @@ interface AccessTokenInterface extends JsonSerializable
     public function getRefreshToken();
 
     /**
-     * Returns the expiration timestamp in seconds, if defined.
+     * Returns the expiration timestamp, if defined.
      *
      * @return integer|null
      */
