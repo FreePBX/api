@@ -49,13 +49,15 @@ class AccessTokens {
 			":id" => $aid
 		]);
 		$token = $sth->fetch(PDO::FETCH_ASSOC);
-		$rf = new RefreshTokens($this->database);
-		$rf->removeByAccessToken($token['token']);
-		$sql = "DELETE FROM api_access_tokens WHERE `aid` = :id";
-		$sth = $this->database->prepare($sql);
-		$sth->execute([
-			":id" => $aid
-		]);
+		if(is_array($token)){
+			$rf = new RefreshTokens($this->database);
+			$rf->removeByAccessToken($token['token']);
+			$sql = "DELETE FROM api_access_tokens WHERE `aid` = :id";
+			$sth = $this->database->prepare($sql);
+			$sth->execute([
+				":id" => $aid
+			]);
+		}
 	}
 
 	public function updateAccessed($token, $ip_address) {
