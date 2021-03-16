@@ -21,7 +21,13 @@ class ApiGqlHelper {
 		$txnId = $args[3];
 
 		$bin = \FreePBX::Config()->get('AMPSBIN');
-		shell_exec($bin.'/fwconsole ma '.$action.' '.$module.' --'.$track);
+		if($module == 'upgradeall'){
+			$action = $module;
+			$txnId = $args[2];
+			shell_exec($bin.'/fwconsole ma '.$action);
+		}else{
+			shell_exec($bin.'/fwconsole ma '.$action.' '.$module.' --'.$track);
+		}
 
 		$result = shell_exec($bin."/fwconsole ma list|grep ".$module ."|awk '{print $5 $6}'");
 
@@ -30,11 +36,13 @@ class ApiGqlHelper {
 
 		if(in_array($action,$enabled) && $result ="|Enabled"){
 			$status = "Executed";
-		}else if($action == "disabled" && $result ="|Disabled"){
+		}else if($action == "disable" && $result ="|Disabled"){
 			$status = "Executed";
 		}else if($action == "uninstall" && $result ="NotInstalled"){
 			$status = "Executed";
 		}else if($action == "delete" && $result =""){
+			$status = "Executed";
+		}elseif($action == 'upgradeall'){
 			$status = "Executed";
 		}else{
 			$status = "Failed";
