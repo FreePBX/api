@@ -189,7 +189,7 @@ class ValuesOfCorrectType extends AbstractValidationRule
                     null,
                     null,
                     null,
-                    $error
+                    null
                 )
             );
         } catch (\Throwable $error) {
