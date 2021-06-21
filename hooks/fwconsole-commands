@@ -1,0 +1,47 @@
+#!/usr/bin/php -q
+<?php
+error_reporting(E_ALL);
+require '/usr/lib/sysadmin/includes.php';
+
+$command = $argv[1];
+$txn_id  = "";
+if (isset($argv[1])) {
+	// Underp the base64
+	$b = str_replace('_', '/', $argv[1]);
+	$settings = @json_decode(gzuncompress(@base64_decode($b)), true);
+	if (is_array($settings)) {
+		$command = $settings[0];
+		$txn_id = $settings[1];
+	}
+}
+
+try {
+	$output = array();
+	$cmd = "/usr/sbin/fwconsole $command 2>&1";
+	$result = exec($cmd, $output, $return);
+	if ($return == 0) {
+		$message = 'Command executed successfully';
+		$status = 'Executed';
+	} else {
+		if (array_key_exists(2, $output)) {
+			$message =  "Failed to execute command [ " . $cmd . " ] , command output = $output[2]";
+		} else {
+			$message =  "Failed to execute command [ " . $cmd . " ]";
+		}
+		$status = 'Failed';
+	}
+} catch (\Exception $e) {
+	$message = "Exception occurred in executing command " . $cmd .  " Error = " . $e->getMessage();
+	$status = 'Failed'; 
+}
+
+$db = \Sysadmin\FreePBX::Database();
+$sql = ("UPDATE IGNORE api_asynchronous_transaction_history SET event_status = :event_status , failure_reason =:failure_reason, process_end_time =:end_time WHERE `txn_id` = :txn_id");
+$sth = $db->prepare($sql);
+$sth->execute([
+	":event_status" => $status,
+	":failure_reason" => $message,
+	":end_time" => time(),
+	":txn_id" => $txn_id
+]);
+?>
