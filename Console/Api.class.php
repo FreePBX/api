@@ -114,6 +114,18 @@ class Api extends Command {
 			if(isset($args[0]) && $args[0] == 'genclientcred'){
 				 $output->writeln(json_encode($this->generateAPICredentials($args),JSON_UNESCAPED_SLASHES));
 				break;
+			}elseif(isset($args[0]) && $args[0] == 'enableDPMA'){
+				if(!class_exists('\FreePBX\modules\Endpoint\EndpointCommon')) {
+					$webroot = \FreePBX::Config()->get('AMPWEBROOT');
+					if(file_exists($webroot . "/admin/modules/endpoint/DpmaModel.class.php")){
+						include($webroot . "/admin/modules/endpoint/DpmaModel.class.php");
+					}
+				}
+				$txnId = isset($args[1]) ? $args[1] : null;
+				$restartAsterisk = isset($args[2]) ? $args[2] : null;
+				$dpmaModel = new \FreePBX\modules\Endpoint\DpmaModel();
+				$dpmaModel->enableDPMA(false,$txnId,$restartAsterisk);
+				break;
 			}else{ 
 				include_once __DIR__ . '/../ApiGqlHelper.class.php';
 				\FreePBX::ApiGqlHelper()->execGqlApi($args);
