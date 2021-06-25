@@ -447,7 +447,7 @@ class Api extends \FreePBX_Helpers implements \BMO {
 	public function getTransactionStatus($txnId) {
 		$this->transactionStatus = new Api\Includes\TransactionStatus($this->freepbx->Database);
 		$response = $this->transactionStatus->get($txnId);	
-		return $response['event_status'];
+		return $response;
 	}
 
 		//injecting for utest
