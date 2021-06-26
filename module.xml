@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.3.14</version>
+	<version>15.0.3.15</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.3.15* FREEI-3461 sending complete response 
 		*15.0.3.14* FREEI-3462 added fwconsole chown and fwconsole r command to execute after upgrading all modules 
 		*15.0.3.13* FREEI-3071 blob fix 
 		*15.0.3.12* FREEI-2948 gql upgrade all bug fix 
