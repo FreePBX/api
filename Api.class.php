@@ -60,8 +60,38 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		}
 	}
 
+	private function getPorts_api(){
+		$res = [];
+		$ports = \FreePBX::Sysadmin()->getPorts();
+		if (isset($ports['restapi'])) {
+			$res["API"]["HTTP"] = $ports['restapi'];
+		}
+		if (isset($ports['sslrestapi'])) {
+			$res["API"]["HTTPS"] = $ports['sslrestapi'];
+		}
+		if (isset($ports['acp'])) {
+			$res["ACP"]["HTTP"] = $ports['acp'];
+		}
+		if (isset($ports['sslacp'])) {
+			$res["ACP"]["HTTPS"] = $ports['sslacp'];
+		}
+		return $res;
+	}
+
+	public function sysadmin_info(){
+		$module = \module_functions::create();
+		$result = $module->getinfo('sysadmin', MODULE_STATUS_ENABLED);
+		return (empty($result["sysadmin"])) ? '' : $result;
+	}
+
 	public function showPage() {
-		return load_view(__DIR__."/views/system/overview.php",["url" => $this->getAPIAddress()]);
+		$sa = $this->sysadmin_info();
+		$apiPorts["sa"] = "disabled";
+		if(!empty($sa)){
+			$apiPorts = $this->getPorts_api();
+			$apiPorts["sa"] = "enabled";
+		}
+		return load_view(__DIR__."/views/system/overview.php",["url" => $this->getAPIAddress(), "data_api" => $apiPorts] );
 	}
 
 	public function doConfigPageInit($page) {

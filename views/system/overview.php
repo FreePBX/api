@@ -15,7 +15,7 @@
 						</ul>
 						<div class="tab-content">
 							<div role="tabpanel" id="applications" class="tab-pane display active">
-								<?php show_view(__DIR__.'/applicationGrid.php',["url" => $url]); ?>
+								<?php show_view(__DIR__.'/applicationGrid.php',["url" => $url, "data_api" => $data_api]); ?>
 							</div>
 							<div role="tabpanel" id="tokens" class="tab-pane display">
 								<?php show_view(__DIR__.'/accessTokenGrid.php',[]); ?>

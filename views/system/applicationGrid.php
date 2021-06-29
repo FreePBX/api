@@ -34,4 +34,4 @@
 		</tr>
 	</thead>
 </table>
-<?php show_view(__DIR__."/modals.php",["url" => $url])?>
+<?php show_view(__DIR__."/modals.php",["url" => $url, "data_api" => $data_api])?>
