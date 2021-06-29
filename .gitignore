@@ -2,3 +2,5 @@ node/logs/*
 node/package-lock.json
 node/node_modules/*
 docs/*
+assets/less/cache/*
+module.sig

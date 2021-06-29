@@ -1,5 +1,252 @@
 var host = window.location.protocol+"//"+window.location.host;
 
+$(".fa-clipboard").click(function() {
+	$("#copytmp").val("");
+	$("#copytmp").val($("."+this.id).text());
+	copyURL = document.getElementById("copytmp");
+	copyURL.select();
+	document.execCommand("copy");
+});
+
+$(".clipboard-um").click(function() {
+	$("#copytmpum").val($("."+this.id).text());
+	copyURL = document.getElementById("copytmpum");
+	copyURL.select();
+	document.execCommand("copy");
+});
+
+$(".api-select").click( function(){
+	var id = this.id;
+	$("#"+id).addClass("active");
+	switch(id){
+		case "HTTP":
+			if($("#HTTPS").hasClass("active")){
+				$("#HTTPS").removeClass("active");			
+			}		
+			if($("#ADMINPorts").hasClass("active")){
+				if($("#acp").val() != "disabled"){
+					var urlAPI = "http://"+$("#fqdn").val()+":"+$("#acp").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled").show();
+				}				
+			}
+			if($("#APIPorts").hasClass("active")){
+				if($("#restapi").val() != "disabled"){
+					var urlAPI = "http://"+$("#fqdn").val()+":"+$("#restapi").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled").show();
+				}	
+			}		
+			break;
+		case "HTTPS":
+			if($("#HTTP").hasClass("active")){
+				$("#HTTP").removeClass("active");			
+			}	
+			if($("#ADMINPorts").hasClass("active")){
+				if($("#sslacp").val() != "disabled"){
+					var urlAPI = "https://"+$("#fqdn").val()+":"+$("#sslacp").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled").show();
+				}					
+			}
+			if($("#APIPorts").hasClass("active")){
+				if($("#sslrestapi").val() != "disabled"){
+					var urlAPI = "https://"+$("#fqdn").val()+":"+$("#sslrestapi").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled").show();
+				}	
+			}	
+			break;
+		case "APIPorts":
+			if($("#ADMINPorts").hasClass("active")){
+				$("#ADMINPorts").removeClass("active");
+			}
+			if($("#HTTP").hasClass("active")){
+				if($("#restapi").val() != "disabled"){
+					var urlAPI = "http://"+$("#fqdn").val()+":"+$("#restapi").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled").show();
+				}	
+			}
+			if($("#HTTPS").hasClass("active")){
+				if($("#sslrestapi").val() != "disabled"){
+					var urlAPI = "https://"+$("#fqdn").val()+":"+$("#sslrestapi").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled").show();
+				}	
+			}	
+			break;
+		case "ADMINPorts":
+			if($("#APIPorts").hasClass("active")){
+				$("#APIPorts").removeClass("active");
+			}
+			if($("#HTTP").hasClass("active")){
+				if($("#acp").val() != "disabled"){
+					var urlAPI = "http://"+$("#fqdn").val()+":"+$("#acp").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled").show();
+				}		
+			}
+			if($("#HTTPS").hasClass("active")){
+				if($("#sslacp").val() != "disabled"){
+					var urlAPI = "https://"+$("#fqdn").val()+":"+$("#sslacp").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled").show();
+				}	
+			}			
+			break;
+	}
+	$(".url").text(urlAPI);
+});
+
+$(".api-select-um").click( function(){
+	var id = this.id;
+	$("#"+id).addClass("active");
+	switch(id){
+		case "HTTPum":
+			if($("#HTTPSum").hasClass("active")){
+				$("#HTTPSum").removeClass("active");			
+			}		
+			if($("#ADMINPortsum").hasClass("active")){
+				if($("#acp").val() != "disabled"){
+					var urlAPI = "http://"+$("#fqdn").val()+":"+$("#acp").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled-um").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled-um").show();
+				}				
+			}
+			if($("#APIPortsum").hasClass("active")){
+				if($("#restapi").val() != "disabled"){
+					var urlAPI = "http://"+$("#fqdn").val()+":"+$("#restapi").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled-um").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled-um").show();
+				}	
+			}		
+			break;
+		case "HTTPSum":
+			if($("#HTTPum").hasClass("active")){
+				$("#HTTPum").removeClass("active");			
+			}	
+			if($("#ADMINPortsum").hasClass("active")){
+				if($("#sslacp").val() != "disabled"){
+					var urlAPI = "https://"+$("#fqdn").val()+":"+$("#sslacp").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled-um").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled-um").show();
+				}					
+			}
+			if($("#APIPortsum").hasClass("active")){
+				if($("#sslrestapi").val() != "disabled"){
+					var urlAPI = "https://"+$("#fqdn").val()+":"+$("#sslrestapi").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled-um").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled-um").show();
+				}	
+			}	
+			break;
+		case "APIPortsum":
+			if($("#ADMINPortsum").hasClass("active")){
+				$("#ADMINPortsum").removeClass("active");
+			}
+			if($("#HTTPum").hasClass("active")){
+				if($("#restapi").val() != "disabled"){
+					var urlAPI = "http://"+$("#fqdn").val()+":"+$("#restapi").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled-um").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled-um").show();
+				}	
+			}
+			if($("#HTTPSum").hasClass("active")){
+				if($("#sslrestapi").val() != "disabled"){
+					var urlAPI = "https://"+$("#fqdn").val()+":"+$("#sslrestapi").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled-um").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled-um").show();
+				}	
+			}	
+			break;
+		case "ADMINPortsum":
+			if($("#APIPortsum").hasClass("active")){
+				$("#APIPortsum").removeClass("active");
+			}
+			if($("#HTTPum").hasClass("active")){
+				if($("#acp").val() != "disabled"){
+					var urlAPI = "http://"+$("#fqdn").val()+":"+$("#acp").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled-um").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled-um").show();
+				}		
+			}
+			if($("#HTTPSum").hasClass("active")){
+				if($("#sslacp").val() != "disabled"){
+					var urlAPI = "https://"+$("#fqdn").val()+":"+$("#sslacp").val()+"/admin";
+					$(".url-list").show();
+					$(".proto-disabled-um").hide();
+				}
+				else{
+					$(".url-list").hide();
+					$(".proto-disabled-um").show();
+				}	
+			}			
+			break;
+	}
+	$(".url").text(urlAPI);
+});
+
 var app_type;
 $(".api-add-app").click(function() {
 	app_type = $(this).data("id")
@@ -80,6 +327,28 @@ $('#api-app').on('show.bs.modal', function () {
 	}
 })
 
+$("#urlModal").on('shown.bs.modal', function(){
+	if($("#sysadmin").val() == "enabled"){
+		$(".button-filter").show();
+
+		if($(".url-token").text().search("http://") == -1){
+			$("#HTTPSum").click();
+			var https = true;
+		}else{
+			$("#HTTPum").click();
+			var http = true;
+		};
+
+		if($("#restapi").val() != "" && http){
+			$("#APIPortsum").click();
+		}
+
+		if($("#sslrestapi").val() != "" && https){
+			$("#APIPortsum").click();
+		}
+	}
+});
+
 $('#api_application_list').on('post-body.bs.table', function() {
 	$(".api-delete").click(function() {
 		if(confirm(_("Are you sure you wish to delete this application?"))) {
@@ -105,8 +374,28 @@ $('#api_application_list').on('post-body.bs.table', function() {
 	})
 
 	$(".api-view").click(function() {
-		$('#api-info').modal('show')
-		$("#api-info .client_secret_container").addClass("hidden")
+		$('#api-info').modal('show');
+		if($("#sysadmin").val() == "enabled"){
+			$(".button-filter").show();
+
+			if($(".url-token").text().search("http://") == -1){
+				$("#HTTPS").click();
+				var https = true;
+			}else{
+				$("#HTTP").click();
+				var http = true;
+			};
+	
+			if($("#restapi").val() != "" && http){
+				$("#APIPorts").click();
+			}
+
+			if($("#sslrestapi").val() != "" && https){
+				$("#APIPorts").click();
+			}
+		}
+
+		$("#api-info .client_secret_container").addClass("hidden");
 		$("#api-info .client_id").text($(this).data("client_id"));
 		$("#api-info .allowed_scopes").text($(this).data("allowed_scopes"));
 	})
