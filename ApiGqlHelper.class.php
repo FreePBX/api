@@ -1,4 +1,3 @@
-
 <?php
 /**
  * This is the FreePBX Big Module Object.
@@ -34,26 +33,13 @@ class ApiGqlHelper extends \FreePBX_Helpers {
 		} else {
 			shell_exec($bin . '/fwconsole ma ' . $action . ' ' . $module . ' --' . $track);
 		}
-
-		/**
-		 * Running below commands as root user
-		 */
-		$isSysAdminModuleInstalled = 0;
-		if ($this->freepbx->Modules->checkStatus("sysadmin")) {
-			$isSysAdminModuleInstalled = 1;
-			 $this->freepbx->Sysadmin()->ApiHooks()->runModuleSystemHook('api', 'fwconsole-commands', array('chown', $txnId));
-			 $this->freepbx->Sysadmin()->ApiHooks()->runModuleSystemHook('api', 'fwconsole-commands', array('reload', $txnId));
-		}
 	
 		$result = shell_exec($bin."/fwconsole ma list|grep ".$module ."|awk '{print $5 $6}'");
 
 		$reason = '';
 		$enabled = array('enable','install','upgrade');
 
-		if(!$isSysAdminModuleInstalled){
-			$status = "Failed";
-			$reason = "Sysadmin module has not been installed, hence failed to run the hook";
-		}else if(in_array($action,$enabled) && $result ="|Enabled"){
+		if (in_array($action, $enabled) && $result = "|Enabled") {
 			$status = "Executed";
 		}else if($action == "disable" && $result ="|Disabled"){
 			$status = "Executed";
