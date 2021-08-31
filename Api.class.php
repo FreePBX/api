@@ -106,6 +106,9 @@ class Api extends \FreePBX_Helpers implements \BMO {
 			chgrp($logdir."/gql_api_error.log", "asterisk");
 			out("log file created ".$logdir."/gql_api_error.log");
 		}
+		if($this->freepbx->Modules->checkStatus("sysadmin")) {
+			touch("/var/spool/asterisk/incron/api.logrotate");
+		}
 		$this->freepbx->PKCS->generateKey($this->oauthKey);
 		$this->freepbx->PKCS->extractPublicKey($this->oauthKey);
 
