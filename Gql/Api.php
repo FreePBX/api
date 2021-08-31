@@ -85,7 +85,8 @@ class Api {
 			return $this->setupGql($request, $response, $args);
 		});
 
-		$app->post('/api/gql', function ($request, $response, $args) {
+		$self = $this;
+		$app->post('/api/gql', function ($request, $response, $args) use($self) {
 			$server = new StandardServer([
 				'schema' => call_user_func($this->setupGql, $request, $response, $args),
 				'debug' => true
@@ -95,6 +96,7 @@ class Api {
 
 			//handling the exception error response
 			if (isset(json_decode($newResponse->getBody())->errors[0])) {
+				$self->freepbx->api->writelog(print_r(json_decode($newResponse->getBody())->errors[0], true));
 				dbug(json_decode($newResponse->getBody())->errors[0]);
 				$data['errors'][] = array("message" => json_decode($newResponse->getBody())->errors[0]->message,"status"=> false);
 				return  $response->withJson($data, 400);

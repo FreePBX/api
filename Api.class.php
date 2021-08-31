@@ -69,6 +69,16 @@ class Api extends \FreePBX_Helpers implements \BMO {
 
 	/* Assorted stubs to validate the BMO Interface */
 	public function install() {
+		$logdir = $this->freepbx->Config->get("ASTLOGDIR");
+		if(!file_exists($logdir."/gql_api_error.log")){
+			touch($logdir."/gql_api_error.log");
+			chown($logdir."/gql_api_error.log", "asterisk");
+			chgrp($logdir."/gql_api_error.log", "asterisk");
+			out("log file created ".$logdir."/gql_api_error.log");
+		}
+		if($this->freepbx->Modules->checkStatus("sysadmin")) {
+			touch("/var/spool/asterisk/incron/api.logrotate");
+		}
 		$this->freepbx->PKCS->generateKey($this->oauthKey);
 		$this->freepbx->PKCS->extractPublicKey($this->oauthKey);
 
@@ -477,5 +487,11 @@ class Api extends \FreePBX_Helpers implements \BMO {
 	public function doreload($txnId){
 		$bin = $this->freepbx->Config()->get('AMPSBIN');
 		shell_exec($bin.'/fwconsole api doreload '.$txnId.' >/dev/null 2>/dev/null &');
+	}
+
+	public function writelog($msg) {
+		$log_dir = $this->freepbx->Config->get("ASTLOGDIR");
+		$date = date("Y-m-d H:i:s",strtotime("now"));
+		error_log($date." - ".$msg."\n", 3, $log_dir."/gql_api_error.log");
 	}
 }
