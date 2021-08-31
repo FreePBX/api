@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cat <<- EOF > /etc/logrotate.d/freepbx-api
+/var/log/asterisk/gql_api_*.log{
+	size 50M
+	missingok
+	rotate 30
+	notifempty
+	sharedscripts
+	dateext
+	create 0640 asterisk asterisk
+	su asterisk asterisk
+	postrotate
+		/usr/sbin/fwconsole pm2 --reload-logs -q
+	endscript
+}
+EOF
