@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>16.0.4.3</version>
+	<version>16.0.4.4</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*16.0.4.4* FREEI-3539 Add new API port to URLs to Client Credentials summary 
 		*16.0.4.3* Packaging of ver 16.0.4.3
 		*16.0.4.2* Packaging of ver 16.0.4.2
 		*16.0.4.1* bump 
