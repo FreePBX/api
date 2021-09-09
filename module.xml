@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.3.16</version>
+	<version>15.0.3.18</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,8 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.3.18* FREEI-3890 added error log for gql apis 
+		*15.0.3.17* Feature/FREEI-3539 add new api port to urls to client credentials summary 
 		*15.0.3.16* FREEI-3562 removed code which was running chown and reload commands 
 		*15.0.3.15* FREEI-3461 sending complete response 
 		*15.0.3.14* FREEI-3462 added fwconsole chown and fwconsole r command to execute after upgrading all modules 
