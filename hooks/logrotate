@@ -10,8 +10,5 @@ cat <<- EOF > /etc/logrotate.d/freepbx-api
 	dateext
 	create 0640 asterisk asterisk
 	su asterisk asterisk
-	postrotate
-		/usr/sbin/fwconsole pm2 --reload-logs -q
-	endscript
 }
 EOF
