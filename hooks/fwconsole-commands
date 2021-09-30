@@ -23,11 +23,8 @@ try {
 		$message = 'Command executed successfully';
 		$status = 'Executed';
 	} else {
-		if (array_key_exists(2, $output)) {
-			$message =  "Failed to execute command [ " . $cmd . " ] , command output = $output[2]";
-		} else {
-			$message =  "Failed to execute command [ " . $cmd . " ]";
-		}
+		$output = json_encode($output);
+		$message =  "Failed to execute command [ " . $cmd . " ] , command output = $output";
 		$status = 'Failed';
 	}
 } catch (\Exception $e) {
