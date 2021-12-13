@@ -26,7 +26,7 @@ class Api extends \FreePBX_Helpers implements \BMO {
 
 	public function getAPIAddress() {
 		$protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
-		return $protocol.'://'.$_SERVER['HTTP_HOST']."/admin";
+		return $protocol.'://'.preg_replace('/:\d+/', '', $_SERVER['HTTP_HOST'])."/admin";
 	}
 
 	public function __get($var) {
