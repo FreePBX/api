@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>16.0.4.8</version>
+	<version>16.0.4.9</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*16.0.4.9* FREEPBX-23136 
 		*16.0.4.8* FREEI-4012 
 		*16.0.4.7* Packaging of ver 16.0.4.7
 		*16.0.4.6* Packaging of ver 16.0.4.6
