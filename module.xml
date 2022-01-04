@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.3.21</version>
+	<version>15.0.3.22</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.3.22* FREEI-2891 Created new rest api base class to create rest api unit test cases 
 		*15.0.3.21* FREEPBX-23136 URL get two ports within URL when we change the admin GUI port by default. 
 		*15.0.3.20* FREEI-4012 modified fwconsole-commands hook file to display complete error message 
 		*15.0.3.19* FREEI-3890 added error log for gql apis 
