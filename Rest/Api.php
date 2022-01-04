@@ -128,4 +128,39 @@ class Api {
 			});
 		}
 	}
+
+	public function buildSlimApp($route, $command, $queryString)
+	{
+		$_SERVER['QUERY_STRING'] = str_replace('module=api&command=' . $command . '&route=' . $route, '', $queryString);
+		$_SERVER['REQUEST_URI'] = '/api' . (!empty($route) ? '/' . ltrim($route, '/') : '');
+
+		$config = [
+			'settings' => [
+				'displayErrorDetails' => !empty($_REQUEST['debug'])
+			]
+		];
+
+		$accessTokenRepository = new AccessTokenRepository($this->freepbx->api);
+		$publicKeyPath = 'file://' . $this->publicKey;
+		$server = new ResourceServer(
+			$accessTokenRepository,
+			$publicKeyPath
+		);
+
+		$app = new App($config);
+		$app->add(new ResourceServerMiddleware($server));
+
+		$container = $app->getContainer();
+		$container['setupRest'] = $container->protect(function ($app) {
+			return $this->setupRest($app);
+		});
+
+		$container['freepbx'] = $this->freepbx;
+
+		$app->group('/api/rest', function () {
+			$this->setupRest($this);
+		});
+
+		return $app;
+	}
 }
