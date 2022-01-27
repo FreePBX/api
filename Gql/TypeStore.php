@@ -4,6 +4,7 @@ use FreePBX\modules\Api\Gql\References\ObjectType;
 use FreePBX\modules\Api\Gql\References\UnionType;
 use FreePBX\modules\Api\Gql\References\InterfaceType;
 use FreePBX\modules\Api\Gql\References\ObjectRelayType;
+use FreePBX\modules\Api\Gql\References\EnumType;
 class TypeStore {
 	private $types = [];
 
