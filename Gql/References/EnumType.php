@@ -23,7 +23,7 @@ class EnumType extends BaseType {
 		if($this->isObject()) {
 			throw new \Exception("Can not add a field after objectifying!");
 		}
-		$this->state['values'] = array_merge($values,$this->state['values']);
+		$this->state['values'] = array_merge($this->state['values'], $values);
 	}
 	/**
 	 * Add Single Field
