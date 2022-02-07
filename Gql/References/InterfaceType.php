@@ -26,7 +26,7 @@ class InterfaceType extends BaseType {
 		if($this->isObject()) {
 			throw new \Exception("Can not add a field after objectifying!");
 		}
-		$this->state['fields'] = array_merge($fields,$this->state['fields']);
+		$this->state['fields'] = array_merge($this->state['fields'], $fields);
 	}
 	/**
 	 * Add Single Field

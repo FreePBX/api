@@ -17,25 +17,25 @@ class EnumType extends BaseType {
 	/**
 	 * Add array of fields
 	 * @method addFields
-	 * @param  [type]    $fields [description]
+	 * @param  [type]    $values [description]
 	 */
 	public function addFields($values) {
 		if($this->isObject()) {
 			throw new \Exception("Can not add a field after objectifying!");
 		}
-		$this->state['values'] = array_merge($fields,$this->state['values']);
+		$this->state['values'] = array_merge($this->state['values'], $values);
 	}
 	/**
 	 * Add Single Field
 	 * @method addField
-	 * @param  string   $fieldName The Field Name
-	 * @param  [type]   $fieldData [description]
+	 * @param  string   $valueName The Field Name
+	 * @param  [type]   $valueData [description]
 	 */
 	public function addField($valueName,$valueData) {
 		if($this->isObject()) {
 			throw new \Exception("Can not add a field after objectifying!");
 		}
-		$this->state['values'][$fieldName] = $fieldData;
+		$this->state['values'][$valueName] = $valueData;
 	}
 
 	/**
