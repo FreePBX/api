@@ -468,7 +468,7 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		$process = new Process('rm -Rf '.__DIR__.'/docs');
 		$process->mustRun();
 
-		$process = new Process('node '.__DIR__.'/node/index.js -e '.$host.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$this->getDeveloperAccessToken($scope, $host).'"');
+		$process = new Process('NODE_TLS_REJECT_UNAUTHORIZED=0 node '.__DIR__.'/node/index.js -e '.$host.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$this->getDeveloperAccessToken($scope, $host).'"');
 		$process->mustRun();
 
 		file_put_contents(__DIR__."/docs/.htaccess",$ht);
