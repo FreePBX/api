@@ -287,6 +287,26 @@ $('#api-save-app').click(function () {
 			})
 			$('#api-app').modal('hide')
 			$('#api-info').modal('show')
+			if($("#sysadmin").val() == "enabled"){
+				$(".button-filter").show();
+		
+				if($(".url-token").text().search("http://") == -1){
+					$("#HTTPS").click();
+					var https = true;
+				}
+				else{
+					$("#HTTP").click();
+					var http = true;
+				};
+		
+				if($("#restapi").val() != "" && http){
+					$("#APIPorts").click();
+				}
+		
+				if($("#sslrestapi").val() != "" && https){
+					$("#APIPorts").click();
+				}
+			}
 			apiUpdateapplicationCredentials(res)
 		} else {
 			alert(res.message)
