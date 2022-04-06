@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 03:57+0000\n"
+"POT-Creation-Date: 2022-04-06 04:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,19 +99,19 @@ msgstr ""
 msgid "Applications"
 msgstr ""
 
-#: assets/js/api.js:406
+#: assets/js/api.js:426
 msgid "Are you sure you wish to delete this access token?"
 msgstr ""
 
-#: assets/js/api.js:354
+#: assets/js/api.js:374
 msgid "Are you sure you wish to delete this application?"
 msgstr ""
 
-#: assets/js/api.js:428
+#: assets/js/api.js:448
 msgid "Are you sure you wish to delete this refresh token?"
 msgstr ""
 
-#: assets/js/api.js:448
+#: assets/js/api.js:468
 msgid ""
 "Are you sure you wish to regenerate this application? This will break any "
 "clients using the old credentials"
@@ -127,7 +127,7 @@ msgid "Authorize your account"
 msgstr ""
 
 #: views/system/applicationGrid.php:9 views/user/grid.php:8
-#: assets/js/api.js:480
+#: assets/js/api.js:332 assets/js/api.js:500
 msgid "Browser-based/Single Page app"
 msgstr ""
 
@@ -206,7 +206,7 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
-#: assets/js/api.js:313
+#: assets/js/api.js:333
 msgid ""
 "It is intended to be used for user-agent-based clients (e.g. single page web "
 "apps) that can’t keep a client secret because all of the application code "
@@ -222,7 +222,7 @@ msgid "Learn more about this API type"
 msgstr ""
 
 #: views/system/applicationGrid.php:11 views/user/grid.php:10
-#: assets/js/api.js:324 assets/js/api.js:489
+#: assets/js/api.js:344 assets/js/api.js:509
 msgid "Machine-to-Machine app"
 msgstr ""
 
@@ -239,7 +239,7 @@ msgid "Module to place the API file if using generatefromtable"
 msgstr ""
 
 #: views/system/applicationGrid.php:10 views/user/grid.php:9
-#: assets/js/api.js:320 assets/js/api.js:486
+#: assets/js/api.js:340 assets/js/api.js:506
 msgid "Native app"
 msgstr ""
 
@@ -315,7 +315,7 @@ msgstr ""
 msgid "Scope Visualizer"
 msgstr ""
 
-#: assets/js/api.js:313
+#: assets/js/api.js:333
 msgid ""
 "Secondly instead of the authorization server returning an authorization code "
 "which is exchanged for an access token, the authorization server returns an "
@@ -334,13 +334,13 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: assets/js/api.js:313
+#: assets/js/api.js:333
 msgid ""
 "The 'Browser-based/Single Page app', also known as 'Implicit Code Grant', is "
 "similar to the 'Web-server App' with two distinct differences"
 msgstr ""
 
-#: assets/js/api.js:317
+#: assets/js/api.js:337
 msgid ""
 "The 'Web-server App', also known as 'Authorization Code Grant', should be "
 "very familiar if you’ve ever signed into a web app using your Facebook or "
@@ -388,7 +388,7 @@ msgid ""
 "to not have any scope restrictions"
 msgstr ""
 
-#: assets/js/api.js:316 assets/js/api.js:483
+#: assets/js/api.js:336 assets/js/api.js:503
 msgid "Web-server App"
 msgstr ""
 
