@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.6</version>
+	<version>15.0.7</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.7* FREEI-3539 fixe the issue with creation 
 		*15.0.6* FREEPBX-23336 Can't browse GraphQL documentation when logged in via https 
 		*15.0.5* Packaging of ver 15.0.5
 		*15.0.4*    FREEPBX-23272 
