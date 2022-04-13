@@ -99,9 +99,9 @@
 			<field name="module_name" type="string" length="80" default=""/>
 			<field name="event_name" type="string" length="80" default=""/>
 			<field name="event_status" type="string" length="10" default="Processing"/>
-			<field name="failure_reason" type="blob"/>
+			<field name="failure_reason" type="string" length="255" default=""/>
 			<field name="process_start_time" type="integer"/>
-			<field name="process_end_time" type="integer"/>
+			<field name="process_end_time" type="integer" notnull="false"/>
 		</table>
 	</database>
 	<supported>
