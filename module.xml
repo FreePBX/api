@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>16.0.8</version>
+	<version>16.0.9</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*16.0.9* FREEI-4793 
 		*16.0.8* Packaging of ver 16.0.8
 		*16.0.7* FREEI-3539 fixed the issue with creation 
 		*16.0.6* FREEPBX-23336 

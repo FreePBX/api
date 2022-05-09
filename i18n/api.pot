@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-21 10:39+0000\n"
+"POT-Creation-Date: 2022-05-09 09:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid "API URL List"
 msgstr ""
 
-#: views/system/modals.php:167
+#: views/system/modals.php:166
 msgid "API URLs"
 msgstr ""
 
@@ -150,8 +150,8 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: views/system/modals.php:59
-#: views/user/modals.php:52
+#: views/system/modals.php:58
+#: views/user/modals.php:51
 msgid "Client Credentials"
 msgstr ""
 
