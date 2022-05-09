@@ -321,10 +321,10 @@ $('#api-app').on('show.bs.modal', function () {
 	switch(app_type) {
 		case "implicit":
 		case "authorization_code":
-			$('.api_app_redirect_group').removeClass("hidden")
+			$('.api_app_redirect_group').removeClass("d-none")
 		break;
 		default:
-			$('.api_app_redirect_group').addClass("hidden")
+			$('.api_app_redirect_group').addClass("d-none")
 		break;
 	}
 	switch(app_type) {
@@ -415,7 +415,7 @@ $('#api_application_list').on('post-body.bs.table', function() {
 			}
 		}
 
-		$("#api-info .client_secret_container").addClass("hidden");
+		$("#api-info .client_secret_container").addClass("d-none");
 		$("#api-info .client_id").text($(this).data("client_id"));
 		$("#api-info .allowed_scopes").text($(this).data("allowed_scopes"));
 	})
@@ -484,10 +484,10 @@ $("#api-application-regenerate").click(function() {
 
 function apiUpdateapplicationCredentials(res) {
 	if(res.client_secret && res.client_secret.length) {
-		$("#api-info .client_secret_container").removeClass("hidden")
+		$("#api-info .client_secret_container").removeClass("d-none")
 		$("#api-info .client_secret").text(res.client_secret);
 	} else {
-		$("#api-info .client_secret_container").addClass("hidden")
+		$("#api-info .client_secret_container").addClass("d-none")
 		$("#api-info .client_secret").text("");
 	}
 	$("#api-info .client_id").text(res.client_id);
@@ -597,7 +597,7 @@ $("#generate-docs").click(function() {
 	$("#doc-container")[0].src = ""
 	$.post( "ajax.php?module=api&command=generatedocs", { scopes: $("#scope-doc").val(), host: host },function( data ) {
 		$("#doc-container")[0].src = "modules/api/docs/index.html"
-		$("#doc-buttons").removeClass("hidden")
+		$("#doc-buttons").removeClass("d-none")
 	})
 	.always(function() {
 		$("#generate-docs").prop("disabled",false)

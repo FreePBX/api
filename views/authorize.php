@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title><?php echo _("Authorize your account")?></title>
-		<link href="/admin/assets/css/bootstrap-3.3.7.min.css" rel="stylesheet" type="text/css">
+		<link href="/admin/assets/css/bootstrap-4.6.1.min.css" rel="stylesheet" type="text/css">
 		<link href="/admin/assets/css/font-awesome.min-4.7.0.css" rel="stylesheet" type="text/css">
 	</head>
 	<body style="padding: 5px;">
