@@ -5,13 +5,13 @@
 				 <div class="display no-border">
 					<h1><?php echo _("API")?></h1>
 					<div role="tabpanel">
-						<ul class="nav nav-tabs" role="tablist">
-							<li role="presentation" class="active"><a href="#applications" aria-controls="applications" role="tab" data-toggle="tab"><?php echo _("Applications"); ?></a></li>
-							<li role="presentation"><a href="#tokens" aria-controls="tokens" role="tab" data-toggle="tab"><?php echo _("Access Tokens"); ?></a></li>
-							<li role="presentation"><a href="#refresh" aria-controls="refresh" role="tab" data-toggle="tab"><?php echo _("Refresh Tokens"); ?></a></li>
-							<li role="presentation"><a href="#scopes" aria-controls="scopes" role="tab" data-toggle="tab"><?php echo _("Scope Visualizer"); ?></a></li>
-							<li role="presentation"><a href="#gqldoc" aria-controls="gqldoc" role="tab" data-toggle="tab"><?php echo _("GraphQL Documentation"); ?></a></li>
-							<li role="presentation"><a href="#graphiql" aria-controls="graphiql" role="tab" data-toggle="tab"><?php echo _("GraphQL Explorer"); ?></a></li>
+						<ul class="nav nav-tabs pb-0" role="tablist">
+							<li role="presentation"><a class="nav-link active" href="#applications" aria-controls="applications" role="tab" data-toggle="tab"><?php echo _("Applications"); ?></a></li>
+							<li role="presentation"><a class="nav-link" href="#tokens" aria-controls="tokens" role="tab" data-toggle="tab"><?php echo _("Access Tokens"); ?></a></li>
+							<li role="presentation"><a class="nav-link" href="#refresh" aria-controls="refresh" role="tab" data-toggle="tab"><?php echo _("Refresh Tokens"); ?></a></li>
+							<li role="presentation"><a class="nav-link" href="#scopes" aria-controls="scopes" role="tab" data-toggle="tab"><?php echo _("Scope Visualizer"); ?></a></li>
+							<li role="presentation"><a class="nav-link" href="#gqldoc" aria-controls="gqldoc" role="tab" data-toggle="tab"><?php echo _("GraphQL Documentation"); ?></a></li>
+							<li role="presentation"><a class="nav-link" href="#graphiql" aria-controls="graphiql" role="tab" data-toggle="tab"><?php echo _("GraphQL Explorer"); ?></a></li>
 						</ul>
 						<div class="tab-content">
 							<div role="tabpanel" id="applications" class="tab-pane display active">
