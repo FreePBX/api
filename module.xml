@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>16.0.9</version>
+	<version>17.0.1</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,25 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
-		*16.0.9* FREEI-4793 
-		*16.0.8* Packaging of ver 16.0.8
-		*16.0.7* FREEI-3539 fixed the issue with creation 
-		*16.0.6* FREEPBX-23336 
-		*16.0.5* FREEPBX-23272 
-		*16.0.4.10* FREEI-2891 Created new rest api base class to create rest api unit test cases 
-		*16.0.4.9* FREEPBX-23136 
-		*16.0.4.8* FREEI-4012 
-		*16.0.4.7* Packaging of ver 16.0.4.7
-		*16.0.4.6* Packaging of ver 16.0.4.6
-		*16.0.4.5* FREEI-3890 added error log for gql apis 
-		*16.0.4.4* FREEI-3539 Add new API port to URLs to Client Credentials summary 
-		*16.0.4.3* Packaging of ver 16.0.4.3
-		*16.0.4.2* Packaging of ver 16.0.4.2
-		*16.0.4.1* bump 
-		*16.0.4* Packaging of ver 16.0.4
-		*16.0.3* Packaging of ver 16.0.3
-		*16.0.2* Packaging of ver 16.0.2
-		*16.0.1alpha* 16.0.1 alpha release
+		*17.0.1alpha* 17.0.1 alpha release
 	</changelog>
 	<description>The API module allows administrators to configure and manage FreePBX remotely through automated. As an administrator you can use other languages to control your PBX systems.</description>
 	<more-info>https://wiki.freepbx.org/display/FPG/API</more-info>
@@ -94,6 +76,6 @@
 		</table>
 	</database>
 	<supported>
-		<version>16.0</version>
+		<version>17.0</version>
 	</supported>
 </module>
