@@ -2,19 +2,19 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title mr-auto" id="api-app-title"></h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="api-app-title"></h4>
 			</div>
 			<div class="modal-body">
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="api-app-info-heading">
 						<h4 class="panel-title">
-							<a class="collapsed" data-toggle="collapse" href="#api-app-info" role="button" aria-expanded="false" aria-controls="api-app-info">
+							<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#api-app-info" aria-expanded="false" aria-controls="api-app-info">
 								<?php echo _("Learn more about this API type")?>
 							</a>
 						</h4>
 					</div>
-					<div  id="api-app-info" class="panel-collapse collapse">
+					<div id="api-app-info" class="panel-collapse collapse" role="tabpanel" aria-labelledby="api-app-info-heading">
 						<div class="panel-body" id="api-app-description"></div>
 					</div>
 				</div>
@@ -55,8 +55,8 @@
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title mr-auto"><?php echo _("Client Credentials")?></h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title"><?php echo _("Client Credentials")?></h4>
 			</div>
 			<div class="modal-body">
 				<div class="container-fluid">
@@ -64,8 +64,8 @@
 						<div class="col-md-12">					
 							<div class="col-md-2">
 							</div>
-							<div class="col-md-8 text-center button-filter m-auto" style="display:none">
-								<div id="api-filter" class="btn-group flex-wrap" role="group">
+							<div class="col-md-8 text-center button-filter" style="display:none">
+								<div id="api-filter" class="btn-group" role="group">
 									<button class="btn btn-secondary api-select" type="button" style="display:none"></button>			 
 									<button class="btn btn-secondary api-select left-btn-group" id="HTTP" type="button">HTTP</button> 
 									<button class="btn btn-secondary api-select" id="HTTPS" type="button">HTTPS</button> 
@@ -82,7 +82,7 @@
 				<br>
 				<div class="col-md-12">
 					<div class="row">
-						<div class="list-group col-md-12 pr-0">
+						<div class="list-group">
 							<a href="#" class="list-group-item list-group-item-action active"><strong><?php echo _("URLs")?></strong></a>
 							<div class="list-group-item">
 								<div class="container-fluid" >
@@ -163,8 +163,8 @@
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title mr-auto" id="myModalLabel"><?php echo _("API URLs")?></h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel"><?php echo _("API URLs")?></h4>
 			</div>
 			<div class="modal-body">
 				<div class="container-fluid">
@@ -172,8 +172,8 @@
 						<div class="col-md-12">					
 							<div class="col-md-2">
 							</div>
-							<div class="col-md-8 m-auto text-center button-filter" style="display:none">
-								<div id="api-filter" class="btn-group flex-wrap" role="group">
+							<div class="col-md-8 text-center button-filter" style="display:none">
+								<div id="api-filter" class="btn-group" role="group">
 									<button class="btn btn-secondary api-select-um" type="button" style="display:none"></button>			 
 									<button class="btn btn-secondary api-select-um left-btn-group" id="HTTPum" type="button">HTTP</button> 
 									<button class="btn btn-secondary api-select-um" id="HTTPSum" type="button">HTTPS</button> 
