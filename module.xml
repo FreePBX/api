@@ -92,6 +92,7 @@
 			<field name="failure_reason" type="string" length="255" default=""/>
 			<field name="process_start_time" type="integer"/>
 			<field name="process_end_time" type="integer" notnull="false"/>
+			<field name="event_output" type="string" length="255" default=""/>
 		</table>
 	</database>
 	<supported>
