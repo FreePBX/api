@@ -2,8 +2,8 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title mr-auto" id="api-app-title"></h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="api-app-title"></h4>
 			</div>
 			<div class="modal-body">
 				<div class="panel panel-default">
@@ -48,8 +48,8 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title mr-auto"><?php echo _("Client Credentials")?></h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title"><?php echo _("Client Credentials")?></h4>
 			</div>
 			<div class="modal-body">
 				<strong><?php echo ('Client ID')?></strong>:<span class="client_id"></span>
@@ -115,10 +115,10 @@ $('#api-app').on('show.bs.modal', function () {
 	switch(app_type) {
 		case "implicit":
 		case "authorization_code":
-			$('.api_app_redirect_group').removeClass("d-none")
+			$('.api_app_redirect_group').removeClass("hidden")
 		break;
 		default:
-			$('.api_app_redirect_group').addClass("d-none")
+			$('.api_app_redirect_group').addClass("hidden")
 		break;
 	}
 	switch(app_type) {
@@ -164,7 +164,7 @@ $('#api_application_list').on('post-body.bs.table', function() {
 
 	$(".api-view").click(function() {
 		$('#api-info').modal('show')
-		$("#api-info .client_secret_container").addClass("d-none")
+		$("#api-info .client_secret_container").addClass("hidden")
 		$("#api-info .client_id").text($(this).data("id"));
 	})
 });
@@ -198,10 +198,10 @@ $("#api-application-regenerate").click(function() {
 
 function apiUpdateapplicationCredentials(res) {
 	if(res.client_secret && res.client_secret.length) {
-		$("#api-info .client_secret_container").removeClass("d-none")
+		$("#api-info .client_secret_container").removeClass("hidden")
 		$("#api-info .client_secret").text(res.client_secret);
 	} else {
-		$("#api-info .client_secret_container").addClass("d-none")
+		$("#api-info .client_secret_container").addClass("hidden")
 		$("#api-info .client_secret").text("");
 	}
 	$("#api-info .client_id").text(res.client_id);
