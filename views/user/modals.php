@@ -9,12 +9,12 @@
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="api-app-info-heading">
 						<h4 class="panel-title">
-							<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#api-app-info" aria-expanded="false" aria-controls="api-app-info">
+							<a role="button" data-toggle="collapse" href="#api-app-info" role="button" aria-expanded="false" aria-controls="api-app-info">
 								<?php echo _("Learn more about this API type")?>
 							</a>
 						</h4>
 					</div>
-					<div id="api-app-info" class="panel-collapse collapse" role="tabpanel" aria-labelledby="api-app-info-heading">
+					<div id="api-app-info" class="panel-collapse collapse">
 						<div class="panel-body" id="api-app-description"></div>
 					</div>
 				</div>
