@@ -464,10 +464,11 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		$ht = file_get_contents(__DIR__."/docs.htaccess");
 
 		$ht = str_replace('%ipaddress%',$_SERVER['REMOTE_ADDR'],$ht);
-		$process = new Process (['rm', '-Rf', __DIR__.'/docs']);
+		$process = \freepbx_get_process_obj('rm -Rf '.__DIR__.'/docs');
 		$process->mustRun();
 
-		$process = new Process(['NODE_TLS_REJECT_UNAUTHORIZED=0','node', __DIR__.'/node/index.js', '-e', $host.'/admin/api/api/gql', '-o', __DIR__.'/docs', '-x', 'Authorization: Bearer '.$this->getDeveloperAccessToken($scope, $host)]);
+		$process = \freepbx_get_process_obj('NODE_TLS_REJECT_UNAUTHORIZED=0 node '.__DIR__.'/node/index.js -e '.$host.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$this->getDeveloperAccessToken($scope, $host).'"');
+
 		$process->mustRun();
 
 		file_put_contents(__DIR__."/docs/.htaccess",$ht);
