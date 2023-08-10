@@ -177,8 +177,8 @@ class Api extends \FreePBX_Helpers implements \BMO {
 				return ["status" => true, "token" => $token];
 			break;
 			case "generatedocs":
-				$this->generateDocumentation($_POST['scopes'], $_POST['host']);
-				return ["status" => true];
+				$status = $this->generateDocumentation($_POST['scopes'], $_POST['host']);
+				return ["status" => $status];
 			break;
 			case "getJSTreeScopes":
 				return $this->getJSTreeScopes();
@@ -461,17 +461,25 @@ class Api extends \FreePBX_Helpers implements \BMO {
 	}
 
 	public function generateDocumentation($scope, $host='http://localhost') {
+		$accessToken = $this->getDeveloperAccessToken($scope, $host);
+		if (!preg_match('/^[a-zA-Z0-9\-_.]+$/', $accessToken)) {
+			return false;
+		}
+
 		$ht = file_get_contents(__DIR__."/docs.htaccess");
 
 		$ht = str_replace('%ipaddress%',$_SERVER['REMOTE_ADDR'],$ht);
 		$process = \freepbx_get_process_obj('rm -Rf '.__DIR__.'/docs');
 		$process->mustRun();
 
-		$process = \freepbx_get_process_obj('NODE_TLS_REJECT_UNAUTHORIZED=0 node '.__DIR__.'/node/index.js -e '.$host.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$this->getDeveloperAccessToken($scope, $host).'"');
+		$process = \freepbx_get_process_obj('rm -Rf '.__DIR__.'/docs');
+		$process->mustRun();
 
+		$process = \freepbx_get_process_obj('NODE_TLS_REJECT_UNAUTHORIZED=0 node '.__DIR__.'/node/index.js -e '.$host.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$accessToken.'"');
 		$process->mustRun();
 
 		file_put_contents(__DIR__."/docs/.htaccess",$ht);
+		return true;
 	}
 
 	public function setTransactionStatus($transactionId,$status,$failureReason) {
