@@ -20,54 +20,15 @@ use OutOfBoundsException;
  * @author Luís Otávio Cobucci Oblonczyk <lcobucci@gmail.com>
  * @since 0.1.0
  */
-class Token
+class Token implements \Stringable
 {
-    /**
-     * The token headers
-     *
-     * @var array
-     */
-    private $headers;
-
-    /**
-     * The token claim set
-     *
-     * @var array
-     */
-    private $claims;
-
-    /**
-     * The token signature
-     *
-     * @var Signature
-     */
-    private $signature;
-
-    /**
-     * The encoded data
-     *
-     * @var array
-     */
-    private $payload;
-
     /**
      * Initializes the object
      *
-     * @param array $headers
-     * @param array $claims
-     * @param array $payload
      * @param Signature $signature
      */
-    public function __construct(
-        array $headers = ['alg' => 'none'],
-        array $claims = [],
-        Signature $signature = null,
-        array $payload = ['', '']
-    ) {
-        $this->headers = $headers;
-        $this->claims = $claims;
-        $this->signature = $signature;
-        $this->payload = $payload;
+    public function __construct(private readonly array $headers = ['alg' => 'none'], private readonly array $claims = [], private readonly ?\Lcobucci\JWT\Signature $signature = null, private readonly array $payload = ['', ''])
+    {
     }
 
     /**
@@ -96,13 +57,11 @@ class Token
      * Returns the value of a token header
      *
      * @param string $name
-     * @param mixed $default
      *
      * @return mixed
-     *
      * @throws OutOfBoundsException
      */
-    public function getHeader($name, $default = null)
+    public function getHeader($name, mixed $default = null)
     {
         if ($this->hasHeader($name)) {
             return $this->getHeaderValue($name);
@@ -159,13 +118,11 @@ class Token
      * Returns the value of a token claim
      *
      * @param string $name
-     * @param mixed $default
      *
      * @return mixed
-     *
      * @throws OutOfBoundsException
      */
-    public function getClaim($name, $default = null)
+    public function getClaim($name, mixed $default = null)
     {
         if ($this->hasClaim($name)) {
             return $this->claims[$name]->getValue();
@@ -181,11 +138,9 @@ class Token
     /**
      * Verify if the key matches with the one that created the signature
      *
-     * @param Signer $signer
      * @param string $key
      *
      * @return boolean
-     *
      * @throws BadMethodCallException When token is not signed
      */
     public function verify(Signer $signer, $key)
@@ -204,7 +159,6 @@ class Token
     /**
      * Validates if the token is valid
      *
-     * @param ValidationData $data
      *
      * @return boolean
      */
@@ -271,7 +225,7 @@ class Token
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $data = implode('.', $this->payload);
 

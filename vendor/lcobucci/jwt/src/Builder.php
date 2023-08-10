@@ -22,44 +22,33 @@ class Builder
 {
     /**
      * The token header
-     *
-     * @var array
      */
-    private $headers;
+    private array $headers = ['typ'=> 'JWT', 'alg' => 'none'];
 
     /**
      * The token claim set
-     *
-     * @var array
      */
-    private $claims;
+    private array $claims = [];
 
     /**
      * The token signature
-     *
-     * @var Signature
      */
-    private $signature;
+    private ?\Lcobucci\JWT\Signature $signature = null;
 
     /**
      * The data encoder
-     *
-     * @var Encoder
      */
-    private $encoder;
+    private readonly \Lcobucci\JWT\Parsing\Encoder $encoder;
 
     /**
      * The factory of claims
      *
      * @var ClaimFactory
      */
-    private $claimFactory;
+    private readonly ClaimFactory $claimFactory;
 
     /**
      * Initializes a new builder
-     *
-     * @param Encoder $encoder
-     * @param ClaimFactory $claimFactory
      */
     public function __construct(
         Encoder $encoder = null,
@@ -67,8 +56,6 @@ class Builder
     ) {
         $this->encoder = $encoder ?: new Encoder();
         $this->claimFactory = $claimFactory ?: new ClaimFactory();
-        $this->headers = ['typ'=> 'JWT', 'alg' => 'none'];
-        $this->claims = [];
     }
 
     /**
@@ -166,12 +153,10 @@ class Builder
      * Configures a registed claim
      *
      * @param string $name
-     * @param mixed $value
      * @param boolean $replicate
-     *
      * @return Builder
      */
-    protected function setRegisteredClaim($name, $value, $replicate)
+    protected function setRegisteredClaim($name, mixed $value, $replicate)
     {
         $this->set($name, $value);
 
@@ -186,13 +171,11 @@ class Builder
      * Configures a header item
      *
      * @param string $name
-     * @param mixed $value
      *
      * @return Builder
-     *
      * @throws BadMethodCallException When data has been already signed
      */
-    public function setHeader($name, $value)
+    public function setHeader($name, mixed $value)
     {
         if ($this->signature) {
             throw new BadMethodCallException('You must unsign before make changes');
@@ -207,13 +190,11 @@ class Builder
      * Configures a claim item
      *
      * @param string $name
-     * @param mixed $value
      *
      * @return Builder
-     *
      * @throws BadMethodCallException When data has been already signed
      */
-    public function set($name, $value)
+    public function set($name, mixed $value)
     {
         if ($this->signature) {
             throw new BadMethodCallException('You must unsign before making changes');
@@ -227,9 +208,7 @@ class Builder
     /**
      * Signs the data
      *
-     * @param Signer $signer
      * @param Key|string $key
-     *
      * @return Builder
      */
     public function sign(Signer $signer, $key)

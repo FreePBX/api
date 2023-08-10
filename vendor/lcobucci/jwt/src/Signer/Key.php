@@ -23,18 +23,12 @@ final class Key
     private $content;
 
     /**
-     * @var string
-     */
-    private $passphrase;
-
-    /**
      * @param string $content
      * @param string $passphrase
      */
-    public function __construct($content, $passphrase = null)
+    public function __construct($content, private $passphrase = null)
     {
         $this->setContent($content);
-        $this->passphrase = $passphrase;
     }
 
     /**
@@ -44,7 +38,7 @@ final class Key
      */
     private function setContent($content)
     {
-        if (strpos($content, 'file://') === 0) {
+        if (str_starts_with($content, 'file://')) {
             $content = $this->readFile($content);
         }
 

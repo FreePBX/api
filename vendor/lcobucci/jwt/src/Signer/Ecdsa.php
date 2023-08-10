@@ -33,15 +33,10 @@ abstract class Ecdsa extends BaseSigner
      */
     private $signer;
 
-    /**
-     * @var KeyParser
-     */
-    private $parser;
+    private readonly \Lcobucci\JWT\Signer\Ecdsa\KeyParser $parser;
 
     /**
-     * @param Adapter $adapter
      * @param EcdsaSigner $signer
-     * @param KeyParser $parser
      */
     public function __construct(Adapter $adapter = null, Signer $signer = null, KeyParser $parser = null)
     {
@@ -85,8 +80,8 @@ abstract class Ecdsa extends BaseSigner
             'H*',
             sprintf(
                 '%s%s',
-                str_pad($this->adapter->decHex($signature->getR()), $length, '0', STR_PAD_LEFT),
-                str_pad($this->adapter->decHex($signature->getS()), $length, '0', STR_PAD_LEFT)
+                str_pad((string) $this->adapter->decHex($signature->getR()), $length, '0', STR_PAD_LEFT),
+                str_pad((string) $this->adapter->decHex($signature->getS()), $length, '0', STR_PAD_LEFT)
             )
         );
     }
@@ -128,8 +123,8 @@ abstract class Ecdsa extends BaseSigner
         $value = unpack('H*', $value)[1];
 
         return new Signature(
-            $this->adapter->hexDec(substr($value, 0, $length)),
-            $this->adapter->hexDec(substr($value, $length))
+            $this->adapter->hexDec(substr((string) $value, 0, $length)),
+            $this->adapter->hexDec(substr((string) $value, $length))
         );
     }
 

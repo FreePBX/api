@@ -24,10 +24,7 @@ class RsaTokenTest extends \PHPUnit_Framework_TestCase
 {
     use Keys;
 
-    /**
-     * @var Sha256
-     */
-    private $signer;
+    private ?\Lcobucci\JWT\Signer\Rsa\Sha256 $signer = null;
 
     /**
      * @before

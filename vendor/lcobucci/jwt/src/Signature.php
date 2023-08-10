@@ -13,33 +13,23 @@ namespace Lcobucci\JWT;
  * @author Luís Otávio Cobucci Oblonczyk <lcobucci@gmail.com>
  * @since 0.1.0
  */
-class Signature
+class Signature implements \Stringable
 {
-    /**
-     * The resultant hash
-     *
-     * @var string
-     */
-    protected $hash;
-
     /**
      * Initializes the object
      *
      * @param string $hash
      */
-    public function __construct($hash)
+    public function __construct(protected $hash)
     {
-        $this->hash = $hash;
     }
 
     /**
      * Verifies if the current hash matches with with the result of the creation of
      * a new signature with given data
      *
-     * @param Signer $signer
      * @param string $payload
      * @param string $key
-     *
      * @return boolean
      */
     public function verify(Signer $signer, $payload, $key)
@@ -52,7 +42,7 @@ class Signature
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->hash;
     }

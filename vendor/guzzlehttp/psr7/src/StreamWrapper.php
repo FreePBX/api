@@ -49,7 +49,7 @@ class StreamWrapper
     public static function register()
     {
         if (!in_array('guzzle', stream_get_wrappers())) {
-            stream_wrapper_register('guzzle', __CLASS__);
+            stream_wrapper_register('guzzle', self::class);
         }
     }
 

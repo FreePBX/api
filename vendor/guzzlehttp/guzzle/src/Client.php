@@ -77,15 +77,15 @@ class Client implements ClientInterface
 
     public function __call($method, $args)
     {
-        if (count($args) < 1) {
+        if ((is_countable($args) ? count($args) : 0) < 1) {
             throw new \InvalidArgumentException('Magic request methods require a URI and optional options array');
         }
 
         $uri = $args[0];
-        $opts = isset($args[1]) ? $args[1] : [];
+        $opts = $args[1] ?? [];
 
-        return substr($method, -5) === 'Async'
-            ? $this->requestAsync(substr($method, 0, -5), $uri, $opts)
+        return str_ends_with((string) $method, 'Async')
+            ? $this->requestAsync(substr((string) $method, 0, -5), $uri, $opts)
             : $this->request($method, $uri, $opts);
     }
 
@@ -110,9 +110,9 @@ class Client implements ClientInterface
     {
         $options = $this->prepareDefaults($options);
         // Remove request modifying parameter because it can be done up-front.
-        $headers = isset($options['headers']) ? $options['headers'] : [];
-        $body = isset($options['body']) ? $options['body'] : null;
-        $version = isset($options['version']) ? $options['version'] : '1.1';
+        $headers = $options['headers'] ?? [];
+        $body = $options['body'] ?? null;
+        $version = $options['version'] ?? '1.1';
         // Merge the URI into the base URI.
         $uri = $this->buildUri($uri, $options);
         if (is_array($body)) {
@@ -135,13 +135,13 @@ class Client implements ClientInterface
     {
         return $option === null
             ? $this->config
-            : (isset($this->config[$option]) ? $this->config[$option] : null);
+            : ($this->config[$option] ?? null);
     }
 
     private function buildUri($uri, array $config)
     {
         // for BC we accept null which would otherwise fail in uri_for
-        $uri = Psr7\uri_for($uri === null ? '' : $uri);
+        $uri = Psr7\uri_for($uri ?? '');
 
         if (isset($config['base_uri'])) {
             $uri = Psr7\UriResolver::resolve(Psr7\uri_for($config['base_uri']), $uri);
@@ -152,8 +152,6 @@ class Client implements ClientInterface
 
     /**
      * Configures the default options for a client.
-     *
-     * @param array $config
      */
     private function configureDefaults(array $config)
     {
@@ -283,8 +281,6 @@ class Client implements ClientInterface
     /**
      * Applies the array of request options to a request.
      *
-     * @param RequestInterface $request
-     * @param array            $options
      *
      * @return RequestInterface
      */
@@ -345,7 +341,7 @@ class Client implements ClientInterface
 
         if (!empty($options['auth']) && is_array($options['auth'])) {
             $value = $options['auth'];
-            $type = isset($value[2]) ? strtolower($value[2]) : 'basic';
+            $type = isset($value[2]) ? strtolower((string) $value[2]) : 'basic';
             switch ($type) {
                 case 'basic':
                     // Ensure that we don't have the header in different case and set the new value.
@@ -411,7 +407,7 @@ class Client implements ClientInterface
         return $request;
     }
 
-    private function invalidBody()
+    private function invalidBody(): never
     {
         throw new \InvalidArgumentException('Passing in the "body" request '
             . 'option as an array to send a POST request has been deprecated. '

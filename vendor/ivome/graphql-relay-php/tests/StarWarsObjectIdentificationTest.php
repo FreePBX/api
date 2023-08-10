@@ -21,13 +21,8 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'rebels' =>
-                array (
-                    'id' => 'RmFjdGlvbjox',
-                    'name' => 'Alliance to Restore the Republic',
-                ),
-        );
+        $expected = ['rebels' =>
+            ['id' => 'RmFjdGlvbjox', 'name' => 'Alliance to Restore the Republic']];
 
         $this->assertValidQuery($query, $expected);
     }
@@ -43,13 +38,8 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'node' =>
-                array (
-                    'id' => 'RmFjdGlvbjox',
-                    'name' => 'Alliance to Restore the Republic',
-                ),
-        );
+        $expected = ['node' =>
+            ['id' => 'RmFjdGlvbjox', 'name' => 'Alliance to Restore the Republic']];
 
         $this->assertValidQuery($query, $expected);
     }
@@ -63,13 +53,8 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'empire' =>
-                array (
-                    'id' => 'RmFjdGlvbjoy',
-                    'name' => 'Galactic Empire',
-                ),
-        );
+        $expected = ['empire' =>
+            ['id' => 'RmFjdGlvbjoy', 'name' => 'Galactic Empire']];
 
         $this->assertValidQuery($query, $expected);
     }
@@ -85,13 +70,8 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'node' =>
-                array (
-                    'id' => 'RmFjdGlvbjoy',
-                    'name' => 'Galactic Empire',
-                ),
-        );
+        $expected = ['node' =>
+            ['id' => 'RmFjdGlvbjoy', 'name' => 'Galactic Empire']];
 
         $this->assertValidQuery($query, $expected);
     }
@@ -107,13 +87,8 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'node' =>
-                array (
-                    'id' => 'U2hpcDox',
-                    'name' => 'X-Wing',
-                ),
-        );
+        $expected = ['node' =>
+            ['id' => 'U2hpcDox', 'name' => 'X-Wing']];
 
         $this->assertValidQuery($query, $expected);
     }

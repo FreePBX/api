@@ -11,23 +11,19 @@ class CachingStream implements StreamInterface
 {
     use StreamDecoratorTrait;
 
-    /** @var StreamInterface Stream being wrapped */
-    private $remoteStream;
-
     /** @var int Number of bytes to skip reading due to a write on the buffer */
-    private $skipReadBytes = 0;
+    private int $skipReadBytes = 0;
 
     /**
      * We will treat the buffer object as the body of the stream
      *
-     * @param StreamInterface $stream Stream to cache
+     * @param StreamInterface $remoteStream Stream to cache
      * @param StreamInterface $target Optionally specify where data is cached
      */
     public function __construct(
-        StreamInterface $stream,
+        private readonly StreamInterface $remoteStream,
         StreamInterface $target = null
     ) {
-        $this->remoteStream = $stream;
         $this->stream = $target ?: new Stream(fopen('php://temp', 'r+'));
     }
 
@@ -76,7 +72,7 @@ class CachingStream implements StreamInterface
     {
         // Perform a regular read on any previously read data from the buffer
         $data = $this->stream->read($length);
-        $remaining = $length - strlen($data);
+        $remaining = $length - strlen((string) $data);
 
         // More data was requested so read from the remote stream
         if ($remaining) {

@@ -24,23 +24,21 @@ final class Middleware
      */
     public static function cookies()
     {
-        return function (callable $handler) {
-            return function ($request, array $options) use ($handler) {
-                if (empty($options['cookies'])) {
-                    return $handler($request, $options);
-                } elseif (!($options['cookies'] instanceof CookieJarInterface)) {
-                    throw new \InvalidArgumentException('cookies must be an instance of GuzzleHttp\Cookie\CookieJarInterface');
-                }
-                $cookieJar = $options['cookies'];
-                $request = $cookieJar->withCookieHeader($request);
-                return $handler($request, $options)
-                    ->then(
-                        function ($response) use ($cookieJar, $request) {
-                            $cookieJar->extractCookies($request, $response);
-                            return $response;
-                        }
-                );
-            };
+        return fn(callable $handler) => function ($request, array $options) use ($handler) {
+            if (empty($options['cookies'])) {
+                return $handler($request, $options);
+            } elseif (!($options['cookies'] instanceof CookieJarInterface)) {
+                throw new \InvalidArgumentException('cookies must be an instance of GuzzleHttp\Cookie\CookieJarInterface');
+            }
+            $cookieJar = $options['cookies'];
+            $request = $cookieJar->withCookieHeader($request);
+            return $handler($request, $options)
+                ->then(
+                    function ($response) use ($cookieJar, $request) {
+                        $cookieJar->extractCookies($request, $response);
+                        return $response;
+                    }
+            );
         };
     }
 
@@ -52,21 +50,19 @@ final class Middleware
      */
     public static function httpErrors()
     {
-        return function (callable $handler) {
-            return function ($request, array $options) use ($handler) {
-                if (empty($options['http_errors'])) {
-                    return $handler($request, $options);
-                }
-                return $handler($request, $options)->then(
-                    function (ResponseInterface $response) use ($request, $handler) {
-                        $code = $response->getStatusCode();
-                        if ($code < 400) {
-                            return $response;
-                        }
-                        throw RequestException::create($request, $response);
+        return fn(callable $handler) => function ($request, array $options) use ($handler) {
+            if (empty($options['http_errors'])) {
+                return $handler($request, $options);
+            }
+            return $handler($request, $options)->then(
+                function (ResponseInterface $response) use ($request, $handler) {
+                    $code = $response->getStatusCode();
+                    if ($code < 400) {
+                        return $response;
                     }
-                );
-            };
+                    throw RequestException::create($request, $response);
+                }
+            );
         };
     }
 
@@ -125,17 +121,15 @@ final class Middleware
      */
     public static function tap(callable $before = null, callable $after = null)
     {
-        return function (callable $handler) use ($before, $after) {
-            return function ($request, array $options) use ($handler, $before, $after) {
-                if ($before) {
-                    $before($request, $options);
-                }
-                $response = $handler($request, $options);
-                if ($after) {
-                    $after($request, $options, $response);
-                }
-                return $response;
-            };
+        return fn(callable $handler) => function ($request, array $options) use ($handler, $before, $after) {
+            if ($before) {
+                $before($request, $options);
+            }
+            $response = $handler($request, $options);
+            if ($after) {
+                $after($request, $options, $response);
+            }
+            return $response;
         };
     }
 
@@ -146,9 +140,7 @@ final class Middleware
      */
     public static function redirect()
     {
-        return function (callable $handler) {
-            return new RedirectMiddleware($handler);
-        };
+        return fn(callable $handler) => new RedirectMiddleware($handler);
     }
 
     /**
@@ -168,9 +160,7 @@ final class Middleware
      */
     public static function retry(callable $decider, callable $delay = null)
     {
-        return function (callable $handler) use ($decider, $delay) {
-            return new RetryMiddleware($decider, $handler, $delay);
-        };
+        return fn(callable $handler) => new RetryMiddleware($decider, $handler, $delay);
     }
 
     /**
@@ -185,25 +175,21 @@ final class Middleware
      */
     public static function log(LoggerInterface $logger, MessageFormatter $formatter, $logLevel = LogLevel::INFO)
     {
-        return function (callable $handler) use ($logger, $formatter, $logLevel) {
-            return function ($request, array $options) use ($handler, $logger, $formatter, $logLevel) {
-                return $handler($request, $options)->then(
-                    function ($response) use ($logger, $request, $formatter, $logLevel) {
-                        $message = $formatter->format($request, $response);
-                        $logger->log($logLevel, $message);
-                        return $response;
-                    },
-                    function ($reason) use ($logger, $request, $formatter) {
-                        $response = $reason instanceof RequestException
-                            ? $reason->getResponse()
-                            : null;
-                        $message = $formatter->format($request, $response, $reason);
-                        $logger->notice($message);
-                        return \GuzzleHttp\Promise\rejection_for($reason);
-                    }
-                );
-            };
-        };
+        return fn(callable $handler) => fn($request, array $options) => $handler($request, $options)->then(
+            function ($response) use ($logger, $request, $formatter, $logLevel) {
+                $message = $formatter->format($request, $response);
+                $logger->log($logLevel, $message);
+                return $response;
+            },
+            function ($reason) use ($logger, $request, $formatter) {
+                $response = $reason instanceof RequestException
+                    ? $reason->getResponse()
+                    : null;
+                $message = $formatter->format($request, $response, $reason);
+                $logger->notice($message);
+                return \GuzzleHttp\Promise\rejection_for($reason);
+            }
+        );
     }
 
     /**
@@ -214,9 +200,7 @@ final class Middleware
      */
     public static function prepareBody()
     {
-        return function (callable $handler) {
-            return new PrepareBodyMiddleware($handler);
-        };
+        return fn(callable $handler) => new PrepareBodyMiddleware($handler);
     }
 
     /**
@@ -229,11 +213,7 @@ final class Middleware
      */
     public static function mapRequest(callable $fn)
     {
-        return function (callable $handler) use ($fn) {
-            return function ($request, array $options) use ($handler, $fn) {
-                return $handler($fn($request), $options);
-            };
-        };
+        return fn(callable $handler) => fn($request, array $options) => $handler($fn($request), $options);
     }
 
     /**
@@ -246,10 +226,6 @@ final class Middleware
      */
     public static function mapResponse(callable $fn)
     {
-        return function (callable $handler) use ($fn) {
-            return function ($request, array $options) use ($handler, $fn) {
-                return $handler($request, $options)->then($fn);
-            };
-        };
+        return fn(callable $handler) => fn($request, array $options) => $handler($request, $options)->then($fn);
     }
 }

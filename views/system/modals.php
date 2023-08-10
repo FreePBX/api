@@ -151,7 +151,7 @@
 				<input type="hidden" id="sslrestapi" value="<?php echo !empty($data_api["API"]["HTTPS"]) ? $data_api["API"]["HTTPS"] : ""; ?>">
 				<input type="hidden" id="acp" value="<?php echo !empty($data_api["ACP"]["HTTP"]) ? $data_api["ACP"]["HTTP"] : ""; ?>">
 				<input type="hidden" id="sslacp" value="<?php echo !empty($data_api["ACP"]["HTTPS"]) ? $data_api["ACP"]["HTTPS"] : ""; ?>">
-				<input type="hidden" id="fqdn" value="<?php echo str_replace(array("http://", "https://", "/admin"),array("","",""), $url)?>">
+				<input type="hidden" id="fqdn" value="<?php echo str_replace(["http://", "https://", "/admin"],["", "", ""], (string) $url)?>">
 				<input type="hidden" id="sysadmin" value="<?php echo $data_api["sa"] ;?>">
 			</div>
 		</div>

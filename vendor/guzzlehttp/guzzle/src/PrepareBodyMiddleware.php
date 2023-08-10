@@ -23,8 +23,6 @@ class PrepareBodyMiddleware
     }
 
     /**
-     * @param RequestInterface $request
-     * @param array            $options
      *
      * @return PromiseInterface
      */
@@ -76,7 +74,7 @@ class PrepareBodyMiddleware
             return;
         }
 
-        $expect = isset($options['expect']) ? $options['expect'] : null;
+        $expect = $options['expect'] ?? null;
 
         // Return if disabled or if you're not using HTTP/1.1 or HTTP/2.0
         if ($expect === false || $request->getProtocolVersion() < 1.1) {
@@ -91,7 +89,7 @@ class PrepareBodyMiddleware
 
         // By default, send the expect header when the payload is > 1mb
         if ($expect === null) {
-            $expect = 1048576;
+            $expect = 1_048_576;
         }
 
         // Always add if the body cannot be rewound, the size cannot be

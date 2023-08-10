@@ -133,13 +133,13 @@ function parse_header($header)
 
     foreach (normalize_header($header) as $val) {
         $part = [];
-        foreach (preg_split('/;(?=([^"]*"[^"]*")*[^"]*$)/', $val) as $kvp) {
-            if (preg_match_all('/<[^>]+>|[^=]+/', $kvp, $matches)) {
+        foreach (preg_split('/;(?=([^"]*"[^"]*")*[^"]*$)/', (string) $val) as $kvp) {
+            if (preg_match_all('/<[^>]+>|[^=]+/', (string) $kvp, $matches)) {
                 $m = $matches[0];
                 if (isset($m[1])) {
-                    $part[trim($m[0], $trimmed)] = trim($m[1], $trimmed);
+                    $part[trim((string) $m[0], $trimmed)] = trim((string) $m[1], $trimmed);
                 } else {
-                    $part[] = trim($m[0], $trimmed);
+                    $part[] = trim((string) $m[0], $trimmed);
                 }
             }
         }
@@ -168,12 +168,12 @@ function normalize_header($header)
     $result = [];
     foreach ($header as $value) {
         foreach ((array) $value as $v) {
-            if (strpos($v, ',') === false) {
+            if (!str_contains((string) $v, ',')) {
                 $result[] = $v;
                 continue;
             }
-            foreach (preg_split('/,(?=([^"]*"[^"]*")*[^"]*$)/', $v) as $vv) {
-                $result[] = trim($vv);
+            foreach (preg_split('/,(?=([^"]*"[^"]*")*[^"]*$)/', (string) $v) as $vv) {
+                $result[] = trim((string) $vv);
             }
         }
     }
@@ -239,25 +239,21 @@ function modify_request(RequestInterface $request, array $changes)
 
     if ($request instanceof ServerRequestInterface) {
         return new ServerRequest(
-            isset($changes['method']) ? $changes['method'] : $request->getMethod(),
+            $changes['method'] ?? $request->getMethod(),
             $uri,
             $headers,
-            isset($changes['body']) ? $changes['body'] : $request->getBody(),
-            isset($changes['version'])
-                ? $changes['version']
-                : $request->getProtocolVersion(),
+            $changes['body'] ?? $request->getBody(),
+            $changes['version'] ?? $request->getProtocolVersion(),
             $request->getServerParams()
         );
     }
 
     return new Request(
-        isset($changes['method']) ? $changes['method'] : $request->getMethod(),
+        $changes['method'] ?? $request->getMethod(),
         $uri,
         $headers,
-        isset($changes['body']) ? $changes['body'] : $request->getBody(),
-        isset($changes['version'])
-            ? $changes['version']
-            : $request->getProtocolVersion()
+        $changes['body'] ?? $request->getBody(),
+        $changes['version'] ?? $request->getProtocolVersion()
     );
 }
 
@@ -331,7 +327,7 @@ function copy_to_string(StreamInterface $stream, $maxLen = -1)
 
     if ($maxLen === -1) {
         while (!$stream->eof()) {
-            $buf = $stream->read(1048576);
+            $buf = $stream->read(1_048_576);
             // Using a loose equality here to match on '' and false.
             if ($buf == null) {
                 break;
@@ -416,7 +412,7 @@ function hash(
 
     $ctx = hash_init($algo);
     while (!$stream->eof()) {
-        hash_update($ctx, $stream->read(1048576));
+        hash_update($ctx, $stream->read(1_048_576));
     }
 
     $out = hash_final($ctx, (bool) $rawOutput);
@@ -464,10 +460,10 @@ function parse_request($message)
 {
     $data = _parse_message($message);
     $matches = [];
-    if (!preg_match('/^[\S]+\s+([a-zA-Z]+:\/\/|\/).*/', $data['start-line'], $matches)) {
+    if (!preg_match('/^[\S]+\s+([a-zA-Z]+:\/\/|\/).*/', (string) $data['start-line'], $matches)) {
         throw new \InvalidArgumentException('Invalid request string');
     }
-    $parts = explode(' ', $data['start-line'], 3);
+    $parts = explode(' ', (string) $data['start-line'], 3);
     $version = isset($parts[2]) ? explode('/', $parts[2])[1] : '1.1';
 
     $request = new Request(
@@ -494,17 +490,17 @@ function parse_response($message)
     // According to https://tools.ietf.org/html/rfc7230#section-3.1.2 the space
     // between status-code and reason-phrase is required. But browsers accept
     // responses without space and reason as well.
-    if (!preg_match('/^HTTP\/.* [0-9]{3}( .*|$)/', $data['start-line'])) {
+    if (!preg_match('/^HTTP\/.* [0-9]{3}( .*|$)/', (string) $data['start-line'])) {
         throw new \InvalidArgumentException('Invalid response string');
     }
-    $parts = explode(' ', $data['start-line'], 3);
+    $parts = explode(' ', (string) $data['start-line'], 3);
 
     return new Response(
         $parts[1],
         $data['headers'],
         $data['body'],
         explode('/', $parts[0])[1],
-        isset($parts[2]) ? $parts[2] : null
+        $parts[2] ?? null
     );
 }
 
@@ -530,15 +526,13 @@ function parse_query($str, $urlEncoding = true)
     }
 
     if ($urlEncoding === true) {
-        $decoder = function ($value) {
-            return rawurldecode(str_replace('+', ' ', $value));
-        };
+        $decoder = fn($value) => rawurldecode(str_replace('+', ' ', $value));
     } elseif ($urlEncoding == PHP_QUERY_RFC3986) {
         $decoder = 'rawurldecode';
     } elseif ($urlEncoding == PHP_QUERY_RFC1738) {
         $decoder = 'urldecode';
     } else {
-        $decoder = function ($str) { return $str; };
+        $decoder = fn($str) => $str;
     }
 
     foreach (explode('&', $str) as $kvp) {
@@ -578,7 +572,7 @@ function build_query(array $params, $encoding = PHP_QUERY_RFC3986)
     }
 
     if ($encoding === false) {
-        $encoder = function ($str) { return $str; };
+        $encoder = fn($str) => $str;
     } elseif ($encoding === PHP_QUERY_RFC3986) {
         $encoder = 'rawurlencode';
     } elseif ($encoding === PHP_QUERY_RFC1738) {
@@ -619,7 +613,7 @@ function build_query(array $params, $encoding = PHP_QUERY_RFC3986)
  */
 function mimetype_from_filename($filename)
 {
-    return mimetype_from_extension(pathinfo($filename, PATHINFO_EXTENSION));
+    return mimetype_from_extension(pathinfo((string) $filename, PATHINFO_EXTENSION));
 }
 
 /**
@@ -733,11 +727,9 @@ function mimetype_from_extension($extension)
         'zip' => 'application/zip',
     ];
 
-    $extension = strtolower($extension);
+    $extension = strtolower((string) $extension);
 
-    return isset($mimetypes[$extension])
-        ? $mimetypes[$extension]
-        : null;
+    return $mimetypes[$extension] ?? null;
 }
 
 /**
@@ -772,8 +764,8 @@ function _parse_message($message)
             }
             break;
         }
-        if (strpos($line, ':')) {
-            $parts = explode(':', $line, 2);
+        if (strpos((string) $line, ':')) {
+            $parts = explode(':', (string) $line, 2);
             $key = trim($parts[0]);
             $value = isset($parts[1]) ? trim($parts[1]) : '';
             $result['headers'][$key][] = $value;
@@ -794,9 +786,7 @@ function _parse_message($message)
  */
 function _parse_request_uri($path, array $headers)
 {
-    $hostKey = array_filter(array_keys($headers), function ($k) {
-        return strtolower($k) === 'host';
-    });
+    $hostKey = array_filter(array_keys($headers), fn($k) => strtolower($k) === 'host');
 
     // If no host is found, then a full URI cannot be constructed.
     if (!$hostKey) {
@@ -804,7 +794,7 @@ function _parse_request_uri($path, array $headers)
     }
 
     $host = $headers[reset($hostKey)][0];
-    $scheme = substr($host, -4) === ':443' ? 'https' : 'http';
+    $scheme = str_ends_with((string) $host, ':443') ? 'https' : 'http';
 
     return $scheme . '://' . $host . '/' . ltrim($path, '/');
 }
@@ -815,7 +805,7 @@ function _caseless_remove($keys, array $data)
     $result = [];
 
     foreach ($keys as &$key) {
-        $key = strtolower($key);
+        $key = strtolower((string) $key);
     }
 
     foreach ($data as $k => $v) {

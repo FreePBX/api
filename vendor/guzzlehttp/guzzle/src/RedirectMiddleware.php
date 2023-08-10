@@ -17,9 +17,9 @@ use Psr\Http\Message\UriInterface;
  */
 class RedirectMiddleware
 {
-    const HISTORY_HEADER = 'X-Guzzle-Redirect-History';
+    final public const HISTORY_HEADER = 'X-Guzzle-Redirect-History';
 
-    const STATUS_HISTORY_HEADER = 'X-Guzzle-Redirect-Status-History';
+    final public const STATUS_HISTORY_HEADER = 'X-Guzzle-Redirect-Status-History';
 
     public static $defaultSettings = [
         'max'             => 5,
@@ -41,8 +41,6 @@ class RedirectMiddleware
     }
 
     /**
-     * @param RequestInterface $request
-     * @param array            $options
      *
      * @return PromiseInterface
      */
@@ -68,14 +66,10 @@ class RedirectMiddleware
         }
 
         return $fn($request, $options)
-            ->then(function (ResponseInterface $response) use ($request, $options) {
-                return $this->checkRedirect($request, $options, $response);
-            });
+            ->then(fn(ResponseInterface $response) => $this->checkRedirect($request, $options, $response));
     }
 
     /**
-     * @param RequestInterface  $request
-     * @param array             $options
      * @param ResponseInterface|PromiseInterface $response
      *
      * @return ResponseInterface|PromiseInterface
@@ -85,7 +79,7 @@ class RedirectMiddleware
         array $options,
         ResponseInterface $response
     ) {
-        if (substr($response->getStatusCode(), 0, 1) != '3'
+        if (!str_starts_with($response->getStatusCode(), '3')
             || !$response->hasHeader('Location')
         ) {
             return $response;
@@ -137,9 +131,7 @@ class RedirectMiddleware
 
     private function guardMax(RequestInterface $request, array &$options)
     {
-        $current = isset($options['__redirect_count'])
-            ? $options['__redirect_count']
-            : 0;
+        $current = $options['__redirect_count'] ?? 0;
         $options['__redirect_count'] = $current + 1;
         $max = $options['allow_redirects']['max'];
 
@@ -152,9 +144,6 @@ class RedirectMiddleware
     }
 
     /**
-     * @param RequestInterface  $request
-     * @param array             $options
-     * @param ResponseInterface $response
      *
      * @return RequestInterface
      */
@@ -203,9 +192,6 @@ class RedirectMiddleware
     /**
      * Set the appropriate URL on the request based on the location header
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param array             $protocols
      *
      * @return UriInterface
      */

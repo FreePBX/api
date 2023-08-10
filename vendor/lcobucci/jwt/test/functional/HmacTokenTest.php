@@ -20,10 +20,7 @@ use Lcobucci\JWT\Signer\Hmac\Sha512;
  */
 class HmacTokenTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Sha256
-     */
-    private $signer;
+    private ?\Lcobucci\JWT\Signer\Hmac\Sha256 $signer = null;
 
     /**
      * @before

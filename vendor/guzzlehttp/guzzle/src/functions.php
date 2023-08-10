@@ -33,16 +33,15 @@ function uri_template($template, array $variables)
 /**
  * Debug function used to describe the provided value type and class.
  *
- * @param mixed $input
  *
  * @return string Returns a string containing the type of the variable and
  *                if a class is provided, the class name.
  */
-function describe_type($input)
+function describe_type(mixed $input)
 {
     switch (gettype($input)) {
         case 'object':
-            return 'object(' . get_class($input) . ')';
+            return 'object(' . $input::class . ')';
         case 'array':
             return 'array(' . count($input) . ')';
         default:
@@ -65,7 +64,7 @@ function headers_from_lines($lines)
     $headers = [];
 
     foreach ($lines as $line) {
-        $parts = explode(':', $line, 2);
+        $parts = explode(':', (string) $line, 2);
         $headers[trim($parts[0])][] = isset($parts[1])
             ? trim($parts[1])
             : null;
@@ -81,7 +80,7 @@ function headers_from_lines($lines)
  *
  * @return resource
  */
-function debug_resource($value = null)
+function debug_resource(mixed $value = null)
 {
     if (is_resource($value)) {
         return $value;
@@ -217,7 +216,6 @@ EOT
  * Creates an associative array of lowercase header names to the actual
  * header casing.
  *
- * @param array $headers
  *
  * @return array
  */
@@ -274,8 +272,8 @@ function is_host_in_noproxy($host, array $noProxyArray)
         } else {
             // Special match if the area when prefixed with ".". Remove any
             // existing leading "." and add a new leading ".".
-            $area = '.' . ltrim($area, '.');
-            if (substr($host, -(strlen($area))) === $area) {
+            $area = '.' . ltrim((string) $area, '.');
+            if (str_ends_with($host, $area)) {
                 return true;
             }
         }
@@ -320,7 +318,7 @@ function json_decode($json, $assoc = false, $depth = 512, $options = 0)
  * @throws \InvalidArgumentException if the JSON cannot be encoded.
  * @link http://www.php.net/manual/en/function.json-encode.php
  */
-function json_encode($value, $options = 0, $depth = 512)
+function json_encode(mixed $value, $options = 0, $depth = 512)
 {
     $json = \json_encode($value, $options, $depth);
     if (JSON_ERROR_NONE !== json_last_error()) {

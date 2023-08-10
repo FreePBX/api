@@ -1,18 +1,15 @@
 <?php
 
 namespace FreePBX\modules\Api\Gql;
+
 use FreePBX\modules\Api\Includes\ApiBase;
 
 abstract class Base extends ApiBase {
 	protected $type = 'gql';
-	protected $typeContainer;
-	protected $module;
 	protected $nodeDefinition;
 	protected static $priority = 500;
-	public function __construct($freepbx,$typeContainer,$module) {
+	public function __construct($freepbx, protected $typeContainer, protected $module) {
 		$this->freepbx = $freepbx;
-		$this->typeContainer = $typeContainer;
-		$this->module = $module;
 	}
 
 	public function setNodeDefinition($nodeDefinition) {

@@ -4,10 +4,8 @@ namespace FreePBX\modules\Api\Gql\References;
 abstract class BaseType {
 	protected $state = null;
 	protected $object = null;
-	protected $name = null;
 
-	public function __construct($name) {
-		$this->name = $name;
+	public function __construct(protected $name) {
 		$this->state = [
 			'name' => $name,
 			'description' => ''

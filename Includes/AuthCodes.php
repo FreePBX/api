@@ -15,7 +15,7 @@ class AuthCodes {
 		return $sth->execute([
 			":code" => $code,
 			":aid" => $app_id,
-			":scopes" => json_encode($scopes),
+			":scopes" => json_encode($scopes, JSON_THROW_ON_ERROR),
 			":expiry" => $expiry->getTimestamp(),
 			":uid" => $uid,
 			":ip" => $ipAddress,
@@ -76,7 +76,7 @@ class AuthCodes {
 		]);
 		$code = $sth->fetch(PDO::FETCH_ASSOC);
 		if(!empty($code)) {
-			$code['scopes'] = json_decode($code['scopes'],true);
+			$code['scopes'] = json_decode((string) $code['scopes'],true, 512, JSON_THROW_ON_ERROR);
 		}
 		return $code;
 	}

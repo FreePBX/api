@@ -15,28 +15,15 @@ use Lcobucci\JWT\Claim;
  * @author Luís Otávio Cobucci Oblonczyk <lcobucci@gmail.com>
  * @since 2.0.0
  */
-class Basic implements Claim
+class Basic implements Claim, \Stringable
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var mixed
-     */
-    private $value;
-
     /**
      * Initializes the claim
      *
      * @param string $name
-     * @param mixed $value
      */
-    public function __construct($name, $value)
+    public function __construct(private $name, private readonly mixed $value)
     {
-        $this->name = $name;
-        $this->value = $value;
     }
 
     /**
@@ -66,7 +53,7 @@ class Basic implements Claim
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->value;
     }

@@ -4,10 +4,9 @@ namespace GuzzleHttp\Cookie;
 /**
  * Set-Cookie object
  */
-class SetCookie
+class SetCookie implements \Stringable
 {
-    /** @var array */
-    private static $defaults = [
+    private static array $defaults = [
         'Name'     => null,
         'Value'    => null,
         'Domain'   => null,
@@ -20,7 +19,7 @@ class SetCookie
     ];
 
     /** @var array Cookie data */
-    private $data;
+    private array $data;
 
     /**
      * Create a new SetCookie object from a string
@@ -81,7 +80,7 @@ class SetCookie
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $str = $this->data['Name'] . '=' . $this->data['Value'] . '; ';
         foreach ($this->data as $k => $v) {
@@ -311,12 +310,12 @@ class SetCookie
         }
 
         // Ensure that the cookie-path is a prefix of the request path.
-        if (0 !== strpos($requestPath, $cookiePath)) {
+        if (!str_starts_with($requestPath, $cookiePath)) {
             return false;
         }
 
         // Match if the last character of the cookie-path is "/"
-        if (substr($cookiePath, -1, 1) === '/') {
+        if (str_ends_with($cookiePath, '/')) {
             return true;
         }
 

@@ -22,12 +22,10 @@ class Encoder
     /**
      * Encodes to JSON, validating the errors
      *
-     * @param mixed $data
      * @return string
-     *
      * @throws RuntimeException When something goes wrong while encoding
      */
-    public function jsonEncode($data)
+    public function jsonEncode(mixed $data)
     {
         $json = json_encode($data);
 

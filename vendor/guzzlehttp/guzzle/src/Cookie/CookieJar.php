@@ -10,10 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 class CookieJar implements CookieJarInterface
 {
     /** @var SetCookie[] Loaded cookie data */
-    private $cookies = [];
-
-    /** @var bool */
-    private $strictMode;
+    private array $cookies = [];
 
     /**
      * @param bool $strictMode   Set to true to throw exceptions when invalid
@@ -22,10 +19,8 @@ class CookieJar implements CookieJarInterface
      *                           arrays that can be used with the SetCookie
      *                           constructor
      */
-    public function __construct($strictMode = false, $cookieArray = [])
+    public function __construct(private $strictMode = false, $cookieArray = [])
     {
-        $this->strictMode = $strictMode;
-
         foreach ($cookieArray as $cookie) {
             if (!($cookie instanceof SetCookie)) {
                 $cookie = new SetCookie($cookie);
@@ -107,9 +102,7 @@ class CookieJar implements CookieJarInterface
 
     public function toArray()
     {
-        return array_map(function (SetCookie $cookie) {
-            return $cookie->toArray();
-        }, $this->getIterator()->getArrayCopy());
+        return array_map(fn(SetCookie $cookie) => $cookie->toArray(), $this->getIterator()->getArrayCopy());
     }
 
     public function clear($domain = null, $path = null, $name = null)
@@ -120,26 +113,20 @@ class CookieJar implements CookieJarInterface
         } elseif (!$path) {
             $this->cookies = array_filter(
                 $this->cookies,
-                function (SetCookie $cookie) use ($path, $domain) {
-                    return !$cookie->matchesDomain($domain);
-                }
+                fn(SetCookie $cookie) => !$cookie->matchesDomain($domain)
             );
         } elseif (!$name) {
             $this->cookies = array_filter(
                 $this->cookies,
-                function (SetCookie $cookie) use ($path, $domain) {
-                    return !($cookie->matchesPath($path) &&
-                        $cookie->matchesDomain($domain));
-                }
+                fn(SetCookie $cookie) => !($cookie->matchesPath($path) &&
+                    $cookie->matchesDomain($domain))
             );
         } else {
             $this->cookies = array_filter(
                 $this->cookies,
-                function (SetCookie $cookie) use ($path, $domain, $name) {
-                    return !($cookie->getName() == $name &&
-                        $cookie->matchesPath($path) &&
-                        $cookie->matchesDomain($domain));
-                }
+                fn(SetCookie $cookie) => !($cookie->getName() == $name &&
+                    $cookie->matchesPath($path) &&
+                    $cookie->matchesDomain($domain))
             );
         }
     }
@@ -148,9 +135,7 @@ class CookieJar implements CookieJarInterface
     {
         $this->cookies = array_filter(
             $this->cookies,
-            function (SetCookie $cookie) {
-                return !$cookie->getDiscard() && $cookie->getExpires();
-            }
+            fn(SetCookie $cookie) => !$cookie->getDiscard() && $cookie->getExpires()
         );
     }
 
@@ -235,7 +220,7 @@ class CookieJar implements CookieJarInterface
                 if (!$sc->getDomain()) {
                     $sc->setDomain($request->getUri()->getHost());
                 }
-                if (0 !== strpos($sc->getPath(), '/')) {
+                if (!str_starts_with($sc->getPath(), '/')) {
                     $sc->setPath($this->getCookiePathFromRequest($request));
                 }
                 $this->setCookie($sc);
@@ -248,7 +233,6 @@ class CookieJar implements CookieJarInterface
      *
      * @link https://tools.ietf.org/html/rfc6265#section-5.1.4
      *
-     * @param RequestInterface $request
      * @return string
      */
     private function getCookiePathFromRequest(RequestInterface $request)
@@ -257,7 +241,7 @@ class CookieJar implements CookieJarInterface
         if (''  === $uriPath) {
             return '/';
         }
-        if (0 !== strpos($uriPath, '/')) {
+        if (!str_starts_with($uriPath, '/')) {
             return '/';
         }
         if ('/' === $uriPath) {
@@ -297,8 +281,6 @@ class CookieJar implements CookieJarInterface
     /**
      * If a cookie already exists and the server asks to set it again with a
      * null value, the cookie must be deleted.
-     *
-     * @param SetCookie $cookie
      */
     private function removeCookieIfEmpty(SetCookie $cookie)
     {

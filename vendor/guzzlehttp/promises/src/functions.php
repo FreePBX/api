@@ -42,13 +42,11 @@ function queue(TaskQueueInterface $assign = null)
 function task(callable $task)
 {
     $queue = queue();
-    $promise = new Promise([$queue, 'run']);
+    $promise = new Promise($queue->run(...));
     $queue->add(function () use ($task, $promise) {
         try {
             $promise->resolve($task());
-        } catch (\Throwable $e) {
-            $promise->reject($e);
-        } catch (\Exception $e) {
+        } catch (\Throwable|\Exception $e) {
             $promise->reject($e);
         }
     });
@@ -63,7 +61,7 @@ function task(callable $task)
  *
  * @return PromiseInterface
  */
-function promise_for($value)
+function promise_for(mixed $value)
 {
     if ($value instanceof PromiseInterface) {
         return $value;
@@ -74,7 +72,7 @@ function promise_for($value)
         $wfn = method_exists($value, 'wait') ? [$value, 'wait'] : null;
         $cfn = method_exists($value, 'cancel') ? [$value, 'cancel'] : null;
         $promise = new Promise($wfn, $cfn);
-        $value->then([$promise, 'resolve'], [$promise, 'reject']);
+        $value->then($promise->resolve(...), $promise->reject(...));
         return $promise;
     }
 
@@ -89,7 +87,7 @@ function promise_for($value)
  *
  * @return PromiseInterface
  */
-function rejection_for($reason)
+function rejection_for(mixed $reason)
 {
     if ($reason instanceof PromiseInterface) {
         return $reason;
@@ -101,11 +99,10 @@ function rejection_for($reason)
 /**
  * Create an exception for a rejected promise value.
  *
- * @param mixed $reason
  *
  * @return \Exception|\Throwable
  */
-function exception_for($reason)
+function exception_for(mixed $reason)
 {
     return $reason instanceof \Exception || $reason instanceof \Throwable
         ? $reason
@@ -115,11 +112,10 @@ function exception_for($reason)
 /**
  * Returns an iterator for the given value.
  *
- * @param mixed $value
  *
  * @return \Iterator
  */
-function iter_for($value)
+function iter_for(mixed $value)
 {
     if ($value instanceof \Iterator) {
         return $value;
@@ -153,9 +149,7 @@ function inspect(PromiseInterface $promise)
         ];
     } catch (RejectionException $e) {
         return ['state' => PromiseInterface::REJECTED, 'reason' => $e->getReason()];
-    } catch (\Throwable $e) {
-        return ['state' => PromiseInterface::REJECTED, 'reason' => $e];
-    } catch (\Exception $e) {
+    } catch (\Throwable|\Exception $e) {
         return ['state' => PromiseInterface::REJECTED, 'reason' => $e];
     }
 }
@@ -194,7 +188,7 @@ function inspect_all($promises)
  * @throws \Exception on error
  * @throws \Throwable on error in PHP >=7
  */
-function unwrap($promises)
+function unwrap(mixed $promises)
 {
     $results = [];
     foreach ($promises as $key => $promise) {
@@ -216,7 +210,7 @@ function unwrap($promises)
  *
  * @return PromiseInterface
  */
-function all($promises)
+function all(mixed $promises)
 {
     $results = [];
     return each(
@@ -249,7 +243,7 @@ function all($promises)
  *
  * @return PromiseInterface
  */
-function some($count, $promises)
+function some($count, mixed $promises)
 {
     $results = [];
     $rejections = [];
@@ -290,9 +284,9 @@ function some($count, $promises)
  *
  * @return PromiseInterface
  */
-function any($promises)
+function any(mixed $promises)
 {
-    return some(1, $promises)->then(function ($values) { return $values[0]; });
+    return some(1, $promises)->then(fn($values) => $values[0]);
 }
 
 /**
@@ -306,7 +300,7 @@ function any($promises)
  * @return PromiseInterface
  * @see GuzzleHttp\Promise\inspect for the inspection state array format.
  */
-function settle($promises)
+function settle(mixed $promises)
 {
     $results = [];
 
@@ -344,7 +338,7 @@ function settle($promises)
  * @return PromiseInterface
  */
 function each(
-    $iterable,
+    mixed $iterable,
     callable $onFulfilled = null,
     callable $onRejected = null
 ) {
@@ -370,7 +364,7 @@ function each(
  * @return PromiseInterface
  */
 function each_limit(
-    $iterable,
+    mixed $iterable,
     $concurrency,
     callable $onFulfilled = null,
     callable $onRejected = null
@@ -387,14 +381,12 @@ function each_limit(
  * is rejected. If any promise is rejected, then the aggregate promise is
  * rejected with the encountered rejection.
  *
- * @param mixed        $iterable
  * @param int|callable $concurrency
- * @param callable     $onFulfilled
  *
  * @return PromiseInterface
  */
 function each_limit_all(
-    $iterable,
+    mixed $iterable,
     $concurrency,
     callable $onFulfilled = null
 ) {
@@ -411,7 +403,6 @@ function each_limit_all(
 /**
  * Returns true if a promise is fulfilled.
  *
- * @param PromiseInterface $promise
  *
  * @return bool
  */
@@ -423,7 +414,6 @@ function is_fulfilled(PromiseInterface $promise)
 /**
  * Returns true if a promise is rejected.
  *
- * @param PromiseInterface $promise
  *
  * @return bool
  */
@@ -435,7 +425,6 @@ function is_rejected(PromiseInterface $promise)
 /**
  * Returns true if a promise is fulfilled or rejected.
  *
- * @param PromiseInterface $promise
  *
  * @return bool
  */
@@ -447,7 +436,6 @@ function is_settled(PromiseInterface $promise)
 /**
  * @see Coroutine
  *
- * @param callable $generatorFn
  *
  * @return PromiseInterface
  */

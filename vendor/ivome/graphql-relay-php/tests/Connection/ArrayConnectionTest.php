@@ -17,43 +17,14 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $connection = ArrayConnection::connectionFromArray($this->letters, []);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'A',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    3 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                    4 =>
-                        array (
-                            'node' => 'E',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'A', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjA='], 1 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 2 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 3 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM='], 4 =>
+                ['node' => 'E', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -62,28 +33,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $connection = ArrayConnection::connectionFromArray($this->letters, ['first' => 2]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'A',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'A', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjA='], 1 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -92,43 +46,14 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $connection = ArrayConnection::connectionFromArray($this->letters, ['first' => 10]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'A',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    3 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                    4 =>
-                        array (
-                            'node' => 'E',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'A', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjA='], 1 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 2 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 3 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM='], 4 =>
+                ['node' => 'E', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -137,28 +62,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $connection = ArrayConnection::connectionFromArray($this->letters, ['last' => 2]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'E',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                    'hasPreviousPage' => true,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM='], 1 =>
+                ['node' => 'E', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'hasPreviousPage' => true, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -167,43 +75,14 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $connection = ArrayConnection::connectionFromArray($this->letters, ['last' => 10]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'A',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    3 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                    4 =>
-                        array (
-                            'node' => 'E',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'A', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjA='], 1 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 2 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 3 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM='], 4 =>
+                ['node' => 'E', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -212,28 +91,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $connection = ArrayConnection::connectionFromArray($this->letters, ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjE=']);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 1 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($connection, $expected);
     }
@@ -242,33 +104,12 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $connection = ArrayConnection::connectionFromArray($this->letters, ['first' => 10, 'after' => 'YXJyYXljb25uZWN0aW9uOjE=']);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'E',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 1 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM='], 2 =>
+                ['node' => 'E', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -280,28 +121,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'before' => 'YXJyYXljb25uZWN0aW9uOjM='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'hasPreviousPage' => true,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 1 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'hasPreviousPage' => true, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -313,33 +137,12 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'before' => 'YXJyYXljb25uZWN0aW9uOjM='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'A',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'A', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjA='], 1 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 2 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -352,28 +155,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'before' => 'YXJyYXljb25uZWN0aW9uOjQ='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 1 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -386,33 +172,12 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'before' => 'YXJyYXljb25uZWN0aW9uOjQ='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 1 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 2 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -425,33 +190,12 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'before' => 'YXJyYXljb25uZWN0aW9uOjQ='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 1 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 2 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -464,28 +208,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'before' => 'YXJyYXljb25uZWN0aW9uOjQ='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'hasPreviousPage' => true,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 1 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'hasPreviousPage' => true, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -498,33 +225,12 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'before' => 'YXJyYXljb25uZWN0aW9uOjQ='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 1 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 2 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -537,33 +243,12 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'before' => 'YXJyYXljb25uZWN0aW9uOjQ='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 1 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 2 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -574,18 +259,9 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'first' => 0
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => NULL,
-                    'endCursor' => NULL,
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [], 'pageInfo' =>
+            ['startCursor' => NULL, 'endCursor' => NULL, 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -597,43 +273,14 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'after' => 'invalid'
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'A',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    3 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                    4 =>
-                        array (
-                            'node' => 'E',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'A', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjA='], 1 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 2 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 3 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM='], 4 =>
+                ['node' => 'E', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -645,43 +292,14 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'after' => 'YXJyYXljb25uZWN0aW9uOi0xCg=='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'A',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    2 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    3 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                    4 =>
-                        array (
-                            'node' => 'E',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'A', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjA='], 1 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 2 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 3 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM='], 4 =>
+                ['node' => 'E', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjA=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -693,18 +311,9 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             'after' => 'YXJyYXljb25uZWN0aW9uOjQ='
         ]);
 
-        $expected = array (
-            'edges' =>
-                array (
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => NULL,
-                    'endCursor' => NULL,
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [], 'pageInfo' =>
+            ['startCursor' => NULL, 'endCursor' => NULL, 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -737,28 +346,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 1 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -777,28 +369,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'B',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'B', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjE='], 1 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -817,23 +392,10 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -852,23 +414,10 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -887,28 +436,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'E',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => false,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM='], 1 =>
+                ['node' => 'E', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'hasPreviousPage' => false, 'hasNextPage' => false]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -927,28 +459,11 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'C',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                        ),
-                    1 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'C', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjI='], 1 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }
@@ -967,23 +482,10 @@ class ArrayConnectionTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $expected = array (
-            'edges' =>
-                array (
-                    0 =>
-                        array (
-                            'node' => 'D',
-                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                        ),
-                ),
-            'pageInfo' =>
-                array (
-                    'startCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                    'hasPreviousPage' => false,
-                    'hasNextPage' => true,
-                ),
-        );
+        $expected = ['edges' =>
+            [0 =>
+                ['node' => 'D', 'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=']], 'pageInfo' =>
+            ['startCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'endCursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'hasPreviousPage' => false, 'hasNextPage' => true]];
 
         $this->assertEquals($expected, $connection);
     }

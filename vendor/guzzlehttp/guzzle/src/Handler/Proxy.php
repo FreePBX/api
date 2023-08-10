@@ -22,11 +22,9 @@ class Proxy
         callable $default,
         callable $sync
     ) {
-        return function (RequestInterface $request, array $options) use ($default, $sync) {
-            return empty($options[RequestOptions::SYNCHRONOUS])
-                ? $default($request, $options)
-                : $sync($request, $options);
-        };
+        return fn(RequestInterface $request, array $options) => empty($options[RequestOptions::SYNCHRONOUS])
+            ? $default($request, $options)
+            : $sync($request, $options);
     }
 
     /**
@@ -46,10 +44,8 @@ class Proxy
         callable $default,
         callable $streaming
     ) {
-        return function (RequestInterface $request, array $options) use ($default, $streaming) {
-            return empty($options['stream'])
-                ? $default($request, $options)
-                : $streaming($request, $options);
-        };
+        return fn(RequestInterface $request, array $options) => empty($options['stream'])
+            ? $default($request, $options)
+            : $streaming($request, $options);
     }
 }

@@ -17,10 +17,8 @@ class ValidationData
 {
     /**
      * The list of things to be validated
-     *
-     * @var array
      */
-    private $items;
+    private array $items;
 
     /**
      * Initializes the object
@@ -103,7 +101,7 @@ class ValidationData
      */
     public function get($name)
     {
-        return isset($this->items[$name]) ? $this->items[$name] : null;
+        return $this->items[$name] ?? null;
     }
 
     /**

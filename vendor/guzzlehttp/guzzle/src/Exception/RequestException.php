@@ -11,37 +11,26 @@ use Psr\Http\Message\UriInterface;
  */
 class RequestException extends TransferException
 {
-    /** @var RequestInterface */
-    private $request;
-
-    /** @var ResponseInterface */
-    private $response;
-
-    /** @var array */
-    private $handlerContext;
+    private ?\Psr\Http\Message\ResponseInterface $response = null;
 
     public function __construct(
         $message,
-        RequestInterface $request,
+        private readonly RequestInterface $request,
         ResponseInterface $response = null,
         \Exception $previous = null,
-        array $handlerContext = []
+        private readonly array $handlerContext = []
     ) {
         // Set the code of the exception if the response is set and not future.
         $code = $response && !($response instanceof PromiseInterface)
             ? $response->getStatusCode()
             : 0;
         parent::__construct($message, $code, $previous);
-        $this->request = $request;
         $this->response = $response;
-        $this->handlerContext = $handlerContext;
     }
 
     /**
      * Wrap non-RequestExceptions with a RequestException
      *
-     * @param RequestInterface $request
-     * @param \Exception       $e
      *
      * @return RequestException
      */
@@ -87,7 +76,7 @@ class RequestException extends TransferException
             $className = ServerException::class;
         } else {
             $label = 'Unsuccessful request';
-            $className = __CLASS__;
+            $className = self::class;
         }
 
         $uri = $request->getUri();

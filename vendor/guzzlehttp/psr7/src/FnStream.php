@@ -9,11 +9,8 @@ use Psr\Http\Message\StreamInterface;
  * Allows for easy testing and extension of a provided stream without needing
  * to create a concrete class for a simple extension point.
  */
-class FnStream implements StreamInterface
+class FnStream implements StreamInterface, \Stringable
 {
-    /** @var array */
-    private $methods;
-
     /** @var array Methods that must be implemented in the given array */
     private static $slots = ['__toString', 'close', 'detach', 'rewind',
         'getSize', 'tell', 'eof', 'isSeekable', 'seek', 'isWritable', 'write',
@@ -22,10 +19,8 @@ class FnStream implements StreamInterface
     /**
      * @param array $methods Hash of method name to a callable.
      */
-    public function __construct(array $methods)
+    public function __construct(private readonly array $methods)
     {
-        $this->methods = $methods;
-
         // Create the functions on the class
         foreach ($methods as $name => $fn) {
             $this->{'_fn_' . $name} = $fn;
@@ -38,7 +33,7 @@ class FnStream implements StreamInterface
      */
     public function __get($name)
     {
-        throw new \BadMethodCallException(str_replace('_fn_', '', $name)
+        throw new \BadMethodCallException(str_replace('_fn_', '', (string) $name)
             . '() is not implemented in the FnStream');
     }
 
@@ -72,9 +67,9 @@ class FnStream implements StreamInterface
         return new self($methods);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return call_user_func($this->_fn___toString);
+        return (string) call_user_func($this->_fn___toString);
     }
 
     public function close()

@@ -75,12 +75,12 @@ class RestApiBaseTestCase extends PHPUnit_Framework_TestCase
             ->setNotBefore(time())
             ->setExpiration(time() + 1440)
             ->setSubject(null)
-            ->set('scopes', array('rest'))
+            ->set('scopes', ['rest'])
             ->sign(new Sha256(), $daKey)
             ->getToken();
 
         $ipAddress = '127.0.0.1';
-        $scopes = array('rest');
+        $scopes = ['rest'];
         $expiry = new \DateTime();
         $expiry->setTimestamp($expireTimestamp);
         self::$api->accessTokens->add($token, $application['id'], $ipAddress, $scopes, $expiry);

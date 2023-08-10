@@ -5,13 +5,9 @@ namespace FreePBX\modules\Api\Includes;
 abstract class ApiBase {
 	protected $validScopes = [];
 
-	protected $freepbx;
-	protected $module;
-
-	public function __construct($freepbx,$module) {
-		$this->freepbx = $freepbx;
-		$this->module = $module;
-	}
+	public function __construct(protected $freepbx, protected $module)
+ {
+ }
 
 	public static function getScopes() {
 		return [];
@@ -47,7 +43,7 @@ abstract class ApiBase {
 			throw new \Exception("Unknown module!");
 		}
 
-		$parts = explode(":",$scope);
+		$parts = explode(":",(string) $scope);
 		//all of api type + module
 		if(in_array($this->type.":".$this->module,$this->validScopes)) {
 			return true;

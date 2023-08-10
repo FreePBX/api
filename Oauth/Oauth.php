@@ -16,7 +16,7 @@ class Oauth {
 		$this->privateKey = $privateKey;
 	}
 	public function access_token() {
-		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',$_SERVER['QUERY_STRING']);
+		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',(string) $_SERVER['QUERY_STRING']);
 		$_SERVER['REQUEST_URI'] = '/'.$_GET['command'].(!empty($_GET['route']) ? '/'.$_GET['route'] : '');
 
 		$config = [
@@ -134,7 +134,7 @@ class Oauth {
 						"image" => $freepbx['brand_image'],
 						"flattenedScopes" => $freepbx['flattenedScopes'],
 						"scopes" => $authRequest->getScopes(),
-						"visualScopes" => $api->getVisualScopes(json_decode(json_encode($authRequest->getScopes()),true))
+						"visualScopes" => $api->getVisualScopes(json_decode(json_encode($authRequest->getScopes(), JSON_THROW_ON_ERROR),true, 512, JSON_THROW_ON_ERROR))
 					]));
 					return;
 				}

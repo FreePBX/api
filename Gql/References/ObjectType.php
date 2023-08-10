@@ -76,7 +76,7 @@ class ObjectType extends BaseType {
 	 * @param  mixed        $fields [description]
 	 * @return [type]                [description]
 	 */
-	public function replaceFields($fields) {
+	public function replaceFields(mixed $fields) {
 		if($this->isObject()) {
 			throw new \Exception("Can not add a field after objectifying!");
 		}

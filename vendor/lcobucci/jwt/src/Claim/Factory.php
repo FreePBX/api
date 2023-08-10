@@ -26,20 +26,18 @@ class Factory
 
     /**
      * Initializes the factory, registering the default callbacks
-     *
-     * @param array $callbacks
      */
     public function __construct(array $callbacks = [])
     {
         $this->callbacks = array_merge(
             [
-                'iat' => [$this, 'createLesserOrEqualsTo'],
-                'nbf' => [$this, 'createLesserOrEqualsTo'],
-                'exp' => [$this, 'createGreaterOrEqualsTo'],
-                'iss' => [$this, 'createEqualsTo'],
-                'aud' => [$this, 'createEqualsTo'],
-                'sub' => [$this, 'createEqualsTo'],
-                'jti' => [$this, 'createEqualsTo']
+                'iat' => $this->createLesserOrEqualsTo(...),
+                'nbf' => $this->createLesserOrEqualsTo(...),
+                'exp' => $this->createGreaterOrEqualsTo(...),
+                'iss' => $this->createEqualsTo(...),
+                'aud' => $this->createEqualsTo(...),
+                'sub' => $this->createEqualsTo(...),
+                'jti' => $this->createEqualsTo(...)
             ],
             $callbacks
         );
@@ -49,11 +47,10 @@ class Factory
      * Create a new claim
      *
      * @param string $name
-     * @param mixed $value
      *
      * @return Claim
      */
-    public function create($name, $value)
+    public function create($name, mixed $value)
     {
         if (!empty($this->callbacks[$name])) {
             return call_user_func($this->callbacks[$name], $name, $value);
@@ -66,11 +63,10 @@ class Factory
      * Creates a claim that can be compared (greator or equals)
      *
      * @param string $name
-     * @param mixed $value
      *
      * @return GreaterOrEqualsTo
      */
-    private function createGreaterOrEqualsTo($name, $value)
+    private function createGreaterOrEqualsTo($name, mixed $value)
     {
         return new GreaterOrEqualsTo($name, $value);
     }
@@ -79,11 +75,10 @@ class Factory
      * Creates a claim that can be compared (greator or equals)
      *
      * @param string $name
-     * @param mixed $value
      *
      * @return LesserOrEqualsTo
      */
-    private function createLesserOrEqualsTo($name, $value)
+    private function createLesserOrEqualsTo($name, mixed $value)
     {
         return new LesserOrEqualsTo($name, $value);
     }
@@ -92,11 +87,10 @@ class Factory
      * Creates a claim that can be compared (equals)
      *
      * @param string $name
-     * @param mixed $value
      *
      * @return EqualsTo
      */
-    private function createEqualsTo($name, $value)
+    private function createEqualsTo($name, mixed $value)
     {
         return new EqualsTo($name, $value);
     }
@@ -105,11 +99,10 @@ class Factory
      * Creates a basic claim
      *
      * @param string $name
-     * @param mixed $value
      *
      * @return Basic
      */
-    private function createBasic($name, $value)
+    private function createBasic($name, mixed $value)
     {
         return new Basic($name, $value);
     }

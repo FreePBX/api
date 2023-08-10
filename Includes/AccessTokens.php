@@ -15,7 +15,7 @@ class AccessTokens {
 		return $sth->execute([
 			":token" => $token,
 			":aid" => $app_id,
-			":scopes" => json_encode($scopes),
+			":scopes" => json_encode($scopes, JSON_THROW_ON_ERROR),
 			":expiry" => $expiry->getTimestamp(),
 			":uid" => $uid,
 			":ip" => $ipAddress,
@@ -78,7 +78,7 @@ class AccessTokens {
 		]);
 		$tokenResult = $sth->fetch(PDO::FETCH_ASSOC);
 		if(!empty($tokenResult)) {
-			$tokenResult['scopes'] = json_decode($tokenResult['scopes'], true);
+			$tokenResult['scopes'] = json_decode((string) $tokenResult['scopes'], true, 512, JSON_THROW_ON_ERROR);
 		}
 		return $tokenResult;
 	}

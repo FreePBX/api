@@ -25,13 +25,13 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new Factory(['test' => $callback]);
 
         $expected = [
-            'iat' => [$factory, 'createLesserOrEqualsTo'],
-            'nbf' => [$factory, 'createLesserOrEqualsTo'],
-            'exp' => [$factory, 'createGreaterOrEqualsTo'],
-            'iss' => [$factory, 'createEqualsTo'],
-            'aud' => [$factory, 'createEqualsTo'],
-            'sub' => [$factory, 'createEqualsTo'],
-            'jti' => [$factory, 'createEqualsTo'],
+            'iat' => $factory->createLesserOrEqualsTo(...),
+            'nbf' => $factory->createLesserOrEqualsTo(...),
+            'exp' => $factory->createGreaterOrEqualsTo(...),
+            'iss' => $factory->createEqualsTo(...),
+            'aud' => $factory->createEqualsTo(...),
+            'sub' => $factory->createEqualsTo(...),
+            'jti' => $factory->createEqualsTo(...),
             'test' => $callback
         ];
 

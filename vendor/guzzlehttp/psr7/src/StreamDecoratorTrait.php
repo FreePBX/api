@@ -142,7 +142,7 @@ trait StreamDecoratorTrait
      * @return StreamInterface
      * @throws \BadMethodCallException
      */
-    protected function createStream()
+    protected function createStream(): never
     {
         throw new \BadMethodCallException('Not implemented');
     }

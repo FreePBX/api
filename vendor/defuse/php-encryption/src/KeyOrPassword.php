@@ -6,14 +6,11 @@ use Defuse\Crypto\Exception as Ex;
 
 final class KeyOrPassword
 {
-    const PBKDF2_ITERATIONS    = 100000;
-    const SECRET_TYPE_KEY      = 1;
-    const SECRET_TYPE_PASSWORD = 2;
+    public const PBKDF2_ITERATIONS    = 100000;
+    public const SECRET_TYPE_KEY      = 1;
+    public const SECRET_TYPE_PASSWORD = 2;
 
-    /**
-     * @var int
-     */
-    private $secret_type = 0;
+    private int $secret_type = 0;
 
     /**
      * @var Key|string
@@ -23,7 +20,6 @@ final class KeyOrPassword
     /**
      * Initializes an instance of KeyOrPassword from a key.
      *
-     * @param Key $key
      *
      * @return KeyOrPassword
      */
@@ -133,7 +129,7 @@ final class KeyOrPassword
      * @param int   $secret_type
      * @param mixed $secret      (either a Key or a password string)
      */
-    private function __construct($secret_type, $secret)
+    private function __construct($secret_type, mixed $secret)
     {
         // The constructor is private, so these should never throw.
         if ($secret_type === self::SECRET_TYPE_KEY) {

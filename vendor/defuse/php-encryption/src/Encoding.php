@@ -6,9 +6,9 @@ use Defuse\Crypto\Exception as Ex;
 
 final class Encoding
 {
-    const CHECKSUM_BYTE_SIZE     = 32;
-    const CHECKSUM_HASH_ALGO     = 'sha256';
-    const SERIALIZE_HEADER_BYTES = 4;
+    public const CHECKSUM_BYTE_SIZE     = 32;
+    public const CHECKSUM_HASH_ALGO     = 'sha256';
+    public const SERIALIZE_HEADER_BYTES = 4;
 
     /**
      * Converts a byte string to a hexadecimal string without leaking

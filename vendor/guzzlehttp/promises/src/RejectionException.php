@@ -8,17 +8,12 @@ namespace GuzzleHttp\Promise;
  */
 class RejectionException extends \RuntimeException
 {
-    /** @var mixed Rejection reason. */
-    private $reason;
-
     /**
      * @param mixed $reason       Rejection reason.
      * @param string $description Optional description
      */
-    public function __construct($reason, $description = null)
+    public function __construct(private $reason, $description = null)
     {
-        $this->reason = $reason;
-
         $message = 'The promise was rejected';
 
         if ($description) {

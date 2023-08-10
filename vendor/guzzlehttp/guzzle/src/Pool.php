@@ -18,8 +18,7 @@ use GuzzleHttp\Promise\EachPromise;
  */
 class Pool implements PromisorInterface
 {
-    /** @var EachPromise */
-    private $each;
+    private readonly \GuzzleHttp\Promise\EachPromise $each;
 
     /**
      * @param ClientInterface $client   Client used to send the requests.

@@ -39,12 +39,12 @@ class MessageFormatter
      * @link http://httpd.apache.org/docs/2.4/logs.html#common
      * @var string
      */
-    const CLF = "{hostname} {req_header_User-Agent} - [{date_common_log}] \"{method} {target} HTTP/{version}\" {code} {res_header_Content-Length}";
-    const DEBUG = ">>>>>>>>\n{request}\n<<<<<<<<\n{response}\n--------\n{error}";
-    const SHORT = '[{ts}] "{method} {target} HTTP/{version}" {code}';
+    final public const CLF = "{hostname} {req_header_User-Agent} - [{date_common_log}] \"{method} {target} HTTP/{version}\" {code} {res_header_Content-Length}";
+    final public const DEBUG = ">>>>>>>>\n{request}\n<<<<<<<<\n{response}\n--------\n{error}";
+    final public const SHORT = '[{ts}] "{method} {target} HTTP/{version}" {code}';
 
     /** @var string Template used to format log messages */
-    private $template;
+    private readonly string $template;
 
     /**
      * @param string $template Log message template
@@ -152,9 +152,9 @@ class MessageFormatter
                         break;
                     default:
                         // handle prefixed dynamic headers
-                        if (strpos($matches[1], 'req_header_') === 0) {
+                        if (str_starts_with($matches[1], 'req_header_')) {
                             $result = $request->getHeaderLine(substr($matches[1], 11));
-                        } elseif (strpos($matches[1], 'res_header_') === 0) {
+                        } elseif (str_starts_with($matches[1], 'res_header_')) {
                             $result = $response
                                 ? $response->getHeaderLine(substr($matches[1], 11))
                                 : 'NULL';

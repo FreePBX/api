@@ -27,25 +27,12 @@ class StarWarsConnectionTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'rebels' =>
-                array (
-                    'name' => 'Alliance to Restore the Republic',
-                    'ships' =>
-                        array (
-                            'edges' =>
-                                array (
-                                    0 =>
-                                        array (
-                                            'node' =>
-                                                array (
-                                                    'name' => 'X-Wing',
-                                                ),
-                                        ),
-                                ),
-                        ),
-                ),
-        );
+        $expected = ['rebels' =>
+            ['name' => 'Alliance to Restore the Republic', 'ships' =>
+                ['edges' =>
+                    [0 =>
+                        ['node' =>
+                            ['name' => 'X-Wing']]]]]];
 
         $this->assertValidQuery($query, $expected);
     }
@@ -66,34 +53,14 @@ class StarWarsConnectionTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'rebels' =>
-                array (
-                    'name' => 'Alliance to Restore the Republic',
-                    'ships' =>
-                        array (
-                            'edges' =>
-                                array (
-                                    0 =>
-                                        array (
-                                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjA=',
-                                            'node' =>
-                                                array (
-                                                    'name' => 'X-Wing',
-                                                ),
-                                        ),
-                                    1 =>
-                                        array (
-                                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjE=',
-                                            'node' =>
-                                                array (
-                                                    'name' => 'Y-Wing',
-                                                ),
-                                        ),
-                                ),
-                        ),
-                ),
-        );
+        $expected = ['rebels' =>
+            ['name' => 'Alliance to Restore the Republic', 'ships' =>
+                ['edges' =>
+                    [0 =>
+                        ['cursor' => 'YXJyYXljb25uZWN0aW9uOjA=', 'node' =>
+                            ['name' => 'X-Wing']], 1 =>
+                        ['cursor' => 'YXJyYXljb25uZWN0aW9uOjE=', 'node' =>
+                            ['name' => 'Y-Wing']]]]]];
 
         $this->assertValidQuery($query, $expected);
     }
@@ -114,42 +81,16 @@ class StarWarsConnectionTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'rebels' =>
-                array (
-                    'name' => 'Alliance to Restore the Republic',
-                    'ships' =>
-                        array (
-                            'edges' =>
-                                array (
-                                    0 =>
-                                        array (
-                                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjI=',
-                                            'node' =>
-                                                array (
-                                                    'name' => 'A-Wing',
-                                                ),
-                                        ),
-                                    1 =>
-                                        array (
-                                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjM=',
-                                            'node' =>
-                                                array (
-                                                    'name' => 'Millenium Falcon',
-                                                ),
-                                        ),
-                                    2 =>
-                                        array (
-                                            'cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=',
-                                            'node' =>
-                                                array (
-                                                    'name' => 'Home One',
-                                                ),
-                                        ),
-                                ),
-                        ),
-                ),
-        );
+        $expected = ['rebels' =>
+            ['name' => 'Alliance to Restore the Republic', 'ships' =>
+                ['edges' =>
+                    [0 =>
+                        ['cursor' => 'YXJyYXljb25uZWN0aW9uOjI=', 'node' =>
+                            ['name' => 'A-Wing']], 1 =>
+                        ['cursor' => 'YXJyYXljb25uZWN0aW9uOjM=', 'node' =>
+                            ['name' => 'Millenium Falcon']], 2 =>
+                        ['cursor' => 'YXJyYXljb25uZWN0aW9uOjQ=', 'node' =>
+                            ['name' => 'Home One']]]]]];
 
         $this->assertValidQuery($query, $expected);
     }
@@ -170,18 +111,10 @@ class StarWarsConnectionTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = array (
-            'rebels' =>
-                array (
-                    'name' => 'Alliance to Restore the Republic',
-                    'ships' =>
-                        array (
-                            'edges' =>
-                                array (
-                                ),
-                        ),
-                ),
-        );
+        $expected = ['rebels' =>
+            ['name' => 'Alliance to Restore the Republic', 'ships' =>
+                ['edges' =>
+                    []]]];
 
         $this->assertValidQuery($query, $expected);
     }
@@ -213,67 +146,24 @@ class StarWarsConnectionTest extends \PHPUnit_Framework_TestCase
               }
             }
           }';
-        $expected = array (
-            'rebels' =>
-                array (
-                    'name' => 'Alliance to Restore the Republic',
-                    'originalShips' =>
-                        array (
-                            'edges' =>
-                                array (
-                                    0 =>
-                                        array (
-                                            'node' =>
-                                                array (
-                                                    'name' => 'X-Wing',
-                                                ),
-                                        ),
-                                    1 =>
-                                        array (
-                                            'node' =>
-                                                array (
-                                                    'name' => 'Y-Wing',
-                                                ),
-                                        ),
-                                ),
-                            'pageInfo' =>
-                                array (
-                                    'hasNextPage' => true,
-                                ),
-                        ),
-                    'moreShips' =>
-                        array (
-                            'edges' =>
-                                array (
-                                    0 =>
-                                        array (
-                                            'node' =>
-                                                array (
-                                                    'name' => 'A-Wing',
-                                                ),
-                                        ),
-                                    1 =>
-                                        array (
-                                            'node' =>
-                                                array (
-                                                    'name' => 'Millenium Falcon',
-                                                ),
-                                        ),
-                                    2 =>
-                                        array (
-                                            'node' =>
-                                                array (
-                                                    'name' => 'Home One',
-                                                ),
-                                        ),
-                                ),
-                            'pageInfo' =>
-                                array (
-                                    'hasNextPage' => false,
-                                ),
-                        ),
-                ),
-        );
+        $expected = ['rebels' =>
+            ['name' => 'Alliance to Restore the Republic', 'originalShips' =>
+                ['edges' =>
+                    [0 =>
+                        ['node' =>
+                            ['name' => 'X-Wing']], 1 =>
+                        ['node' =>
+                            ['name' => 'Y-Wing']]], 'pageInfo' =>
+                    ['hasNextPage' => true]], 'moreShips' =>
+                ['edges' =>
+                    [0 =>
+                        ['node' =>
+                            ['name' => 'A-Wing']], 1 =>
+                        ['node' =>
+                            ['name' => 'Millenium Falcon']], 2 =>
+                        ['node' =>
+                            ['name' => 'Home One']]], 'pageInfo' =>
+                    ['hasNextPage' => false]]]];
 
         $this->assertValidQuery($query, $expected);
     }

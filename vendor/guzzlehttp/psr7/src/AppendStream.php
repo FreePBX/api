@@ -8,15 +8,15 @@ use Psr\Http\Message\StreamInterface;
  *
  * This is a read-only stream decorator.
  */
-class AppendStream implements StreamInterface
+class AppendStream implements StreamInterface, \Stringable
 {
     /** @var StreamInterface[] Streams being decorated */
-    private $streams = [];
+    private array $streams = [];
 
-    private $seekable = true;
-    private $current = 0;
-    private $pos = 0;
-    private $detached = false;
+    private bool $seekable = true;
+    private int $current = 0;
+    private int $pos = 0;
+    private bool $detached = false;
 
     /**
      * @param StreamInterface[] $streams Streams to decorate. Each stream must
@@ -29,12 +29,12 @@ class AppendStream implements StreamInterface
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         try {
             $this->rewind();
             return $this->getContents();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return '';
         }
     }
@@ -221,7 +221,7 @@ class AppendStream implements StreamInterface
         return $this->seekable;
     }
 
-    public function write($string)
+    public function write($string): never
     {
         throw new \RuntimeException('Cannot write to an AppendStream');
     }

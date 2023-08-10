@@ -11,7 +11,7 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @var int[]
      */
-    private static $errors = [
+    private static array $errors = [
         UPLOAD_ERR_OK,
         UPLOAD_ERR_INI_SIZE,
         UPLOAD_ERR_FORM_SIZE,
@@ -42,10 +42,7 @@ class UploadedFile implements UploadedFileInterface
      */
     private $file;
 
-    /**
-     * @var bool
-     */
-    private $moved = false;
+    private bool $moved = false;
 
     /**
      * @var int
@@ -55,7 +52,7 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @var StreamInterface|null
      */
-    private $stream;
+    private ?\GuzzleHttp\Psr7\Stream $stream = null;
 
     /**
      * @param StreamInterface|string|resource $streamOrFile
@@ -84,10 +81,9 @@ class UploadedFile implements UploadedFileInterface
     /**
      * Depending on the value set file or stream variable
      *
-     * @param mixed $streamOrFile
      * @throws InvalidArgumentException
      */
-    private function setStreamOrFile($streamOrFile)
+    private function setStreamOrFile(mixed $streamOrFile)
     {
         if (is_string($streamOrFile)) {
             $this->file = $streamOrFile;
@@ -139,19 +135,17 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param mixed $param
      * @return boolean
      */
-    private function isStringOrNull($param)
+    private function isStringOrNull(mixed $param)
     {
         return in_array(gettype($param), ['string', 'NULL']);
     }
 
     /**
-     * @param mixed $param
      * @return boolean
      */
-    private function isStringNotEmpty($param)
+    private function isStringNotEmpty(mixed $param)
     {
         return is_string($param) && false === empty($param);
     }

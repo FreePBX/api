@@ -13,14 +13,12 @@ class Request implements RequestInterface
 {
     use MessageTrait;
 
-    /** @var string */
-    private $method;
+    private string $method;
 
     /** @var null|string */
     private $requestTarget;
 
-    /** @var UriInterface */
-    private $uri;
+    private \Psr\Http\Message\UriInterface $uri;
 
     /**
      * @param string                               $method  HTTP method
@@ -73,7 +71,7 @@ class Request implements RequestInterface
 
     public function withRequestTarget($requestTarget)
     {
-        if (preg_match('#\s#', $requestTarget)) {
+        if (preg_match('#\s#', (string) $requestTarget)) {
             throw new InvalidArgumentException(
                 'Invalid request target provided; cannot contain whitespace'
             );

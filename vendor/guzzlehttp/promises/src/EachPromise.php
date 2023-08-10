@@ -7,10 +7,9 @@ namespace GuzzleHttp\Promise;
  */
 class EachPromise implements PromisorInterface
 {
-    private $pending = [];
+    private ?array $pending = [];
 
-    /** @var \Iterator */
-    private $iterable;
+    private ?\Iterator $iterable = null;
 
     /** @var callable|int */
     private $concurrency;
@@ -21,11 +20,9 @@ class EachPromise implements PromisorInterface
     /** @var callable */
     private $onRejected;
 
-    /** @var Promise */
-    private $aggregate;
+    private ?\GuzzleHttp\Promise\Promise $aggregate = null;
 
-    /** @var bool */
-    private $mutex;
+    private ?bool $mutex = null;
 
     /**
      * Configuration hash can include the following key value pairs:
@@ -48,7 +45,7 @@ class EachPromise implements PromisorInterface
      * @param mixed    $iterable Promises or values to iterate.
      * @param array    $config   Configuration options
      */
-    public function __construct($iterable, array $config = [])
+    public function __construct(mixed $iterable, array $config = [])
     {
         $this->iterable = iter_for($iterable);
 
@@ -75,9 +72,7 @@ class EachPromise implements PromisorInterface
             $this->createPromise();
             $this->iterable->rewind();
             $this->refillPending();
-        } catch (\Throwable $e) {
-            $this->aggregate->reject($e);
-        } catch (\Exception $e) {
+        } catch (\Throwable|\Exception $e) {
             $this->aggregate->reject($e);
         }
 
@@ -187,11 +182,7 @@ class EachPromise implements PromisorInterface
             $this->iterable->next();
             $this->mutex = false;
             return true;
-        } catch (\Throwable $e) {
-            $this->aggregate->reject($e);
-            $this->mutex = false;
-            return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable|\Exception $e) {
             $this->aggregate->reject($e);
             $this->mutex = false;
             return false;

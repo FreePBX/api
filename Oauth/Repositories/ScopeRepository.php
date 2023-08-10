@@ -27,7 +27,7 @@ class ScopeRepository implements ScopeRepositoryInterface {
 		$userIdentifier = null
 	) {
 		$application = $this->api->applications->getByClientId($clientEntity->getIdentifier());
-		$applicationAllowedScopes = trim($application['allowed_scopes']);
+		$applicationAllowedScopes = trim((string) $application['allowed_scopes']);
 
 		// If application scope is empty, then that means there are no restrictions
 		if (empty($applicationAllowedScopes)) {
@@ -55,7 +55,7 @@ class ScopeRepository implements ScopeRepositoryInterface {
 	}
 
 	private function checkScope($scope,$applicationScopes) {
-		$parts = explode(":",$scope);
+		$parts = explode(":",(string) $scope);
 		$scopeString = '';
 		foreach($parts as $part) {
 			if(empty($scopeString)) {

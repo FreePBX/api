@@ -6,7 +6,7 @@ use FreePBX\modules\Api\Gql\References\InterfaceType;
 use FreePBX\modules\Api\Gql\References\ObjectRelayType;
 use FreePBX\modules\Api\Gql\References\EnumType;
 class TypeStore {
-	private $types = [];
+	private array $types = [];
 
 	public function exists($name) {
 		return isset($this->types[$name]);
@@ -23,26 +23,14 @@ class TypeStore {
 		if (isset($this->types[$name])) {
 			throw new \Exception("Type $name has already been created!");
 		}
-		switch($type) {
-			case "objectrelay":
-				$this->types[$name] = new ObjectRelayType($name);
-			break;
-			case "object":
-				$this->types[$name] = new ObjectType($name);
-			break;
-			case "union":
-				$this->types[$name] = new UnionType($name);
-			break;
-			case "interface":
-				$this->types[$name] = new InterfaceType($name);
-			break;
-			case "enum":
-				$this->types[$name] = new EnumType($name);
-			break;
-			default:
-				throw new \Exception("Type $type is not valid!");
-			break;
-		}
+		$this->types[$name] = match ($type) {
+      "objectrelay" => new ObjectRelayType($name),
+      "object" => new ObjectType($name),
+      "union" => new UnionType($name),
+      "interface" => new InterfaceType($name),
+      "enum" => new EnumType($name),
+      default => throw new \Exception("Type $type is not valid!"),
+  };
 
 		return $this->types[$name];
 	}

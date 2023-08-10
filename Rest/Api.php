@@ -29,7 +29,7 @@ class Api {
 	}
 
 	public function execute() {
-		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',$_SERVER['QUERY_STRING']);
+		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',(string) $_SERVER['QUERY_STRING']);
 		$_SERVER['REQUEST_URI'] = '/api/rest'.(!empty($_GET['route']) ? '/'.$_GET['route'] : '');
 
 		$config = [
@@ -50,9 +50,7 @@ class Api {
 		$app->add(new ResourceServerMiddleware($server));
 
 		$container = $app->getContainer();
-		$container['setupRest'] = $container->protect(function($app) {
-			return $this->setupRest($app);
-		});
+		$container['setupRest'] = $container->protect(fn($app) => $this->setupRest($app));
 
 		$container['freepbx'] = $this->freepbx;
 
@@ -77,7 +75,7 @@ class Api {
 			// skip '.' and '..' entries in the directory
 			if($fileInfo->isDot()) { continue; };
 			// skip files that begin with '.', such as '.Donotdisturb.php.swp'
-			if(substr($fileInfo->getBasename(),0,1)=='.') { continue; };
+			if(str_starts_with($fileInfo->getBasename(), '.')) { continue; };
 			$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
 			$class = "FreePBX\\Api\\Rest\\".$name;
 			$classes[] = [
@@ -131,8 +129,8 @@ class Api {
 
 	public function buildSlimApp($route, $command, $queryString)
 	{
-		$_SERVER['QUERY_STRING'] = str_replace('module=api&command=' . $command . '&route=' . $route, '', $queryString);
-		$_SERVER['REQUEST_URI'] = '/api' . (!empty($route) ? '/' . ltrim($route, '/') : '');
+		$_SERVER['QUERY_STRING'] = str_replace('module=api&command=' . $command . '&route=' . $route, '', (string) $queryString);
+		$_SERVER['REQUEST_URI'] = '/api' . (!empty($route) ? '/' . ltrim((string) $route, '/') : '');
 
 		$config = [
 			'settings' => [
@@ -151,9 +149,7 @@ class Api {
 		$app->add(new ResourceServerMiddleware($server));
 
 		$container = $app->getContainer();
-		$container['setupRest'] = $container->protect(function ($app) {
-			return $this->setupRest($app);
-		});
+		$container['setupRest'] = $container->protect(fn($app) => $this->setupRest($app));
 
 		$container['freepbx'] = $this->freepbx;
 

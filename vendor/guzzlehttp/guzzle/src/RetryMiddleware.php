@@ -36,7 +36,7 @@ class RetryMiddleware
     ) {
         $this->decider = $decider;
         $this->nextHandler = $nextHandler;
-        $this->delay = $delay ?: __CLASS__ . '::exponentialDelay';
+        $this->delay = $delay ?: self::class . '::exponentialDelay';
     }
 
     /**
@@ -48,12 +48,10 @@ class RetryMiddleware
      */
     public static function exponentialDelay($retries)
     {
-        return (int) pow(2, $retries - 1);
+        return (int) 2 ** ($retries - 1);
     }
 
     /**
-     * @param RequestInterface $request
-     * @param array            $options
      *
      * @return PromiseInterface
      */

@@ -11,11 +11,7 @@ use Psr\Http\Message\UriInterface;
  */
 final class TransferStats
 {
-    private $request;
-    private $response;
     private $transferTime;
-    private $handlerStats;
-    private $handlerErrorData;
 
     /**
      * @param RequestInterface  $request          Request that was sent.
@@ -25,17 +21,13 @@ final class TransferStats
      * @param array             $handlerStats     Handler specific stats.
      */
     public function __construct(
-        RequestInterface $request,
-        ResponseInterface $response = null,
+        private readonly RequestInterface $request,
+        private readonly ?\Psr\Http\Message\ResponseInterface $response = null,
         $transferTime = null,
-        $handlerErrorData = null,
-        $handlerStats = []
+        private readonly mixed $handlerErrorData = null,
+        private $handlerStats = []
     ) {
-        $this->request = $request;
-        $this->response = $response;
         $this->transferTime = $transferTime;
-        $this->handlerErrorData = $handlerErrorData;
-        $this->handlerStats = $handlerStats;
     }
 
     /**
@@ -119,8 +111,6 @@ final class TransferStats
      */
     public function getHandlerStat($stat)
     {
-        return isset($this->handlerStats[$stat])
-            ? $this->handlerStats[$stat]
-            : null;
+        return $this->handlerStats[$stat] ?? null;
     }
 }

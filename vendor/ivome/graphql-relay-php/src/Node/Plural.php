@@ -39,14 +39,12 @@ class Plural {
         ];
 
         return [
-            'description' => isset($config['description']) ? $config['description'] : null,
+            'description' => $config['description'] ?? null,
             'type' => Type::listOf(self::getArrayValue($config, 'outputType')),
             'args' => $inputArgs,
             'resolve' => function ($obj, $args, $context, ResolveInfo $info) use ($argName, $config) {
                 $inputs = $args[$argName];
-                return array_map(function($input) use ($config, $context, $info) {
-                    return call_user_func(self::getArrayValue($config, 'resolveSingleInput'), $input, $context, $info);
-                }, $inputs);
+                return array_map(fn($input) => call_user_func(self::getArrayValue($config, 'resolveSingleInput'), $input, $context, $info), $inputs);
             }
         ];
     }
@@ -54,7 +52,6 @@ class Plural {
     /**
      * Returns the value for the given array key, NULL, if it does not exist
      *
-     * @param array $array
      * @param string $key
      * @return mixed
      */

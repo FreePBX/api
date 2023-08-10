@@ -14,18 +14,13 @@ use Psr\Http\Message\RequestInterface;
  */
 class CurlFactory implements CurlFactoryInterface
 {
-    /** @var array */
-    private $handles = [];
-
-    /** @var int Total number of idle handles to keep in cache */
-    private $maxHandles;
+    private array $handles = [];
 
     /**
      * @param int $maxHandles Maximum number of idle handles.
      */
-    public function __construct($maxHandles)
+    public function __construct(private $maxHandles)
     {
-        $this->maxHandles = $maxHandles;
     }
 
     public function create(RequestInterface $request, array $options)
@@ -83,8 +78,6 @@ class CurlFactory implements CurlFactoryInterface
      * Completes a cURL transaction, either returning a response promise or a
      * rejected promise.
      *
-     * @param callable             $handler
-     * @param EasyHandle           $easy
      * @param CurlFactoryInterface $factory Dictates how the handle is released
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
@@ -250,7 +243,7 @@ class CurlFactory implements CurlFactoryInterface
 
         // Send the body as a string if the size is less than 1MB OR if the
         // [curl][body_as_string] request value is set.
-        if (($size !== null && $size < 1000000) ||
+        if (($size !== null && $size < 1_000_000) ||
             !empty($options['_body_as_string'])
         ) {
             $conf[CURLOPT_POSTFIELDS] = (string) $request->getBody();
@@ -267,9 +260,7 @@ class CurlFactory implements CurlFactoryInterface
             if ($body->isSeekable()) {
                 $body->rewind();
             }
-            $conf[CURLOPT_READFUNCTION] = function ($ch, $fd, $length) use ($body) {
-                return $body->read($length);
-            };
+            $conf[CURLOPT_READFUNCTION] = fn($ch, $fd, $length) => $body->read($length);
         }
 
         // If the Expect header is not present, prevent curl from adding it
@@ -376,9 +367,7 @@ class CurlFactory implements CurlFactoryInterface
                 $sink = new LazyOpenStream($sink, 'w+');
             }
             $easy->sink = $sink;
-            $conf[CURLOPT_WRITEFUNCTION] = function ($ch, $write) use ($sink) {
-                return $sink->write($write);
-            };
+            $conf[CURLOPT_WRITEFUNCTION] = fn($ch, $write) => $sink->write($write);
         } else {
             // Use a default temp stream if no sink was set.
             $conf[CURLOPT_FILE] = fopen('php://temp', 'w+');

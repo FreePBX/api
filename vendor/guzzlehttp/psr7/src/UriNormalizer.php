@@ -18,14 +18,14 @@ final class UriNormalizer
      * self::CAPITALIZE_PERCENT_ENCODING | self::DECODE_UNRESERVED_CHARACTERS | self::CONVERT_EMPTY_PATH |
      * self::REMOVE_DEFAULT_HOST | self::REMOVE_DEFAULT_PORT | self::REMOVE_DOT_SEGMENTS
      */
-    const PRESERVING_NORMALIZATIONS = 63;
+    public const PRESERVING_NORMALIZATIONS = 63;
 
     /**
      * All letters within a percent-encoding triplet (e.g., "%3A") are case-insensitive, and should be capitalized.
      *
      * Example: http://example.org/a%c2%b1b → http://example.org/a%C2%B1b
      */
-    const CAPITALIZE_PERCENT_ENCODING = 1;
+    public const CAPITALIZE_PERCENT_ENCODING = 1;
 
     /**
      * Decodes percent-encoded octets of unreserved characters.
@@ -36,14 +36,14 @@ final class UriNormalizer
      *
      * Example: http://example.org/%7Eusern%61me/ → http://example.org/~username/
      */
-    const DECODE_UNRESERVED_CHARACTERS = 2;
+    public const DECODE_UNRESERVED_CHARACTERS = 2;
 
     /**
      * Converts the empty path to "/" for http and https URIs.
      *
      * Example: http://example.org → http://example.org/
      */
-    const CONVERT_EMPTY_PATH = 4;
+    public const CONVERT_EMPTY_PATH = 4;
 
     /**
      * Removes the default host of the given URI scheme from the URI.
@@ -56,14 +56,14 @@ final class UriNormalizer
      *
      * Example: file://localhost/myfile → file:///myfile
      */
-    const REMOVE_DEFAULT_HOST = 8;
+    public const REMOVE_DEFAULT_HOST = 8;
 
     /**
      * Removes the default port of the given URI scheme from the URI.
      *
      * Example: http://example.org:80/ → http://example.org/
      */
-    const REMOVE_DEFAULT_PORT = 16;
+    public const REMOVE_DEFAULT_PORT = 16;
 
     /**
      * Removes unnecessary dot-segments.
@@ -73,7 +73,7 @@ final class UriNormalizer
      *
      * Example: http://example.org/../a/b/../c/./d.html → http://example.org/a/c/d.html
      */
-    const REMOVE_DOT_SEGMENTS = 32;
+    public const REMOVE_DOT_SEGMENTS = 32;
 
     /**
      * Paths which include two or more adjacent slashes are converted to one.
@@ -84,7 +84,7 @@ final class UriNormalizer
      *
      * Example: http://example.org//foo///bar.html → http://example.org/foo/bar.html
      */
-    const REMOVE_DUPLICATE_SLASHES = 64;
+    public const REMOVE_DUPLICATE_SLASHES = 64;
 
     /**
      * Sort query parameters with their values in alphabetical order.
@@ -97,7 +97,7 @@ final class UriNormalizer
      * Note: The sorting is neither locale nor Unicode aware (the URI query does not get decoded at all) as the
      * purpose is to be able to compare URIs in a reproducible way, not to have the params sorted perfectly.
      */
-    const SORT_QUERY_PARAMETERS = 128;
+    public const SORT_QUERY_PARAMETERS = 128;
 
     /**
      * Returns a normalized URI.
@@ -145,11 +145,11 @@ final class UriNormalizer
         }
 
         if ($flags & self::REMOVE_DUPLICATE_SLASHES) {
-            $uri = $uri->withPath(preg_replace('#//++#', '/', $uri->getPath()));
+            $uri = $uri->withPath(preg_replace('#//++#', '/', (string) $uri->getPath()));
         }
 
         if ($flags & self::SORT_QUERY_PARAMETERS && $uri->getQuery() !== '') {
-            $queryKeyValues = explode('&', $uri->getQuery());
+            $queryKeyValues = explode('&', (string) $uri->getQuery());
             sort($queryKeyValues);
             $uri = $uri->withQuery(implode('&', $queryKeyValues));
         }
@@ -181,9 +181,7 @@ final class UriNormalizer
     {
         $regex = '/(?:%[A-Fa-f0-9]{2})++/';
 
-        $callback = function (array $match) {
-            return strtoupper($match[0]);
-        };
+        $callback = fn(array $match) => strtoupper((string) $match[0]);
 
         return
             $uri->withPath(
@@ -197,9 +195,7 @@ final class UriNormalizer
     {
         $regex = '/%(?:2D|2E|5F|7E|3[0-9]|[46][1-9A-F]|[57][0-9A])/i';
 
-        $callback = function (array $match) {
-            return rawurldecode($match[0]);
-        };
+        $callback = fn(array $match) => rawurldecode((string) $match[0]);
 
         return
             $uri->withPath(

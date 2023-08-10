@@ -12,8 +12,8 @@ namespace GuzzleHttp\Promise;
  */
 class TaskQueue implements TaskQueueInterface
 {
-    private $enableShutdown = true;
-    private $queue = [];
+    private bool $enableShutdown = true;
+    private array $queue = [];
 
     public function __construct($withShutdown = true)
     {

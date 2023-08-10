@@ -12,7 +12,7 @@ class Response implements ResponseInterface
     use MessageTrait;
 
     /** @var array Map of standard HTTP status code/reason phrases */
-    private static $phrases = [
+    private static array $phrases = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -76,8 +76,7 @@ class Response implements ResponseInterface
     /** @var string */
     private $reasonPhrase = '';
 
-    /** @var int */
-    private $statusCode = 200;
+    private int $statusCode = 200;
 
     /**
      * @param int                                  $status  Status code

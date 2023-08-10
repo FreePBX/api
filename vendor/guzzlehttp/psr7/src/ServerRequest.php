@@ -24,35 +24,15 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 class ServerRequest extends Request implements ServerRequestInterface
 {
-    /**
-     * @var array
-     */
-    private $attributes = [];
+    private array $attributes = [];
 
-    /**
-     * @var array
-     */
-    private $cookieParams = [];
+    private array $cookieParams = [];
 
-    /**
-     * @var null|array|object
-     */
-    private $parsedBody;
+    private object|array|null $parsedBody = null;
 
-    /**
-     * @var array
-     */
-    private $queryParams = [];
+    private array $queryParams = [];
 
-    /**
-     * @var array
-     */
-    private $serverParams;
-
-    /**
-     * @var array
-     */
-    private $uploadedFiles = [];
+    private array $uploadedFiles = [];
 
     /**
      * @param string                               $method       HTTP method
@@ -68,10 +48,8 @@ class ServerRequest extends Request implements ServerRequestInterface
         array $headers = [],
         $body = null,
         $version = '1.1',
-        array $serverParams = []
+        private array $serverParams = []
     ) {
-        $this->serverParams = $serverParams;
-
         parent::__construct($method, $uri, $headers, $body, $version);
     }
 
@@ -165,11 +143,11 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public static function fromGlobals()
     {
-        $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $headers = function_exists('getallheaders') ? getallheaders() : [];
         $uri = self::getUriFromGlobals();
         $body = new LazyOpenStream('php://input', 'r+');
-        $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL']) : '1.1';
+        $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? str_replace('HTTP/', '', (string) $_SERVER['SERVER_PROTOCOL']) : '1.1';
 
         $serverRequest = new ServerRequest($method, $uri, $headers, $body, $protocol, $_SERVER);
 
@@ -192,7 +170,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 
         $hasPort = false;
         if (isset($_SERVER['HTTP_HOST'])) {
-            $hostHeaderParts = explode(':', $_SERVER['HTTP_HOST']);
+            $hostHeaderParts = explode(':', (string) $_SERVER['HTTP_HOST']);
             $uri = $uri->withHost($hostHeaderParts[0]);
             if (isset($hostHeaderParts[1])) {
                 $hasPort = true;
@@ -210,7 +188,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 
         $hasQuery = false;
         if (isset($_SERVER['REQUEST_URI'])) {
-            $requestUriParts = explode('?', $_SERVER['REQUEST_URI']);
+            $requestUriParts = explode('?', (string) $_SERVER['REQUEST_URI']);
             $uri = $uri->withPath($requestUriParts[0]);
             if (isset($requestUriParts[1])) {
                 $hasQuery = true;

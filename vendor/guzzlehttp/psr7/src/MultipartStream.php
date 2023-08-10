@@ -11,7 +11,7 @@ class MultipartStream implements StreamInterface
 {
     use StreamDecoratorTrait;
 
-    private $boundary;
+    private readonly string $boundary;
 
     /**
      * @param array  $elements Array of associative arrays, each containing a
@@ -88,16 +88,16 @@ class MultipartStream implements StreamInterface
 
         if (empty($element['filename'])) {
             $uri = $element['contents']->getMetadata('uri');
-            if (substr($uri, 0, 6) !== 'php://') {
+            if (!str_starts_with((string) $uri, 'php://')) {
                 $element['filename'] = $uri;
             }
         }
 
-        list($body, $headers) = $this->createElement(
+        [$body, $headers] = $this->createElement(
             $element['name'],
             $element['contents'],
-            isset($element['filename']) ? $element['filename'] : null,
-            isset($element['headers']) ? $element['headers'] : []
+            $element['filename'] ?? null,
+            $element['headers'] ?? []
         );
 
         $stream->addStream(stream_for($this->getHeaders($headers)));
@@ -116,7 +116,7 @@ class MultipartStream implements StreamInterface
             $headers['Content-Disposition'] = ($filename === '0' || $filename)
                 ? sprintf('form-data; name="%s"; filename="%s"',
                     $name,
-                    basename($filename))
+                    basename((string) $filename))
                 : "form-data; name=\"{$name}\"";
         }
 
@@ -141,7 +141,7 @@ class MultipartStream implements StreamInterface
 
     private function getHeader(array $headers, $key)
     {
-        $lowercaseHeader = strtolower($key);
+        $lowercaseHeader = strtolower((string) $key);
         foreach ($headers as $k => $v) {
             if (strtolower($k) === $lowercaseHeader) {
                 return $v;

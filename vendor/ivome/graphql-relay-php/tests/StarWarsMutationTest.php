@@ -27,30 +27,13 @@ class StarWarsMutationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $params = array (
-            'input' =>
-                array (
-                    'shipName' => 'B-Wing',
-                    'factionId' => '1',
-                    'clientMutationId' => 'abcde',
-                ),
-        );
+        $params = ['input' =>
+            ['shipName' => 'B-Wing', 'factionId' => '1', 'clientMutationId' => 'abcde']];
 
-        $expected = array (
-            'introduceShip' =>
-                array (
-                    'ship' =>
-                        array (
-                            'id' => 'U2hpcDo5',
-                            'name' => 'B-Wing',
-                        ),
-                    'faction' =>
-                        array (
-                            'name' => 'Alliance to Restore the Republic',
-                        ),
-                    'clientMutationId' => 'abcde',
-                ),
-        );
+        $expected = ['introduceShip' =>
+            ['ship' =>
+                ['id' => 'U2hpcDo5', 'name' => 'B-Wing'], 'faction' =>
+                ['name' => 'Alliance to Restore the Republic'], 'clientMutationId' => 'abcde']];
 
         $result = GraphQL::execute(StarWarsSchema::getSchema(), $mutation, null, null, $params);
 

@@ -22,9 +22,9 @@ use DirectoryIterator;
 use Slim\App;
 
 class Api {
-	private $classes;
-	private $safeMode = false;
-	private $restricted = [
+	private ?array $classes = null;
+	private bool $safeMode = false;
+	private array $restricted = [
 		'areminder',
 		'framework',
 		'announcement',
@@ -43,25 +43,25 @@ class Api {
 	];
 
 	public function __construct($freepbx, $publicKey) {
-		$this->freepbx = $freepbx;
+		$this->freepbx   = $freepbx;
 		$this->publicKey = $publicKey;
 	}
 
 	public function getValidScopes() {
 		$modules = $this->getAPIClasses();
-		$scopes = [];
-		foreach($modules as $info) {
-			if(!isset($scopes[$info['modname']])) {
+		$scopes  = [];
+		foreach ($modules as $info) {
+			if (!isset($scopes[$info['modname']])) {
 				$scopes[$info['modname']] = [];
 			}
-			$scopes[$info['modname']] = array_merge($scopes[$info['modname']],$info['object']->getScopes());
+			$scopes[$info['modname']] = array_merge($scopes[$info['modname']], $info['object']->getScopes());
 		}
 		return $scopes;
 	}
 
 	public function buildSlimApp() {
-		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',$_SERVER['QUERY_STRING']);
-		$_SERVER['REQUEST_URI'] = '/api/gql'.(!empty($_GET['route']) ? '/'.$_GET['route'] : '');
+		$_SERVER['QUERY_STRING'] = str_replace('module=api&command=' . $_GET['command'] . '&route=' . $_GET['route'], '', (string) $_SERVER['QUERY_STRING']);
+		$_SERVER['REQUEST_URI']  = '/api/gql' . (!empty($_GET['route']) ? '/' . $_GET['route'] : '');
 
 		$config = [
 			'settings' => [
@@ -70,51 +70,52 @@ class Api {
 		];
 
 		$accessTokenRepository = new AccessTokenRepository($this->freepbx->api);
-		$publicKeyPath = 'file://' . $this->publicKey;
-		$server = new ResourceServer(
+		$publicKeyPath         = 'file://' . $this->publicKey;
+		$server                = new ResourceServer(
 			$accessTokenRepository,
-				$publicKeyPath
+			$publicKeyPath
 		);
 
 		$app = new App($config);
 
 		$app->add(new ResourceServerMiddleware($server));
 
-		$container = $app->getContainer();
-		$container['setupGql'] = $container->protect(function($request, $response, $args) {
-			return $this->setupGql($request, $response, $args);
-		});
+		$container             = $app->getContainer();
+		$container['setupGql'] = $container->protect(fn ($request, $response, $args) => $this->setupGql($request, $response, $args));
 
 		$self = $this;
-		$app->post('/api/gql', function ($request, $response, $args) use($self) {
+		$app->post('/api/gql', function ($request, $response, $args) use ($self)
+		{
+			$data   = [];
 			$server = new StandardServer([
 				'schema' => call_user_func($this->setupGql, $request, $response, $args),
-				'debug' => true
+				'debug'  => true
 			]);
-	
+
 			$newResponse = $server->processPsrRequest($request, $response, $response->getBody());
 
 			//handling the exception error response
-			if (isset(json_decode($newResponse->getBody())->errors[0])) {
-				$self->freepbx->api->writelog(print_r(json_decode($newResponse->getBody())->errors[0], true));
-				dbug(json_decode($newResponse->getBody())->errors[0]);
-				$data['errors'][] = array("message" => json_decode($newResponse->getBody())->errors[0]->message,"status"=> false);
-				return  $response->withJson($data, 400);
-			}//handling the error response defined 
-			elseif (isset(json_decode($newResponse->getBody())->data)) {
-				$value = key(json_decode($newResponse->getBody())->data);
-				$res = json_decode($newResponse->getBody())->data->$value;
+			if (isset(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->errors[0])) {
+				$self->freepbx->api->writelog(print_r(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->errors[0], true));
+				dbug(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->errors[0]);
+				$data['errors'][] = [ "message" => json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->errors[0]->message, "status" => false ];
+				return $response->withJson($data, 400);
+			} //handling the error response defined 
+			elseif (isset(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->data)) {
+				$value = key(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->data);
+				$res   = json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->data->$value;
 				//checking for the error case where status is false
-				if (isset($res->status) && json_decode($res->status) == false) {
-					$httpCode = 400; 
-					$status = array("status"=> $res->status);
+				if (isset($res->status) && json_decode((string) $res->status, null, 512, JSON_THROW_ON_ERROR) == false) {
+					$httpCode = 400;
+					$status   = [ "status" => $res->status ];
 					if (isset($res->message)) {
-						$message = array("message" => $res->message);
-						$data['errors'][] = array_merge($message,$status);
-					} else {
+						$message          = [ "message" => $res->message ];
+						$data['errors'][] = [ ...$message, ...$status ];
+					}
+					else {
 						$data['errors'][] = $status;
 					}
-				    return  $response->withJson($data, $httpCode);
+					return $response->withJson($data, $httpCode);
 				}
 			}
 			//default when proper response is true
@@ -130,11 +131,11 @@ class Api {
 
 	}
 
-	private function getUnusedPriority($array,$wantedPriority) {
-		if(isset($array[$wantedPriority])) {
-			while(true) {
-				$wantedPriority = (int)$wantedPriority+1;
-				if(!isset($array[$wantedPriority])) {
+	private function getUnusedPriority($array, $wantedPriority) {
+		if (isset($array[$wantedPriority])) {
+			while (true) {
+				$wantedPriority = (int) $wantedPriority + 1;
+				if (!isset($array[$wantedPriority])) {
 					break;
 				}
 			}
@@ -143,7 +144,7 @@ class Api {
 	}
 
 	public function getAPIClasses() {
-		if(empty($this->classes)) {
+		if (empty($this->classes)) {
 			$webrootpath = $this->freepbx->Config->get('AMPWEBROOT');
 
 			$this->objectReferences = new TypeStore();
@@ -153,44 +154,51 @@ class Api {
 			$classes = [];
 
 			foreach (new DirectoryIterator($fwcpath) as $fileInfo) {
-				if($fileInfo->isDot()) { continue; };
-				$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
-				$class = "FreePBX\\Api\\Gql\\".$name;
-				$pri = $this->getUnusedPriority($classes,$class::getPriority());
+				if ($fileInfo->isDot()) {
+					continue;
+				}
+				;
+				$name          = pathinfo($fileInfo->getFilename(), PATHINFO_FILENAME);
+				$class         = "FreePBX\\Api\\Gql\\" . $name;
+				$pri           = $this->getUnusedPriority($classes, $class::getPriority());
 				$classes[$pri] = [
 					'modname' => 'framework',
-					'class' => $class,
-					'name' => $name
+					'class'   => $class,
+					'name'    => $name
 				];
 			}
 
 			$amodules = $this->freepbx->Modules->getActiveModules();
-			foreach($amodules as $module){
+			foreach ($amodules as $module) {
 				//Module Path
 				$mpath = $webrootpath . '/admin/modules/' . $module['rawname'] . '/Api/Gql/';
-				if (file_exists($mpath)){
+				if (file_exists($mpath)) {
 					//Class files
 					foreach (new DirectoryIterator($mpath) as $fileInfo) {
-						if($fileInfo->isDot()) { continue; };
-						$name = pathinfo($fileInfo->getFilename(),PATHINFO_FILENAME);
-						$class = "FreePBX\\modules\\".$module['rawname']."\\Api\\Gql\\".$name;
-						$pri = $this->getUnusedPriority($classes,$class::getPriority());
+						if ($fileInfo->isDot()) {
+							continue;
+						}
+						;
+						$name          = pathinfo($fileInfo->getFilename(), PATHINFO_FILENAME);
+						$class         = "FreePBX\\modules\\" . $module['rawname'] . "\\Api\\Gql\\" . $name;
+						$pri           = $this->getUnusedPriority($classes, $class::getPriority());
 						$classes[$pri] = [
 							'modname' => $module['rawname'],
-							'class' => $class,
-							'name' => $name
+							'class'   => $class,
+							'name'    => $name
 						];
 					}
 				}
 			}
 			ksort($classes);
-			foreach($classes as $class) {
-				$cls = $class['class'];
-				$class['object'] = new $cls($this->freepbx,$this->objectReferences,$class['modname']);
+			foreach ($classes as $class) {
+				$cls             = $class['class'];
+				$class['object'] = new $cls($this->freepbx, $this->objectReferences, $class['modname']);
 				$this->classes[] = $class;
 			}
 			return $this->classes;
-		} else {
+		}
+		else {
 			return $this->classes;
 		}
 	}
@@ -198,89 +206,88 @@ class Api {
 	private function setupGql($request, $response, $args) {
 
 		$allowedScopes = $request->getAttribute('oauth_scopes');
-		$userId = $request->getAttribute('oauth_user_id');
+		$userId        = $request->getAttribute('oauth_user_id');
 
 		$classes = $this->getAPIClasses();
-		foreach($classes as $object) {
+		foreach ($classes as $object) {
 			$object['object']->setAllowedScopes($allowedScopes);
 			$object['object']->setUserId($userId);
 		}
 
 		$nodeDefinition = Relay::nodeDefinitions(
-			function ($globalId) {
-				$idComponents = Relay::fromGlobalId($globalId);
-				$node = $this->objectReferences->get($idComponents['type'])->getNode($idComponents['id']);
+			function ($globalId)
+			{
+				$idComponents    = Relay::fromGlobalId($globalId);
+				$node            = $this->objectReferences->get($idComponents['type'])->getNode($idComponents['id']);
 				$node['gqlType'] = $idComponents['type'];
 				return $node;
 			},
-			function ($object) {
-				return $this->objectReferences->get($object['gqlType'])->getObject();
-			}
+			fn ($object) => $this->objectReferences->get($object['gqlType'])->getObject()
 		);
 
 		$this->initalizeTypes($nodeDefinition);
 
-		$queryFields = [];
+		$queryFields    = [];
 		$mutationFields = [];
 
-		foreach($classes as $object) {
-			if($this->safeMode && !in_array($object['modname'],$this->restricted)) {
+		foreach ($classes as $object) {
+			if ($this->safeMode && !in_array($object['modname'], $this->restricted)) {
 				continue;
 			}
 			$query = $object['object']->queryCallback();
-			if(is_callable($query)) {
+			if (is_callable($query)) {
 				$tmp = $query();
-				if(!is_array($tmp)) {
+				if (!is_array($tmp)) {
 					continue;
 				}
-				$queryFields = array_merge($queryFields,$tmp);
+				$queryFields = array_merge($queryFields, $tmp);
 			}
 		}
 
-		foreach($classes as $object) {
+		foreach ($classes as $object) {
 			$mutation = $object['object']->mutationCallback();
-			if(is_callable($mutation)) {
+			if (is_callable($mutation)) {
 				$tmp = $mutation();
-				if(!is_array($tmp)) {
+				if (!is_array($tmp)) {
 					continue;
 				}
-				$mutationFields = array_merge($mutationFields,$tmp);
+				$mutationFields = array_merge($mutationFields, $tmp);
 			}
 		}
 
 		$queryFields['node'] = $nodeDefinition['nodeField'];
 
 		$queryType = new ObjectType([
-			'name' => 'Query',
+			'name'   => 'Query',
 			'fields' => $queryFields
 		]);
 
 		$mutationType = null;
-		if(!empty($mutationFields)) {
+		if (!empty($mutationFields)) {
 			$mutationType = new ObjectType([
-				'name' => 'Mutation',
+				'name'   => 'Mutation',
 				'fields' => $mutationFields
 			]);
 		}
 
 		$schema = new Schema([
-			'query' => $queryType,
+			'query'    => $queryType,
 			'mutation' => $mutationType
 		]);
 		return $schema;
 	}
 
 	private function initalizeTypes($nodeDefinition) {
-		$classes = $this->getAPIClasses();
+		$classes    = $this->getAPIClasses();
 		$fieldTypes = [];
-		foreach($classes as $object) {
-			if($this->safeMode && !in_array($object['modname'],$this->restricted)) {
+		foreach ($classes as $object) {
+			if ($this->safeMode && !in_array($object['modname'], $this->restricted)) {
 				continue;
 			}
 			$object['object']->setNodeDefinition($nodeDefinition);
 			$object['object']->initializeTypes();
 		}
-		foreach($classes as $object) {
+		foreach ($classes as $object) {
 			$object['object']->postInitializeTypes();
 		}
 	}

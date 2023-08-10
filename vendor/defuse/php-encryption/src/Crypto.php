@@ -249,9 +249,7 @@ class Crypto
      * Encrypts a string with either a key or a password.
      *
      * @param string        $plaintext
-     * @param KeyOrPassword $secret
      * @param bool          $raw_binary
-     *
      * @return string
      */
     private static function encryptInternal($plaintext, KeyOrPassword $secret, $raw_binary)
@@ -278,12 +276,10 @@ class Crypto
      * Decrypts a ciphertext to a string with either a key or a password.
      *
      * @param string        $ciphertext
-     * @param KeyOrPassword $secret
      * @param bool          $raw_binary
      *
      * @throws Ex\EnvironmentIsBrokenException
      * @throws Ex\WrongKeyOrModifiedCiphertextException
-     *
      * @return string
      */
     private static function decryptInternal($ciphertext, KeyOrPassword $secret, $raw_binary)
@@ -293,7 +289,7 @@ class Crypto
         if (! $raw_binary) {
             try {
                 $ciphertext = Encoding::hexToBin($ciphertext);
-            } catch (Ex\BadFormatException $ex) {
+            } catch (Ex\BadFormatException) {
                 throw new Ex\WrongKeyOrModifiedCiphertextException(
                     'Ciphertext has invalid hex encoding.'
                 );

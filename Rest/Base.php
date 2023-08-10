@@ -32,7 +32,7 @@ abstract class Base extends ApiBase {
 
 			$self->setAllowedScopes($allowedScopes);
 			if(!$self->checkScope($scope)) {
-				$response = $response->withStatus(401)->withJson(array("status" => false, "message" => "unauthorized"));
+				$response = $response->withStatus(401)->withJson(["status" => false, "message" => "unauthorized"]);
 			} else {
 				$response = $next($request, $response);
 			}

@@ -7,13 +7,12 @@ use Psr\Http\Message\RequestInterface;
  * Creates a composed Guzzle handler function by stacking middlewares on top of
  * an HTTP handler function.
  */
-class HandlerStack
+class HandlerStack implements \Stringable
 {
     /** @var callable */
     private $handler;
 
-    /** @var array */
-    private $stack = [];
+    private array $stack = [];
 
     /** @var callable|null */
     private $cached;
@@ -56,9 +55,6 @@ class HandlerStack
 
     /**
      * Invokes the handler stack as a composed handler
-     *
-     * @param RequestInterface $request
-     * @param array            $options
      */
     public function __invoke(RequestInterface $request, array $options)
     {
@@ -72,7 +68,7 @@ class HandlerStack
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $depth = 0;
         $stack = [];
@@ -177,9 +173,7 @@ class HandlerStack
         $idx = is_callable($remove) ? 0 : 1;
         $this->stack = array_values(array_filter(
             $this->stack,
-            function ($tuple) use ($idx, $remove) {
-                return $tuple[$idx] !== $remove;
-            }
+            fn($tuple) => $tuple[$idx] !== $remove
         ));
     }
 
@@ -225,7 +219,6 @@ class HandlerStack
      *
      * @param          $findName
      * @param          $withName
-     * @param callable $middleware
      * @param          $before
      */
     private function splice($findName, $withName, callable $middleware, $before)
@@ -265,7 +258,7 @@ class HandlerStack
         if (is_array($fn)) {
             return is_string($fn[0])
                 ? "callable({$fn[0]}::{$fn[1]})"
-                : "callable(['" . get_class($fn[0]) . "', '{$fn[1]}'])";
+                : "callable(['" . $fn[0]::class . "', '{$fn[1]}'])";
         }
 
         return 'callable(' . spl_object_hash($fn) . ')';

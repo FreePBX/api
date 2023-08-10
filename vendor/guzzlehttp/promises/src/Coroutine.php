@@ -45,17 +45,14 @@ final class Coroutine implements PromiseInterface
     /**
      * @var PromiseInterface|null
      */
-    private $currentPromise;
+    private \GuzzleHttp\Promise\PromiseInterface $currentPromise;
 
     /**
      * @var Generator
      */
     private $generator;
 
-    /**
-     * @var Promise
-     */
-    private $result;
+    private readonly \GuzzleHttp\Promise\Promise $result;
 
     public function __construct(callable $generatorFn)
     {
@@ -109,7 +106,7 @@ final class Coroutine implements PromiseInterface
     private function nextCoroutine($yielded)
     {
         $this->currentPromise = promise_for($yielded)
-            ->then([$this, '_handleSuccess'], [$this, '_handleFailure']);
+            ->then($this->_handleSuccess(...), $this->_handleFailure(...));
     }
 
     /**

@@ -21,23 +21,18 @@ class Parser
 {
     /**
      * The data decoder
-     *
-     * @var Decoder
      */
-    private $decoder;
+    private readonly \Lcobucci\JWT\Parsing\Decoder $decoder;
 
     /**
      * The claims factory
      *
      * @var ClaimFactory
      */
-    private $claimFactory;
+    private readonly ClaimFactory $claimFactory;
 
     /**
      * Initializes the object
-     *
-     * @param Decoder $decoder
-     * @param ClaimFactory $claimFactory
      */
     public function __construct(
         Decoder $decoder = null,
@@ -139,9 +134,7 @@ class Parser
     /**
      * Returns the signature from given data
      *
-     * @param array $header
      * @param string $data
-     *
      * @return Signature
      */
     protected function parseSignature(array $header, $data)

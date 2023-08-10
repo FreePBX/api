@@ -49,7 +49,7 @@ final class EasyHandle
         }
 
         // HTTP-version SP status-code SP reason-phrase
-        $startLine = explode(' ', array_shift($this->headers), 3);
+        $startLine = explode(' ', (string) array_shift($this->headers), 3);
         $headers = \GuzzleHttp\headers_from_lines($this->headers);
         $normalizedKeys = \GuzzleHttp\normalize_header_keys($headers);
 

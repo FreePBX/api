@@ -6,12 +6,7 @@ use Defuse\Crypto\Exception as Ex;
 
 final class KeyProtectedByPassword
 {
-    const PASSWORD_KEY_CURRENT_VERSION = "\xDE\xF1\x00\x00";
-
-    /**
-     * @var string
-     */
-    private $encrypted_key = '';
+    public const PASSWORD_KEY_CURRENT_VERSION = "\xDE\xF1\x00\x00";
 
     /**
      * Creates a random key protected by the provided password.
@@ -91,7 +86,7 @@ final class KeyProtectedByPassword
                 true
             );
             return Key::loadFromAsciiSafeString($inner_key_encoded);
-        } catch (Ex\BadFormatException $ex) {
+        } catch (Ex\BadFormatException) {
             /* This should never happen unless an attacker replaced the
              * encrypted key ciphertext with some other ciphertext that was
              * encrypted with the same password. We transform the exception type
@@ -138,8 +133,7 @@ final class KeyProtectedByPassword
      *
      * @param string $encrypted_key
      */
-    private function __construct($encrypted_key)
+    private function __construct(private $encrypted_key)
     {
-        $this->encrypted_key = $encrypted_key;
     }
 }

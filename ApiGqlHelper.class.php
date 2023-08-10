@@ -20,8 +20,8 @@ class ApiGqlHelper extends \FreePBX_Helpers {
 
 		$apiObj = $this->freepbx->Api();
 
-		$module = strtolower($args[0]);
-		$action = strtolower($args[1]);
+		$module = strtolower((string) $args[0]);
+		$action = strtolower((string) $args[1]);
 		$track = $args[2];
 		$txnId = $args[3];
 
@@ -37,7 +37,7 @@ class ApiGqlHelper extends \FreePBX_Helpers {
 		$result = shell_exec($bin."/fwconsole ma list|grep ".$module ."|awk '{print $5 $6}'");
 
 		$reason = '';
-		$enabled = array('enable','install','upgrade');
+		$enabled = ['enable', 'install', 'upgrade'];
 
 		if (in_array($action, $enabled) && $result = "|Enabled") {
 			$status = "Executed";

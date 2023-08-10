@@ -11,11 +11,10 @@ class UriTemplate
     /** @var string URI template */
     private $template;
 
-    /** @var array Variables to use in the template expansion */
-    private $variables;
+    private ?array $variables = null;
 
     /** @var array Hash for quick operator lookups */
-    private static $operatorHash = [
+    private static array $operatorHash = [
         ''  => ['prefix' => '',  'joiner' => ',', 'query' => false],
         '+' => ['prefix' => '',  'joiner' => ',', 'query' => false],
         '#' => ['prefix' => '#', 'joiner' => ',', 'query' => false],
@@ -27,17 +26,17 @@ class UriTemplate
     ];
 
     /** @var array Delimiters */
-    private static $delims = [':', '/', '?', '#', '[', ']', '@', '!', '$',
+    private static array $delims = [':', '/', '?', '#', '[', ']', '@', '!', '$',
         '&', '\'', '(', ')', '*', '+', ',', ';', '='];
 
     /** @var array Percent encoded delimiters */
-    private static $delimsPct = ['%3A', '%2F', '%3F', '%23', '%5B', '%5D',
+    private static array $delimsPct = ['%3A', '%2F', '%3F', '%23', '%5B', '%5D',
         '%40', '%21', '%24', '%26', '%27', '%28', '%29', '%2A', '%2B', '%2C',
         '%3B', '%3D'];
 
     public function expand($template, array $variables)
     {
-        if (false === strpos($template, '{')) {
+        if (!str_contains((string) $template, '{')) {
             return $template;
         }
 
@@ -46,8 +45,8 @@ class UriTemplate
 
         return preg_replace_callback(
             '/\{([^\}]+)\}/',
-            [$this, 'expandMatch'],
-            $this->template
+            $this->expandMatch(...),
+            (string) $this->template
         );
     }
 
@@ -76,7 +75,7 @@ class UriTemplate
                 $varspec['value'] = substr($value, 0, $colonPos);
                 $varspec['modifier'] = ':';
                 $varspec['position'] = (int) substr($value, $colonPos + 1);
-            } elseif (substr($value, -1) === '*') {
+            } elseif (str_ends_with($value, '*')) {
                 $varspec['modifier'] = '*';
                 $varspec['value'] = substr($value, 0, -1);
             } else {
@@ -127,7 +126,7 @@ class UriTemplate
                     }
 
                     if (!$isNestedArray) {
-                        $var = rawurlencode($var);
+                        $var = rawurlencode((string) $var);
                         if ($parsed['operator'] === '+' ||
                             $parsed['operator'] === '#'
                         ) {
@@ -178,9 +177,9 @@ class UriTemplate
                 }
             } else {
                 if ($value['modifier'] === ':') {
-                    $variable = substr($variable, 0, $value['position']);
+                    $variable = substr((string) $variable, 0, $value['position']);
                 }
-                $expanded = rawurlencode($variable);
+                $expanded = rawurlencode((string) $variable);
                 if ($parsed['operator'] === '+' || $parsed['operator'] === '#') {
                     $expanded = $this->decodeReserved($expanded);
                 }

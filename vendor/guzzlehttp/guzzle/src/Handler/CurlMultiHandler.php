@@ -21,8 +21,8 @@ class CurlMultiHandler
     private $factory;
     private $selectTimeout;
     private $active;
-    private $handles = [];
-    private $delays = [];
+    private array $handles = [];
+    private array $delays = [];
 
     /**
      * This handler accepts the following options:
@@ -35,10 +35,8 @@ class CurlMultiHandler
      */
     public function __construct(array $options = [])
     {
-        $this->factory = isset($options['handle_factory'])
-            ? $options['handle_factory'] : new CurlFactory(50);
-        $this->selectTimeout = isset($options['select_timeout'])
-            ? $options['select_timeout'] : 1;
+        $this->factory = $options['handle_factory'] ?? new CurlFactory(50);
+        $this->selectTimeout = $options['select_timeout'] ?? 1;
     }
 
     public function __get($name)
@@ -64,10 +62,8 @@ class CurlMultiHandler
         $id = (int) $easy->handle;
 
         $promise = new Promise(
-            [$this, 'execute'],
-            function () use ($id) {
-                return $this->cancel($id);
-            }
+            $this->execute(...),
+            fn() => $this->cancel($id)
         );
 
         $this->addRequest(['easy' => $easy, 'deferred' => $promise]);
@@ -194,6 +190,6 @@ class CurlMultiHandler
             }
         }
 
-        return max(0, $nextTime - $currentTime) * 1000000;
+        return max(0, $nextTime - $currentTime) * 1_000_000;
     }
 }

@@ -16,7 +16,7 @@ use Psr\Http\Message\StreamInterface;
  */
 class StreamHandler
 {
-    private $lastHeaders = [];
+    private array $lastHeaders = [];
 
     /**
      * Sends an HTTP request.
@@ -98,12 +98,12 @@ class StreamHandler
     ) {
         $hdrs = $this->lastHeaders;
         $this->lastHeaders = [];
-        $parts = explode(' ', array_shift($hdrs), 3);
+        $parts = explode(' ', (string) array_shift($hdrs), 3);
         $ver = explode('/', $parts[0])[1];
         $status = $parts[1];
-        $reason = isset($parts[2]) ? $parts[2] : null;
+        $reason = $parts[2] ?? null;
         $headers = \GuzzleHttp\headers_from_lines($hdrs);
-        list($stream, $headers) = $this->checkDecode($options, $headers, $stream);
+        [$stream, $headers] = $this->checkDecode($options, $headers, $stream);
         $stream = Psr7\stream_for($stream);
         $sink = $stream;
 
@@ -144,9 +144,7 @@ class StreamHandler
             return $stream;
         }
 
-        $sink = isset($options['sink'])
-            ? $options['sink']
-            : fopen('php://temp', 'r+');
+        $sink = $options['sink'] ?? fopen('php://temp', 'r+');
 
         return is_string($sink)
             ? new Psr7\LazyOpenStream($sink, 'w+')
@@ -190,11 +188,8 @@ class StreamHandler
     /**
      * Drains the source stream into the "sink" client option.
      *
-     * @param StreamInterface $source
-     * @param StreamInterface $sink
      * @param string          $contentLength Header specifying the amount of
      *                                       data to read.
-     *
      * @return StreamInterface
      * @throws \RuntimeException when the sink option is invalid.
      */
@@ -259,7 +254,7 @@ class StreamHandler
     {
         static $methods;
         if (!$methods) {
-            $methods = array_flip(get_class_methods(__CLASS__));
+            $methods = array_flip(get_class_methods(self::class));
         }
 
         // HTTP/1.1 streams using the PHP stream wrapper require a
@@ -313,9 +308,7 @@ class StreamHandler
         $uri = $this->resolveHost($request, $options);
 
         $context = $this->createResource(
-            function () use ($context, $params) {
-                return stream_context_create($context, $params);
-            }
+            fn() => stream_context_create($context, $params)
         );
 
         return $this->createResource(

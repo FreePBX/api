@@ -10,7 +10,7 @@ use Psr\Http\Message\UriInterface;
  * @author Tobias Schultze
  * @author Matthew Weier O'Phinney
  */
-class Uri implements UriInterface
+class Uri implements UriInterface, \Stringable
 {
     /**
      * Absolute http and https URIs require a host per RFC 7230 Section 2.7
@@ -18,9 +18,9 @@ class Uri implements UriInterface
      * we apply this default host when no host is given yet to form a
      * valid URI.
      */
-    const HTTP_DEFAULT_HOST = 'localhost';
+    final public const HTTP_DEFAULT_HOST = 'localhost';
 
-    private static $defaultPorts = [
+    private static array $defaultPorts = [
         'http'  => 80,
         'https' => 443,
         'ftp' => 21,
@@ -34,30 +34,30 @@ class Uri implements UriInterface
         'ldap' => 389,
     ];
 
-    private static $charUnreserved = 'a-zA-Z0-9_\-\.~';
-    private static $charSubDelims = '!\$&\'\(\)\*\+,;=';
-    private static $replaceQuery = ['=' => '%3D', '&' => '%26'];
+    private static string $charUnreserved = 'a-zA-Z0-9_\-\.~';
+    private static string $charSubDelims = '!\$&\'\(\)\*\+,;=';
+    private static array $replaceQuery = ['=' => '%3D', '&' => '%26'];
 
     /** @var string Uri scheme. */
-    private $scheme = '';
+    private string $scheme = '';
 
     /** @var string Uri user info. */
     private $userInfo = '';
 
     /** @var string Uri host. */
-    private $host = '';
+    private string $host = '';
 
     /** @var int|null Uri port. */
-    private $port;
+    private ?int $port = null;
 
     /** @var string Uri path. */
-    private $path = '';
+    private string $path = '';
 
     /** @var string Uri query string. */
-    private $query = '';
+    private string $query = '';
 
     /** @var string Uri fragment. */
-    private $fragment = '';
+    private string $fragment = '';
 
     /**
      * @param string $uri URI to parse
@@ -74,7 +74,7 @@ class Uri implements UriInterface
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return self::composeComponents(
             $this->scheme,
@@ -307,9 +307,7 @@ class Uri implements UriInterface
         }
 
         $decodedKey = rawurldecode($key);
-        $result = array_filter(explode('&', $current), function ($part) use ($decodedKey) {
-            return rawurldecode(explode('=', $part)[0]) !== $decodedKey;
-        });
+        $result = array_filter(explode('&', $current), fn($part) => rawurldecode(explode('=', $part)[0]) !== $decodedKey);
 
         return $uri->withQuery(implode('&', $result));
     }
@@ -337,9 +335,7 @@ class Uri implements UriInterface
             $result = [];
         } else {
             $decodedKey = rawurldecode($key);
-            $result = array_filter(explode('&', $current), function ($part) use ($decodedKey) {
-                return rawurldecode(explode('=', $part)[0]) !== $decodedKey;
-            });
+            $result = array_filter(explode('&', $current), fn($part) => rawurldecode(explode('=', $part)[0]) !== $decodedKey);
         }
 
         // Query string separators ("=", "&") within the key or value need to be encoded
@@ -359,11 +355,9 @@ class Uri implements UriInterface
     /**
      * Creates a URI from a hash of `parse_url` components.
      *
-     * @param array $parts
      *
      * @return UriInterface
      * @link http://php.net/manual/en/function.parse-url.php
-     *
      * @throws \InvalidArgumentException If the components do not form a valid URI.
      */
     public static function fromParts(array $parts)
@@ -542,7 +536,7 @@ class Uri implements UriInterface
         $this->scheme = isset($parts['scheme'])
             ? $this->filterScheme($parts['scheme'])
             : '';
-        $this->userInfo = isset($parts['user']) ? $parts['user'] : '';
+        $this->userInfo = $parts['user'] ?? '';
         $this->host = isset($parts['host'])
             ? $this->filterHost($parts['host'])
             : '';
@@ -644,7 +638,7 @@ class Uri implements UriInterface
 
         return preg_replace_callback(
             '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
-            [$this, 'rawurlencodeMatchZero'],
+            $this->rawurlencodeMatchZero(...),
             $path
         );
     }
@@ -666,14 +660,14 @@ class Uri implements UriInterface
 
         return preg_replace_callback(
             '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
-            [$this, 'rawurlencodeMatchZero'],
+            $this->rawurlencodeMatchZero(...),
             $str
         );
     }
 
     private function rawurlencodeMatchZero(array $match)
     {
-        return rawurlencode($match[0]);
+        return rawurlencode((string) $match[0]);
     }
 
     private function validateState()
@@ -683,10 +677,10 @@ class Uri implements UriInterface
         }
 
         if ($this->getAuthority() === '') {
-            if (0 === strpos($this->path, '//')) {
+            if (str_starts_with($this->path, '//')) {
                 throw new \InvalidArgumentException('The path of a URI without an authority must not start with two slashes "//"');
             }
-            if ($this->scheme === '' && false !== strpos(explode('/', $this->path, 2)[0], ':')) {
+            if ($this->scheme === '' && str_contains(explode('/', $this->path, 2)[0], ':')) {
                 throw new \InvalidArgumentException('A relative URI must not have a path beginning with a segment containing a colon');
             }
         } elseif (isset($this->path[0]) && $this->path[0] !== '/') {

@@ -13,7 +13,7 @@ class Promise implements PromiseInterface
     private $cancelFn;
     private $waitFn;
     private $waitList;
-    private $handlers = [];
+    private ?array $handlers = [];
 
     /**
      * @param callable $waitFn   Fn that when invoked resolves the promise.
@@ -32,7 +32,7 @@ class Promise implements PromiseInterface
         callable $onRejected = null
     ) {
         if ($this->state === self::PENDING) {
-            $p = new Promise(null, [$this, 'cancel']);
+            $p = new Promise(null, $this->cancel(...));
             $this->handlers[] = [$p, $onFulfilled, $onRejected];
             $p->waitList = $this->waitList;
             $p->waitList[] = $this;
@@ -95,9 +95,7 @@ class Promise implements PromiseInterface
             $this->cancelFn = null;
             try {
                 $fn();
-            } catch (\Throwable $e) {
-                $this->reject($e);
-            } catch (\Exception $e) {
+            } catch (\Throwable|\Exception $e) {
                 $this->reject($e);
             }
         }
@@ -187,7 +185,7 @@ class Promise implements PromiseInterface
      *
      * @return array Returns the next group to resolve.
      */
-    private static function callHandler($index, $value, array $handler)
+    private static function callHandler($index, mixed $value, array $handler)
     {
         /** @var PromiseInterface $promise */
         $promise = $handler[0];
@@ -208,9 +206,7 @@ class Promise implements PromiseInterface
                 // Forward rejections down the chain.
                 $promise->reject($value);
             }
-        } catch (\Throwable $reason) {
-            $promise->reject($reason);
-        } catch (\Exception $reason) {
+        } catch (\Throwable|\Exception $reason) {
             $promise->reject($reason);
         }
     }

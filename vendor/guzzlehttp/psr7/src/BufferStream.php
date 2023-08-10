@@ -11,10 +11,9 @@ use Psr\Http\Message\StreamInterface;
  * what the configured high water mark of the stream is, or the maximum
  * preferred size of the buffer.
  */
-class BufferStream implements StreamInterface
+class BufferStream implements StreamInterface, \Stringable
 {
-    private $hwm;
-    private $buffer = '';
+    private string $buffer = '';
 
     /**
      * @param int $hwm High water mark, representing the preferred maximum
@@ -23,12 +22,11 @@ class BufferStream implements StreamInterface
      *                 but will return false to inform writers to slow down
      *                 until the buffer has been drained by reading from it.
      */
-    public function __construct($hwm = 16384)
+    public function __construct(private $hwm = 16384)
     {
-        $this->hwm = $hwm;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getContents();
     }
@@ -53,7 +51,7 @@ class BufferStream implements StreamInterface
 
     public function getSize()
     {
-        return strlen($this->buffer);
+        return strlen((string) $this->buffer);
     }
 
     public function isReadable()
@@ -76,17 +74,17 @@ class BufferStream implements StreamInterface
         $this->seek(0);
     }
 
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): never
     {
         throw new \RuntimeException('Cannot seek a BufferStream');
     }
 
     public function eof()
     {
-        return strlen($this->buffer) === 0;
+        return strlen((string) $this->buffer) === 0;
     }
 
-    public function tell()
+    public function tell(): never
     {
         throw new \RuntimeException('Cannot determine the position of a BufferStream');
     }
@@ -96,7 +94,7 @@ class BufferStream implements StreamInterface
      */
     public function read($length)
     {
-        $currentLength = strlen($this->buffer);
+        $currentLength = strlen((string) $this->buffer);
 
         if ($length >= $currentLength) {
             // No need to slice the buffer because we don't have enough data.
@@ -104,8 +102,8 @@ class BufferStream implements StreamInterface
             $this->buffer = '';
         } else {
             // Slice up the result to provide a subset of the buffer.
-            $result = substr($this->buffer, 0, $length);
-            $this->buffer = substr($this->buffer, $length);
+            $result = substr((string) $this->buffer, 0, $length);
+            $this->buffer = substr((string) $this->buffer, $length);
         }
 
         return $result;

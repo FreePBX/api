@@ -31,15 +31,13 @@ class FulfilledPromise implements PromiseInterface
         }
 
         $queue = queue();
-        $p = new Promise([$queue, 'run']);
+        $p = new Promise($queue->run(...));
         $value = $this->value;
         $queue->add(static function () use ($p, $value, $onFulfilled) {
             if ($p->getState() === self::PENDING) {
                 try {
                     $p->resolve($onFulfilled($value));
-                } catch (\Throwable $e) {
-                    $p->reject($e);
-                } catch (\Exception $e) {
+                } catch (\Throwable|\Exception $e) {
                     $p->reject($e);
                 }
             }
@@ -70,7 +68,7 @@ class FulfilledPromise implements PromiseInterface
         }
     }
 
-    public function reject($reason)
+    public function reject($reason): never
     {
         throw new \LogicException("Cannot reject a fulfilled promise");
     }

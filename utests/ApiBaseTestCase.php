@@ -72,12 +72,12 @@ class ApiBaseTestCase extends PHPUnit_Framework_TestCase
 			->setNotBefore(time())
 			->setExpiration(time() + 1440)
 			->setSubject(null)
-			->set('scopes', array('gql'))
+			->set('scopes', ['gql'])
 			->sign(new Sha256(), $daKey)
 			->getToken();
 
 		$ipAddress = '127.0.0.1';
-		$scopes = array('gql');
+		$scopes = ['gql'];
 		$expiry = new \DateTime();
 		$expiry->setTimestamp($expireTimestamp);
 		self::$api->accessTokens->add($token, $application['id'], $ipAddress, $scopes, $expiry);
@@ -87,11 +87,7 @@ class ApiBaseTestCase extends PHPUnit_Framework_TestCase
 
 	public function request($requestData) {
 		$_SERVER['QUERY_STRING'] = null;
-		$_GET = array(
-			"module" => "api",
-			"command" => "gql",
-			"route" => ""
-		);
+		$_GET = ["module" => "api", "command" => "gql", "route" => ""];
 		$envData = [
 			'REQUEST_METHOD' => 'POST',
 			'REQUEST_URI' => '/api/gql',

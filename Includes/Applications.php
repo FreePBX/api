@@ -5,7 +5,7 @@ namespace FreePBX\modules\Api\Includes;
 use PDO;
 
 class Applications {
-	private $secretHashAlgo = 'sha256';
+	private string $secretHashAlgo = 'sha256';
 
 	public function __construct($database) {
 		$this->database = $database;
@@ -45,7 +45,7 @@ class Applications {
 			":description" => $description,
 			":type" => $type,
 			":client_id" => $client_id,
-			":client_secret" => ($type !== "browser") ? hash($this->secretHashAlgo, $client_secret) : null,
+			":client_secret" => ($type !== "browser") ? hash((string) $this->secretHashAlgo, $client_secret) : null,
 			":redirect_uri" => $redirect,
 			":website" => $website,
 			":algo" => $this->secretHashAlgo,
@@ -91,7 +91,7 @@ class Applications {
 		if($token['grant_type'] === "browser") {
 			return true;
 		}
-		if(hash($token['algo'], $client_secret) !== $token['client_secret']) {
+		if(hash((string) $token['algo'], (string) $client_secret) !== $token['client_secret']) {
 			return false;
 		}
 		return true;

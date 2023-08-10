@@ -8,18 +8,18 @@ use Psr\Http\Message\StreamInterface;
  *
  * @var $stream
  */
-class Stream implements StreamInterface
+class Stream implements StreamInterface, \Stringable
 {
     private $stream;
     private $size;
-    private $seekable;
-    private $readable;
-    private $writable;
+    private bool $seekable;
+    private bool $readable;
+    private bool $writable;
     private $uri;
     private $customMetadata;
 
     /** @var array Hash of readable and writable stream types */
-    private static $readWriteHash = [
+    private static array $readWriteHash = [
         'read' => [
             'r' => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
             'rb' => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
@@ -58,9 +58,7 @@ class Stream implements StreamInterface
             $this->size = $options['size'];
         }
 
-        $this->customMetadata = isset($options['metadata'])
-            ? $options['metadata']
-            : [];
+        $this->customMetadata = $options['metadata'] ?? [];
 
         $this->stream = $stream;
         $meta = stream_get_meta_data($this->stream);
@@ -87,12 +85,12 @@ class Stream implements StreamInterface
         $this->close();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         try {
             $this->seek(0);
             return (string) stream_get_contents($this->stream);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return '';
         }
     }
@@ -252,6 +250,6 @@ class Stream implements StreamInterface
 
         $meta = stream_get_meta_data($this->stream);
 
-        return isset($meta[$key]) ? $meta[$key] : null;
+        return $meta[$key] ?? null;
     }
 }

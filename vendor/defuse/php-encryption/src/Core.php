@@ -6,28 +6,28 @@ use Defuse\Crypto\Exception as Ex;
 
 final class Core
 {
-    const HEADER_VERSION_SIZE               = 4;
-    const MINIMUM_CIPHERTEXT_SIZE           = 84;
+    public const HEADER_VERSION_SIZE               = 4;
+    public const MINIMUM_CIPHERTEXT_SIZE           = 84;
 
-    const CURRENT_VERSION                   = "\xDE\xF5\x02\x00";
+    public const CURRENT_VERSION                   = "\xDE\xF5\x02\x00";
 
-    const CIPHER_METHOD                     = 'aes-256-ctr';
-    const BLOCK_BYTE_SIZE                   = 16;
-    const KEY_BYTE_SIZE                     = 32;
-    const SALT_BYTE_SIZE                    = 32;
-    const MAC_BYTE_SIZE                     = 32;
-    const HASH_FUNCTION_NAME                = 'sha256';
-    const ENCRYPTION_INFO_STRING            = 'DefusePHP|V2|KeyForEncryption';
-    const AUTHENTICATION_INFO_STRING        = 'DefusePHP|V2|KeyForAuthentication';
-    const BUFFER_BYTE_SIZE                  = 1048576;
+    public const CIPHER_METHOD                     = 'aes-256-ctr';
+    public const BLOCK_BYTE_SIZE                   = 16;
+    public const KEY_BYTE_SIZE                     = 32;
+    public const SALT_BYTE_SIZE                    = 32;
+    public const MAC_BYTE_SIZE                     = 32;
+    public const HASH_FUNCTION_NAME                = 'sha256';
+    public const ENCRYPTION_INFO_STRING            = 'DefusePHP|V2|KeyForEncryption';
+    public const AUTHENTICATION_INFO_STRING        = 'DefusePHP|V2|KeyForAuthentication';
+    public const BUFFER_BYTE_SIZE                  = 1_048_576;
 
-    const LEGACY_CIPHER_METHOD              = 'aes-128-cbc';
-    const LEGACY_BLOCK_BYTE_SIZE            = 16;
-    const LEGACY_KEY_BYTE_SIZE              = 16;
-    const LEGACY_HASH_FUNCTION_NAME         = 'sha256';
-    const LEGACY_MAC_BYTE_SIZE              = 32;
-    const LEGACY_ENCRYPTION_INFO_STRING     = 'DefusePHP|KeyForEncryption';
-    const LEGACY_AUTHENTICATION_INFO_STRING = 'DefusePHP|KeyForAuthentication';
+    public const LEGACY_CIPHER_METHOD              = 'aes-128-cbc';
+    public const LEGACY_BLOCK_BYTE_SIZE            = 16;
+    public const LEGACY_KEY_BYTE_SIZE              = 16;
+    public const LEGACY_HASH_FUNCTION_NAME         = 'sha256';
+    public const LEGACY_MAC_BYTE_SIZE              = 32;
+    public const LEGACY_ENCRYPTION_INFO_STRING     = 'DefusePHP|KeyForEncryption';
+    public const LEGACY_AUTHENTICATION_INFO_STRING = 'DefusePHP|KeyForAuthentication';
 
     /*
      * V2.0 Format: VERSION (4 bytes) || SALT (32 bytes) || IV (16 bytes) ||
@@ -101,7 +101,7 @@ final class Core
         self::ensureFunctionExists('random_bytes');
         try {
             return \random_bytes($octets);
-        } catch (\Exception $ex) {
+        } catch (\Exception) {
             throw new Ex\EnvironmentIsBrokenException(
                 'Your system does not have a secure random number generator.'
             );

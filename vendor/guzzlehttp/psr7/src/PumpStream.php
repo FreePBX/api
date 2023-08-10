@@ -13,7 +13,7 @@ use Psr\Http\Message\StreamInterface;
  * the read() function of the PumpStream. The provided callable MUST return
  * false when there is no more data to read.
  */
-class PumpStream implements StreamInterface
+class PumpStream implements StreamInterface, \Stringable
 {
     /** @var callable */
     private $source;
@@ -27,8 +27,7 @@ class PumpStream implements StreamInterface
     /** @var array */
     private $metadata;
 
-    /** @var BufferStream */
-    private $buffer;
+    private readonly \GuzzleHttp\Psr7\BufferStream $buffer;
 
     /**
      * @param callable $source Source of the stream data. The callable MAY
@@ -43,16 +42,16 @@ class PumpStream implements StreamInterface
     public function __construct(callable $source, array $options = [])
     {
         $this->source = $source;
-        $this->size = isset($options['size']) ? $options['size'] : null;
-        $this->metadata = isset($options['metadata']) ? $options['metadata'] : [];
+        $this->size = $options['size'] ?? null;
+        $this->metadata = $options['metadata'] ?? [];
         $this->buffer = new BufferStream();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         try {
             return copy_to_string($this);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return '';
         }
     }
@@ -93,7 +92,7 @@ class PumpStream implements StreamInterface
         $this->seek(0);
     }
 
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): never
     {
         throw new \RuntimeException('Cannot seek a PumpStream');
     }
@@ -103,7 +102,7 @@ class PumpStream implements StreamInterface
         return false;
     }
 
-    public function write($string)
+    public function write($string): never
     {
         throw new \RuntimeException('Cannot write to a PumpStream');
     }
@@ -133,7 +132,7 @@ class PumpStream implements StreamInterface
     {
         $result = '';
         while (!$this->eof()) {
-            $result .= $this->read(1000000);
+            $result .= $this->read(1_000_000);
         }
 
         return $result;
@@ -145,7 +144,7 @@ class PumpStream implements StreamInterface
             return $this->metadata;
         }
 
-        return isset($this->metadata[$key]) ? $this->metadata[$key] : null;
+        return $this->metadata[$key] ?? null;
     }
 
     private function pump($length)
@@ -158,7 +157,7 @@ class PumpStream implements StreamInterface
                     return;
                 }
                 $this->buffer->write($data);
-                $length -= strlen($data);
+                $length -= strlen((string) $data);
             } while ($length > 0);
         }
     }

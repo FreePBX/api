@@ -52,7 +52,6 @@ class KeyParser
     /**
      * Parses a public key from the given PEM content
      *
-     * @param Key $key
      *
      * @return \Mdanter\Ecc\Crypto\Key\PublicKeyInterface
      */
@@ -64,7 +63,6 @@ class KeyParser
     /**
      * Parses a private key from the given PEM content
      *
-     * @param Key $key
      *
      * @return \Mdanter\Ecc\Crypto\Key\PrivateKeyInterface
      */
@@ -76,11 +74,9 @@ class KeyParser
     /**
      * Extracts the base 64 value from the PEM certificate
      *
-     * @param Key $key
      * @param string $header
      *
      * @return string
-     *
      * @throws InvalidArgumentException When given key is not a ECDSA key
      */
     private function getKeyContent(Key $key, $header)

@@ -97,18 +97,16 @@ class Connection {
         $connectionType = new ObjectType([
             'name' => $name . 'Connection',
             'description' => 'A connection to a list of items.',
-            'fields' => function() use ($edgeType, $connectionFields, $config) {
-                return array_merge([
-                    'pageInfo' => [
-                        'type' => Type::nonNull(self::pageInfoType()),
-                        'description' => 'Information to aid in pagination.'
-                    ],
-                    'edges' => [
-                        'type' => Type::listOf($edgeType ?: self::createEdgeType($config)),
-                        'description' => 'Information to aid in pagination'
-                    ]
-                ], self::resolveMaybeThunk($connectionFields));
-            }
+            'fields' => fn() => array_merge([
+                'pageInfo' => [
+                    'type' => Type::nonNull(self::pageInfoType()),
+                    'description' => 'Information to aid in pagination.'
+                ],
+                'edges' => [
+                    'type' => Type::listOf($edgeType ?: self::createEdgeType($config)),
+                    'description' => 'Information to aid in pagination'
+                ]
+            ], self::resolveMaybeThunk($connectionFields))
         ]);
 
         return $connectionType;
@@ -118,7 +116,6 @@ class Connection {
      * Returns a GraphQLObjectType for an edge with the given name,
      * and whose nodes are of the specified type.
      *
-     * @param array $config
      * @return ObjectType
      */
     public static function createEdgeType(array $config)
@@ -132,24 +129,18 @@ class Connection {
         $resolveNode = array_key_exists('resolveNode', $config) ? $config['resolveNode'] : null;
         $resolveCursor = array_key_exists('resolveCursor', $config) ? $config['resolveCursor'] : null;
 
-        $edgeType = new ObjectType(array_merge([
-            'name' => $name . 'Edge',
-            'description' => 'An edge in a connection',
-            'fields' => function() use ($nodeType, $resolveNode, $resolveCursor, $edgeFields) {
-                return array_merge([
-                    'node' => [
-                        'type' => $nodeType,
-                        'resolve' => $resolveNode,
-                        'description' => 'The item at the end of the edge'
-                    ],
-                    'cursor' => [
-                        'type' => Type::nonNull(Type::string()),
-                        'resolve' => $resolveCursor,
-                        'description' => 'A cursor for use in pagination'
-                    ]
-                ], self::resolveMaybeThunk($edgeFields));
-            }
-        ]));
+        $edgeType = new ObjectType(['name' => $name . 'Edge', 'description' => 'An edge in a connection', 'fields' => fn() => array_merge([
+            'node' => [
+                'type' => $nodeType,
+                'resolve' => $resolveNode,
+                'description' => 'The item at the end of the edge'
+            ],
+            'cursor' => [
+                'type' => Type::nonNull(Type::string()),
+                'resolve' => $resolveCursor,
+                'description' => 'A cursor for use in pagination'
+            ]
+        ], self::resolveMaybeThunk($edgeFields))]);
 
         return $edgeType;
     }

@@ -14,9 +14,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 class MockHandler implements \Countable
 {
-    private $queue = [];
-    private $lastRequest;
-    private $lastOptions;
+    private array $queue = [];
+    private ?\Psr\Http\Message\RequestInterface $lastRequest = null;
+    private ?array $lastOptions = null;
     private $onFulfilled;
     private $onRejected;
 
@@ -43,7 +43,6 @@ class MockHandler implements \Countable
      * {@see Psr7\Http\Message\ResponseInterface} objects, Exceptions,
      * callables, or Promises.
      *
-     * @param array $queue
      * @param callable $onFulfilled Callback to invoke when the return value is fulfilled.
      * @param callable $onRejected  Callback to invoke when the return value is rejected.
      */
@@ -56,7 +55,7 @@ class MockHandler implements \Countable
         $this->onRejected = $onRejected;
 
         if ($queue) {
-            call_user_func_array([$this, 'append'], $queue);
+            call_user_func_array($this->append(...), $queue);
         }
     }
 

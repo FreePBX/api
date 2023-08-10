@@ -11,7 +11,7 @@ class ObjectRelayType extends ObjectType {
 	public function getConnection() {
 		if (empty($this->connection)) {
 			$this->connection = Relay::connectionDefinitions([
-				'name' => ucfirst(strtolower($this->name)),
+				'name' => ucfirst(strtolower((string) $this->name)),
 				'nodeType' => $this->getObject(),
 				'resolveNode' => $this->resolveNode,
 				'edgeFields' => $this->edgeFields,

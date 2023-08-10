@@ -11,7 +11,6 @@ final class File
      *
      * @param string $inputFilename
      * @param string $outputFilename
-     * @param Key    $key
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -52,7 +51,6 @@ final class File
      *
      * @param string $inputFilename
      * @param string $outputFilename
-     * @param Key    $key
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -96,7 +94,6 @@ final class File
      *
      * @param resource $inputHandle
      * @param resource $outputHandle
-     * @param Key      $key
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -140,7 +137,6 @@ final class File
      *
      * @param resource $inputHandle
      * @param resource $outputHandle
-     * @param Key      $key
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -183,7 +179,6 @@ final class File
      *
      * @param string        $inputFilename
      * @param string        $outputFilename
-     * @param KeyOrPassword $secret
      * @return void
      *
      * @throws Ex\CryptoException
@@ -248,7 +243,6 @@ final class File
      *
      * @param string        $inputFilename
      * @param string        $outputFilename
-     * @param KeyOrPassword $secret
      * @return void
      *
      * @throws Ex\CryptoException
@@ -315,7 +309,6 @@ final class File
      *
      * @param resource      $inputHandle
      * @param resource      $outputHandle
-     * @param KeyOrPassword $secret
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -430,7 +423,6 @@ final class File
      *
      * @param resource      $inputHandle
      * @param resource      $outputHandle
-     * @param KeyOrPassword $secret
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
