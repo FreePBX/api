@@ -461,7 +461,15 @@ class Api extends \FreePBX_Helpers implements \BMO {
 	}
 
 	public function generateDocumentation($scope, $host='http://localhost') {
-		$accessToken = $this->getDeveloperAccessToken($scope, $host);
+		if (filter_var($host, FILTER_VALIDATE_URL) === false) {
+			return false;
+		}
+		$parsed_url = parse_url($host);
+		$url = $parsed_url['scheme'] . "://" . $parsed_url['host'];
+		if (isset($parsed_url['port'])) {
+			$url .= ":" . $parsed_url['port'];
+		}
+		$accessToken = $this->getDeveloperAccessToken($scope, $url);
 		if (!preg_match('/^[a-zA-Z0-9\-_.]+$/', $accessToken)) {
 			return false;
 		}
@@ -473,7 +481,7 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		$process = new Process('rm -Rf '.__DIR__.'/docs');
 		$process->mustRun();
 
-		$process = new Process('NODE_TLS_REJECT_UNAUTHORIZED=0 node '.__DIR__.'/node/index.js -e '.$host.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$accessToken.'"');
+		$process = new Process('NODE_TLS_REJECT_UNAUTHORIZED=0 node '.__DIR__.'/node/index.js -e '.$url.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$accessToken.'"');
 		$process->mustRun();
 
 		file_put_contents(__DIR__."/docs/.htaccess",$ht);
