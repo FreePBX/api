@@ -177,7 +177,7 @@ class Api extends \FreePBX_Helpers implements \BMO {
 				return ["status" => true, "token" => $token];
 			break;
 			case "generatedocs":
-				$status = $this->generateDocumentation($_POST['scopes'], $_POST['host']);
+				$status = $this->generateDocumentation($_POST['scopes']);
 				return ["status" => $status];
 			break;
 			case "getJSTreeScopes":
@@ -460,16 +460,12 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		return $devApplication['accessToken']['access_token'];
 	}
 
-	public function generateDocumentation($scope, $host='http://localhost') {
-		if (filter_var($host, FILTER_VALIDATE_URL) === false) {
-			return false;
+	public function generateDocumentation($scope) {
+		$host = 'http://' . $_SERVER['HTTP_HOST'];
+		if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+			$host = 'https://' . $_SERVER['HTTP_HOST'];
 		}
-		$parsed_url = parse_url($host);
-		$url = $parsed_url['scheme'] . "://" . $parsed_url['host'];
-		if (isset($parsed_url['port'])) {
-			$url .= ":" . $parsed_url['port'];
-		}
-		$accessToken = $this->getDeveloperAccessToken($scope, $url);
+		$accessToken = $this->getDeveloperAccessToken($scope, $host);
 		if (!preg_match('/^[a-zA-Z0-9\-_.]+$/', $accessToken)) {
 			return false;
 		}
@@ -481,7 +477,7 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		$process = new Process('rm -Rf '.__DIR__.'/docs');
 		$process->mustRun();
 
-		$process = new Process('NODE_TLS_REJECT_UNAUTHORIZED=0 node '.__DIR__.'/node/index.js -e '.$url.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$accessToken.'"');
+		$process = new Process('NODE_TLS_REJECT_UNAUTHORIZED=0 node '.__DIR__.'/node/index.js -e '.$host.'/admin/api/api/gql -o '.__DIR__.'/docs -x "Authorization: Bearer '.$accessToken.'"');
 		$process->mustRun();
 
 		file_put_contents(__DIR__."/docs/.htaccess",$ht);
