@@ -1,31 +1,26 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Server;
 
-use GraphQL\Error\FormattedError;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Utils\Utils;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
-use Throwable;
-use function is_array;
 
 /**
  * GraphQL server compatible with both: [express-graphql](https://github.com/graphql/express-graphql)
  * and [Apollo Server](https://github.com/apollographql/graphql-server).
- * Usage Example:
+ * Usage Example:.
  *
  *     $server = new StandardServer([
  *       'schema' => $mySchema
  *     ]);
  *     $server->handleRequest();
  *
- * Or using [ServerConfig](reference.md#graphqlserverserverconfig) instance:
+ * Or using [ServerConfig](class-reference.md#graphqlserverserverconfig) instance:
  *
  *     $config = GraphQL\Server\ServerConfig::create()
  *         ->setSchema($mySchema)
@@ -35,90 +30,79 @@ use function is_array;
  *     $server->handleRequest();
  *
  * See [dedicated section in docs](executing-queries.md#using-server) for details.
+ *
+ * @see \GraphQL\Tests\Server\StandardServerTest
  */
 class StandardServer
 {
-    /** @var ServerConfig */
-    private $config;
+    protected ServerConfig $config;
 
-    /** @var Helper */
-    private $helper;
+    protected Helper $helper;
 
     /**
-     * Converts and exception to error and sends spec-compliant HTTP 500 error.
-     * Useful when an exception is thrown somewhere outside of server execution context
-     * (e.g. during schema instantiation).
-     *
-     * @param Throwable $error
-     * @param bool      $debug
-     * @param bool      $exitWhenDone
+     * @param ServerConfig|array<string, mixed> $config
      *
      * @api
-     */
-    public static function send500Error($error, $debug = false, $exitWhenDone = false)
-    {
-        $response = [
-            'errors' => [FormattedError::createFromException($error, $debug)],
-        ];
-        $helper   = new Helper();
-        $helper->emitResponse($response, 500, $exitWhenDone);
-    }
-
-    /**
-     * Creates new instance of a standard GraphQL HTTP server
      *
-     * @param ServerConfig|mixed[] $config
-     *
-     * @api
+     * @throws InvariantViolation
      */
     public function __construct($config)
     {
-        if (is_array($config)) {
+        if (\is_array($config)) {
             $config = ServerConfig::create($config);
         }
+
+        // @phpstan-ignore-next-line necessary until we can use proper union types
         if (! $config instanceof ServerConfig) {
-            throw new InvariantViolation('Expecting valid server config, but got ' . Utils::printSafe($config));
+            $safeConfig = Utils::printSafe($config);
+            throw new InvariantViolation("Expecting valid server config, but got {$safeConfig}");
         }
+
         $this->config = $config;
         $this->helper = new Helper();
     }
 
     /**
-     * Parses HTTP request, executes and emits response (using standard PHP `header` function and `echo`)
+     * Parses HTTP request, executes and emits response (using standard PHP `header` function and `echo`).
      *
-     * By default (when $parsedBody is not set) it uses PHP globals to parse a request.
+     * When $parsedBody is not set, it uses PHP globals to parse a request.
      * It is possible to implement request parsing elsewhere (e.g. using framework Request instance)
      * and then pass it to the server.
      *
-     * See `executeRequest()` if you prefer to emit response yourself
-     * (e.g. using Response object of some framework)
+     * See `executeRequest()` if you prefer to emit the response yourself
+     * (e.g. using the Response object of some framework).
      *
-     * @param OperationParams|OperationParams[] $parsedBody
-     * @param bool                              $exitWhenDone
+     * @param OperationParams|array<OperationParams> $parsedBody
      *
      * @api
+     *
+     * @throws \Exception
+     * @throws InvariantViolation
+     * @throws RequestError
      */
-    public function handleRequest($parsedBody = null, $exitWhenDone = false)
+    public function handleRequest($parsedBody = null): void
     {
         $result = $this->executeRequest($parsedBody);
-        $this->helper->sendResponse($result, $exitWhenDone);
+        $this->helper->sendResponse($result);
     }
 
     /**
-     * Executes GraphQL operation and returns execution result
+     * Executes a GraphQL operation and returns an execution result
      * (or promise when promise adapter is different from SyncPromiseAdapter).
      *
-     * By default (when $parsedBody is not set) it uses PHP globals to parse a request.
+     * When $parsedBody is not set, it uses PHP globals to parse a request.
      * It is possible to implement request parsing elsewhere (e.g. using framework Request instance)
      * and then pass it to the server.
      *
      * PSR-7 compatible method executePsrRequest() does exactly this.
      *
-     * @param OperationParams|OperationParams[] $parsedBody
+     * @param OperationParams|array<OperationParams> $parsedBody
      *
-     * @return ExecutionResult|ExecutionResult[]|Promise
-     *
+     * @throws \Exception
      * @throws InvariantViolation
+     * @throws RequestError
+     *
+     * @return ExecutionResult|array<int, ExecutionResult>|Promise
      *
      * @api
      */
@@ -128,7 +112,7 @@ class StandardServer
             $parsedBody = $this->helper->parseHttpRequest();
         }
 
-        if (is_array($parsedBody)) {
+        if (\is_array($parsedBody)) {
             return $this->helper->executeBatch($this->config, $parsedBody);
         }
 
@@ -141,12 +125,19 @@ class StandardServer
      * See `executePsrRequest()` if you prefer to create response yourself
      * (e.g. using specific JsonResponse instance of some framework).
      *
+     * @throws \Exception
+     * @throws \InvalidArgumentException
+     * @throws \JsonException
+     * @throws \RuntimeException
+     * @throws InvariantViolation
+     * @throws RequestError
+     *
      * @return ResponseInterface|Promise
      *
      * @api
      */
     public function processPsrRequest(
-        ServerRequestInterface $request,
+        RequestInterface $request,
         ResponseInterface $response,
         StreamInterface $writableBodyStream
     ) {
@@ -157,29 +148,21 @@ class StandardServer
 
     /**
      * Executes GraphQL operation and returns execution result
-     * (or promise when promise adapter is different from SyncPromiseAdapter)
+     * (or promise when promise adapter is different from SyncPromiseAdapter).
      *
-     * @return ExecutionResult|ExecutionResult[]|Promise
+     * @throws \Exception
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws RequestError
+     *
+     * @return ExecutionResult|array<int, ExecutionResult>|Promise
      *
      * @api
      */
-    public function executePsrRequest(ServerRequestInterface $request)
+    public function executePsrRequest(RequestInterface $request)
     {
         $parsedBody = $this->helper->parsePsrRequest($request);
 
         return $this->executeRequest($parsedBody);
-    }
-
-    /**
-     * Returns an instance of Server helper, which contains most of the actual logic for
-     * parsing / validating / executing request (which could be re-used by other server implementations)
-     *
-     * @return Helper
-     *
-     * @api
-     */
-    public function getHelper()
-    {
-        return $this->helper;
     }
 }

@@ -1,14 +1,10 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
 /**
  * export type ExecutableDefinitionNode =
  *   | OperationDefinitionNode
- *   | FragmentDefinitionNode;
+ *   | FragmentDefinitionNode;.
  */
-interface ExecutableDefinitionNode extends DefinitionNode
-{
-}
+interface ExecutableDefinitionNode extends DefinitionNode {}

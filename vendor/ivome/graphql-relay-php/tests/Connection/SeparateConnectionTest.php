@@ -7,13 +7,14 @@
 namespace GraphQLRelay\Tests\Connection;
 
 use GraphQL\GraphQL;
-use GraphQL\Schema;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Schema;
 use GraphQLRelay\Connection\ArrayConnection;
 use GraphQLRelay\Connection\Connection;
+use PHPUnit\Framework\TestCase;
 
-class SeparateConnectionTest extends \PHPUnit_Framework_TestCase
+class SeparateConnectionTest extends TestCase
 {
     /**
      * @var array
@@ -55,7 +56,7 @@ class SeparateConnectionTest extends \PHPUnit_Framework_TestCase
      */
     protected $schema;
 
-    public function setup()
+    public function setup(): void
     {
         $this->allUsers = [
             [ 'name' => 'Dan', 'friends' => [1, 2, 3, 4] ],
@@ -67,55 +68,73 @@ class SeparateConnectionTest extends \PHPUnit_Framework_TestCase
 
         $this->userType = new ObjectType([
             'name' => 'User',
-            'fields' => fn() => [
-                'name' => [
-                    'type' => Type::string()
-                ],
-                'friends' => [
-                    'type' => $this->friendConnection,
-                    'args' => Connection::connectionArgs(),
-                    'resolve' => fn($user, $args) => ArrayConnection::connectionFromArray($user['friends'], $args)
-                ],
-                'friendsForward' => [
-                    'type' => $this->userConnection,
-                    'args' => Connection::forwardConnectionArgs(),
-                    'resolve' => fn($user, $args) => ArrayConnection::connectionFromArray($user['friends'], $args)
-                ],
-                'friendsBackward' => [
-                    'type' => $this->userConnection,
-                    'args' => Connection::backwardConnectionArgs(),
-                    'resolve' => fn($user, $args) => ArrayConnection::connectionFromArray($user['friends'], $args)
-                ]
-            ]
+            'fields' => function(){
+                return [
+                    'name' => [
+                        'type' => Type::string()
+                    ],
+                    'friends' => [
+                        'type' => $this->friendConnection,
+                        'args' => Connection::connectionArgs(),
+                        'resolve' => function ($user, $args) {
+                            return ArrayConnection::connectionFromArray($user['friends'], $args);
+                        }
+                    ],
+                    'friendsForward' => [
+                        'type' => $this->userConnection,
+                        'args' => Connection::forwardConnectionArgs(),
+                        'resolve' => function ($user, $args) {
+                            return ArrayConnection::connectionFromArray($user['friends'], $args);
+                        }
+                    ],
+                    'friendsBackward' => [
+                        'type' => $this->userConnection,
+                        'args' => Connection::backwardConnectionArgs(),
+                        'resolve' => function ($user, $args) {
+                            return ArrayConnection::connectionFromArray($user['friends'], $args);
+                        }
+                    ]
+                ];
+            }
         ]);
 
         $this->friendEdge = Connection::createEdgeType([
             'name' => 'Friend',
             'nodeType' => $this->userType,
-            'resolveNode' => fn($edge) => $this->allUsers[$edge['node']],
-            'edgeFields' => fn() => [
-                'friendshipTime' => [
-                    'type' => Type::string(),
-                    'resolve' => fn() => 'Yesterday'
-                ]
-            ]
+            'resolveNode' => function ($edge) {
+                return $this->allUsers[$edge['node']];
+            },
+            'edgeFields' => function() {
+                return [
+                    'friendshipTime' => [
+                        'type' => Type::string(),
+                        'resolve' => function() { return 'Yesterday'; }
+                    ]
+                ];
+            }
         ]);
 
         $this->friendConnection = Connection::createConnectionType([
             'name' => 'Friend',
             'nodeType' => $this->userType,
             'edgeType' => $this->friendEdge,
-            'connectionFields' => fn() => [
-                'totalCount' => [
-                    'type' => Type::int(),
-                    'resolve' => fn() => count((array) $this->allUsers) -1
-                ]
-            ]
+            'connectionFields' => function() {
+                return [
+                    'totalCount' => [
+                        'type' => Type::int(),
+                        'resolve' => function() {
+                            return count($this->allUsers) -1;
+                        }
+                    ]
+                ];
+            }
         ]);
 
         $this->userEdge = Connection::createEdgeType([
             'nodeType' => $this->userType,
-            'resolveNode' => fn($edge) => $this->allUsers[$edge['node']]
+            'resolveNode' => function ($edge) {
+                return $this->allUsers[$edge['node']];
+            }
         ]);
 
         $this->userConnection = Connection::createConnectionType([
@@ -125,12 +144,16 @@ class SeparateConnectionTest extends \PHPUnit_Framework_TestCase
 
         $this->queryType = new ObjectType([
             'name' => 'Query',
-            'fields' => fn() => [
-                'user' => [
-                    'type' => $this->userType,
-                    'resolve' => fn() => $this->allUsers[0]
-                ]
-            ]
+            'fields' => function() {
+                return [
+                    'user' => [
+                        'type' => $this->userType,
+                        'resolve' => function() {
+                            return $this->allUsers[0];
+                        }
+                    ]
+                ];
+            }
         ]);
 
         $this->schema = new Schema([
@@ -255,7 +278,7 @@ class SeparateConnectionTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertValidQuery($query, $expected)
     {
-        $result = GraphQL::execute($this->schema, $query);
+        $result = GraphQL::executeQuery($this->schema, $query)->toArray();
         $this->assertEquals(['data' => $expected], $result);
     }
 }

@@ -52,6 +52,7 @@ class Relay {
      * Returns a GraphQLObjectType for a connection and its edge with the given name,
      * and whose nodes are of the specified type.
      *
+     * @param array $config
      * @return array
      */
     public static function connectionDefinitions(array $config)
@@ -63,6 +64,7 @@ class Relay {
      * Returns a GraphQLObjectType for a connection with the given name,
      * and whose nodes are of the specified type.
      *
+     * @param array $config
      * @return ObjectType
      */
     public static function connectionType(array $config)
@@ -74,6 +76,7 @@ class Relay {
      * Returns a GraphQLObjectType for a edge with the given name,
      * and whose nodes are of the specified type.
      *
+     * @param array $config
      * @return ObjectType
      */
     public static function edgeType(array $config)
@@ -85,7 +88,9 @@ class Relay {
      * A simple function that accepts an array and connection arguments, and returns
      * a connection object for use in GraphQL. It uses array offsets as pagination,
      * so pagination will only work if the array is static.
+     * @param array $data
      * @param $args
+     *
      * @return array
      */
     public static function connectionFromArray(array $data, $args)
@@ -115,6 +120,7 @@ class Relay {
     /**
      * Return the cursor associated with an object in an array.
      *
+     * @param array $data
      * @param $object
      * @return null|string
      */
@@ -136,7 +142,7 @@ class Relay {
      * An input object will be created containing the input fields, and an
      * object will be created containing the output fields.
      *
-     * mutateAndGetPayload will receieve an Object with a key for each
+     * mutateAndGetPayload will receive an Object with a key for each
      * input field, and it should return an Object with a key for each
      * output field. It may return synchronously, or return a Promise.
      *

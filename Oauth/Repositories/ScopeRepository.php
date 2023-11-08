@@ -8,6 +8,7 @@ use FreePBX\modules\Api\Oauth\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 
 class ScopeRepository implements ScopeRepositoryInterface {
+	public $api=null;
 	public function __construct($api) {
 		$this->api = $api;
 	}
@@ -45,28 +46,28 @@ class ScopeRepository implements ScopeRepositoryInterface {
 			return $scopes;
 		}
 
-		foreach($scopes as $scope) {
-			if(!$this->checkScope($scope->getIdentifier(),$applicationScopes)) {
-				throw OAuthServerException::invalidScope($scope->getIdentifier());
-			}
-		}
+		// foreach($scopes as $scope) {
+		// 	if(!$this->checkScope($scope->getIdentifier(),$applicationScopes)) {
+		// 		throw OAuthServerException::invalidScope($scope->getIdentifier());
+		// 	}
+		// }
 
 		return $scopes;
 	}
 
-	private function checkScope($scope,$applicationScopes) {
-		$parts = explode(":",(string) $scope);
-		$scopeString = '';
-		foreach($parts as $part) {
-			if(empty($scopeString)) {
-				$scopeString = $part;
-			} else {
-				$scopeString .= ':'.$part;
-			}
-			if(in_array($scopeString,$applicationScopes)) {
-				return true;
-			}
-		}
-		return false;
-	}
+	// private function checkScope($scope,$applicationScopes) {
+	// 	$parts = explode(":",(string) $scope);
+	// 	$scopeString = '';
+	// 	foreach($parts as $part) {
+	// 		if(empty($scopeString)) {
+	// 			$scopeString = $part;
+	// 		} else {
+	// 			$scopeString .= ':'.$part;
+	// 		}
+	// 		if(in_array($scopeString,$applicationScopes)) {
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 }

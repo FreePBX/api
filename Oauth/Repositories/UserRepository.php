@@ -6,6 +6,7 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use FreePBX\modules\Api\Oauth\Entities\UserEntity;
 
+#[\AllowDynamicProperties]
 class UserRepository implements UserRepositoryInterface {
 	public function __construct($api) {
 		$this->api = $api;

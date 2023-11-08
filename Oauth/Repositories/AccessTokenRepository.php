@@ -7,6 +7,7 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use FreePBX\modules\Api\Oauth\Entities\AccessTokenEntity;
 
+#[\AllowDynamicProperties]
 class AccessTokenRepository implements AccessTokenRepositoryInterface {
 	public function __construct($api) {
 		$this->api = $api;

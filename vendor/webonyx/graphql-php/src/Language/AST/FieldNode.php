@@ -1,26 +1,27 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
 class FieldNode extends Node implements SelectionNode
 {
-    /** @var string */
-    public $kind = NodeKind::FIELD;
+    public string $kind = NodeKind::FIELD;
 
-    /** @var NameNode */
-    public $name;
+    public NameNode $name;
 
-    /** @var NameNode|null */
-    public $alias;
+    public ?NameNode $alias = null;
 
-    /** @var ArgumentNode[]|null */
-    public $arguments;
+    /** @var NodeList<ArgumentNode> */
+    public NodeList $arguments;
 
-    /** @var DirectiveNode[]|null */
-    public $directives;
+    /** @var NodeList<DirectiveNode> */
+    public NodeList $directives;
 
-    /** @var SelectionSetNode|null */
-    public $selectionSet;
+    public ?SelectionSetNode $selectionSet = null;
+
+    public function __construct(array $vars)
+    {
+        parent::__construct($vars);
+        $this->directives ??= new NodeList([]);
+        $this->arguments ??= new NodeList([]);
+    }
 }

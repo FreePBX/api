@@ -1,206 +1,324 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Utils;
 
 use GraphQL\Error\Error;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\DirectiveDefinitionNode;
 use GraphQL\Language\AST\DocumentNode;
+use GraphQL\Language\AST\EnumTypeExtensionNode;
+use GraphQL\Language\AST\InputObjectTypeExtensionNode;
+use GraphQL\Language\AST\InterfaceTypeExtensionNode;
 use GraphQL\Language\AST\Node;
-use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\AST\ObjectTypeExtensionNode;
+use GraphQL\Language\AST\ScalarTypeExtensionNode;
 use GraphQL\Language\AST\SchemaDefinitionNode;
-use GraphQL\Language\AST\SchemaTypeExtensionNode;
+use GraphQL\Language\AST\SchemaExtensionNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\TypeExtensionNode;
+use GraphQL\Language\AST\UnionTypeExtensionNode;
+use GraphQL\Type\Definition\Argument;
 use GraphQL\Type\Definition\CustomScalarType;
 use GraphQL\Type\Definition\Directive;
 use GraphQL\Type\Definition\EnumType;
-use GraphQL\Type\Definition\EnumValueDefinition;
-use GraphQL\Type\Definition\FieldArgument;
+use GraphQL\Type\Definition\ImplementingType;
+use GraphQL\Type\Definition\InputObjectField;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NamedType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Introspection;
 use GraphQL\Type\Schema;
+use GraphQL\Type\SchemaConfig;
 use GraphQL\Validator\DocumentValidator;
-use function array_keys;
-use function array_map;
-use function array_merge;
-use function array_values;
-use function count;
 
+/**
+ * @phpstan-import-type TypeConfigDecorator from ASTDefinitionBuilder
+ * @phpstan-import-type UnnamedArgumentConfig from Argument
+ * @phpstan-import-type UnnamedInputObjectFieldConfig from InputObjectField
+ *
+ * @see \GraphQL\Tests\Utils\SchemaExtenderTest
+ */
 class SchemaExtender
 {
-    const SCHEMA_EXTENSION = 'SchemaExtension';
+    /** @var array<string, Type> */
+    protected array $extendTypeCache = [];
 
-    /** @var Type[] */
-    protected static $extendTypeCache;
+    /** @var array<string, array<TypeExtensionNode>> */
+    protected array $typeExtensionsMap = [];
 
-    /** @var mixed[] */
-    protected static $typeExtensionsMap;
-
-    /** @var ASTDefinitionBuilder */
-    protected static $astBuilder;
+    protected ASTDefinitionBuilder $astBuilder;
 
     /**
-     * @return TypeExtensionNode[]|null
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param TypeConfigDecorator|null $typeConfigDecorator
+     *
+     * @api
+     *
+     * @throws \Exception
+     * @throws InvariantViolation
      */
-    protected static function getExtensionASTNodes(NamedType $type) : ?array
-    {
-        if (! $type instanceof Type) {
-            return null;
-        }
-
-        $name = $type->name;
-        if ($type->extensionASTNodes !== null) {
-            if (isset(static::$typeExtensionsMap[$name])) {
-                return array_merge($type->extensionASTNodes, static::$typeExtensionsMap[$name]);
-            }
-
-            return $type->extensionASTNodes;
-        }
-
-        return static::$typeExtensionsMap[$name] ?? null;
+    public static function extend(
+        Schema $schema,
+        DocumentNode $documentAST,
+        array $options = [],
+        callable $typeConfigDecorator = null
+    ): Schema {
+        return (new static())->doExtend($schema, $documentAST, $options, $typeConfigDecorator);
     }
 
     /**
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param TypeConfigDecorator|null $typeConfigDecorator
+     *
+     * @throws \Exception
+     * @throws \ReflectionException
      * @throws Error
+     * @throws InvariantViolation
      */
-    protected static function checkExtensionNode(Type $type, Node $node) : void
-    {
-        switch ($node->kind) {
-            case NodeKind::OBJECT_TYPE_EXTENSION:
-                if (! ($type instanceof ObjectType)) {
-                    throw new Error(
-                        'Cannot extend non-object type "' . $type->name . '".',
-                        [$node]
-                    );
-                }
-                break;
-            case NodeKind::INTERFACE_TYPE_EXTENSION:
-                if (! ($type instanceof InterfaceType)) {
-                    throw new Error(
-                        'Cannot extend non-interface type "' . $type->name . '".',
-                        [$node]
-                    );
-                }
-                break;
-            case NodeKind::ENUM_TYPE_EXTENSION:
-                if (! ($type instanceof EnumType)) {
-                    throw new Error(
-                        'Cannot extend non-enum type "' . $type->name . '".',
-                        [$node]
-                    );
-                }
-                break;
-            case NodeKind::UNION_TYPE_EXTENSION:
-                if (! ($type instanceof UnionType)) {
-                    throw new Error(
-                        'Cannot extend non-union type "' . $type->name . '".',
-                        [$node]
-                    );
-                }
-                break;
-            case NodeKind::INPUT_OBJECT_TYPE_EXTENSION:
-                if (! ($type instanceof InputObjectType)) {
-                    throw new Error(
-                        'Cannot extend non-input object type "' . $type->name . '".',
-                        [$node]
-                    );
-                }
-                break;
+    protected function doExtend(
+        Schema $schema,
+        DocumentNode $documentAST,
+        array $options = [],
+        callable $typeConfigDecorator = null
+    ): Schema {
+        if (
+            ! ($options['assumeValid'] ?? false)
+            && ! ($options['assumeValidSDL'] ?? false)
+        ) {
+            DocumentValidator::assertValidSDLExtension($documentAST, $schema);
         }
+
+        /** @var array<string, Node&TypeDefinitionNode> $typeDefinitionMap */
+        $typeDefinitionMap = [];
+
+        /** @var array<int, DirectiveDefinitionNode> $directiveDefinitions */
+        $directiveDefinitions = [];
+
+        /** @var SchemaDefinitionNode|null $schemaDef */
+        $schemaDef = null;
+
+        /** @var array<int, SchemaExtensionNode> $schemaExtensions */
+        $schemaExtensions = [];
+
+        foreach ($documentAST->definitions as $def) {
+            if ($def instanceof SchemaDefinitionNode) {
+                $schemaDef = $def;
+            } elseif ($def instanceof SchemaExtensionNode) {
+                $schemaExtensions[] = $def;
+            } elseif ($def instanceof TypeDefinitionNode) {
+                $name = $def->getName()->value;
+                $typeDefinitionMap[$name] = $def;
+            } elseif ($def instanceof TypeExtensionNode) {
+                $name = $def->getName()->value;
+                $this->typeExtensionsMap[$name][] = $def;
+            } elseif ($def instanceof DirectiveDefinitionNode) {
+                $directiveDefinitions[] = $def;
+            }
+        }
+
+        if (
+            $this->typeExtensionsMap === []
+            && $typeDefinitionMap === []
+            && $directiveDefinitions === []
+            && $schemaExtensions === []
+            && $schemaDef === null
+        ) {
+            return $schema;
+        }
+
+        $this->astBuilder = new ASTDefinitionBuilder(
+            $typeDefinitionMap,
+            [],
+            // @phpstan-ignore-next-line no idea what is wrong here
+            function (string $typeName) use ($schema): Type {
+                $existingType = $schema->getType($typeName);
+                if ($existingType === null) {
+                    throw new InvariantViolation("Unknown type: \"{$typeName}\".");
+                }
+
+                return $this->extendNamedType($existingType);
+            },
+            $typeConfigDecorator
+        );
+
+        $this->extendTypeCache = [];
+
+        $types = [];
+
+        // Iterate through all types, getting the type definition for each, ensuring
+        // that any type not directly referenced by a field will get created.
+        foreach ($schema->getTypeMap() as $type) {
+            $types[] = $this->extendNamedType($type);
+        }
+
+        // Do the same with new types.
+        foreach ($typeDefinitionMap as $type) {
+            $types[] = $this->astBuilder->buildType($type);
+        }
+
+        $operationTypes = [
+            'query' => $this->extendMaybeNamedType($schema->getQueryType()),
+            'mutation' => $this->extendMaybeNamedType($schema->getMutationType()),
+            'subscription' => $this->extendMaybeNamedType($schema->getSubscriptionType()),
+        ];
+
+        if ($schemaDef !== null) {
+            foreach ($schemaDef->operationTypes as $operationType) {
+                $operationTypes[$operationType->operation] = $this->astBuilder->buildType($operationType->type);
+            }
+        }
+
+        foreach ($schemaExtensions as $schemaExtension) {
+            foreach ($schemaExtension->operationTypes as $operationType) {
+                $operationTypes[$operationType->operation] = $this->astBuilder->buildType($operationType->type);
+            }
+        }
+
+        $schemaExtensionASTNodes = \array_merge($schema->extensionASTNodes, $schemaExtensions);
+
+        return new Schema(
+            (new SchemaConfig())
+            // @phpstan-ignore-next-line the root types may be invalid, but just passing them leads to more actionable errors
+            ->setQuery($operationTypes['query'])
+            // @phpstan-ignore-next-line the root types may be invalid, but just passing them leads to more actionable errors
+            ->setMutation($operationTypes['mutation'])
+            // @phpstan-ignore-next-line the root types may be invalid, but just passing them leads to more actionable errors
+            ->setSubscription($operationTypes['subscription'])
+            ->setTypes($types)
+            ->setDirectives($this->getMergedDirectives($schema, $directiveDefinitions))
+            ->setAstNode($schema->astNode ?? $schemaDef)
+            ->setExtensionASTNodes($schemaExtensionASTNodes)
+        );
     }
 
-    protected static function extendCustomScalarType(CustomScalarType $type) : CustomScalarType
+    /**
+     * @param Type&NamedType $type
+     *
+     * @return array<TypeExtensionNode>|null
+     */
+    protected function extensionASTNodes(NamedType $type): ?array
     {
+        return \array_merge(
+            $type->extensionASTNodes ?? [],
+            $this->typeExtensionsMap[$type->name] ?? []
+        );
+    }
+
+    /**
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws InvariantViolation
+     */
+    protected function extendScalarType(ScalarType $type): CustomScalarType
+    {
+        /** @var array<int, ScalarTypeExtensionNode> $extensionASTNodes */
+        $extensionASTNodes = $this->extensionASTNodes($type);
+
         return new CustomScalarType([
             'name' => $type->name,
             'description' => $type->description,
+            'serialize' => [$type, 'serialize'],
+            'parseValue' => [$type, 'parseValue'],
+            'parseLiteral' => [$type, 'parseLiteral'],
             'astNode' => $type->astNode,
-            'serialize' => $type->config['serialize'] ?? null,
-            'parseValue' => $type->config['parseValue'] ?? null,
-            'parseLiteral' => $type->config['parseLiteral'] ?? null,
-            'extensionASTNodes' => static::getExtensionASTNodes($type),
+            'extensionASTNodes' => $extensionASTNodes,
         ]);
     }
 
-    protected static function extendUnionType(UnionType $type) : UnionType
+    /** @throws InvariantViolation */
+    protected function extendUnionType(UnionType $type): UnionType
     {
+        /** @var array<int, UnionTypeExtensionNode> $extensionASTNodes */
+        $extensionASTNodes = $this->extensionASTNodes($type);
+
         return new UnionType([
             'name' => $type->name,
             'description' => $type->description,
-            'types' => static function () use ($type) {
-                return static::extendPossibleTypes($type);
-            },
+            'types' => fn (): array => $this->extendUnionPossibleTypes($type),
+            'resolveType' => [$type, 'resolveType'],
             'astNode' => $type->astNode,
-            'resolveType' => $type->config['resolveType'] ?? null,
-            'extensionASTNodes' => static::getExtensionASTNodes($type),
-        ]);
-    }
-
-    protected static function extendEnumType(EnumType $type) : EnumType
-    {
-        return new EnumType([
-            'name' => $type->name,
-            'description' => $type->description,
-            'values' => static::extendValueMap($type),
-            'astNode' => $type->astNode,
-            'extensionASTNodes' => static::getExtensionASTNodes($type),
-        ]);
-    }
-
-    protected static function extendInputObjectType(InputObjectType $type) : InputObjectType
-    {
-        return new InputObjectType([
-            'name' => $type->name,
-            'description' => $type->description,
-            'fields' => static function () use ($type) {
-                return static::extendInputFieldMap($type);
-            },
-            'astNode' => $type->astNode,
-            'extensionASTNodes' => static::getExtensionASTNodes($type),
+            'extensionASTNodes' => $extensionASTNodes,
         ]);
     }
 
     /**
-     * @return mixed[]
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws InvariantViolation
      */
-    protected static function extendInputFieldMap(InputObjectType $type) : array
+    protected function extendEnumType(EnumType $type): EnumType
     {
+        /** @var array<int, EnumTypeExtensionNode> $extensionASTNodes */
+        $extensionASTNodes = $this->extensionASTNodes($type);
+
+        return new EnumType([
+            'name' => $type->name,
+            'description' => $type->description,
+            'values' => $this->extendEnumValueMap($type),
+            'astNode' => $type->astNode,
+            'extensionASTNodes' => $extensionASTNodes,
+        ]);
+    }
+
+    /** @throws InvariantViolation */
+    protected function extendInputObjectType(InputObjectType $type): InputObjectType
+    {
+        /** @var array<int, InputObjectTypeExtensionNode> $extensionASTNodes */
+        $extensionASTNodes = $this->extensionASTNodes($type);
+
+        return new InputObjectType([
+            'name' => $type->name,
+            'description' => $type->description,
+            'fields' => fn (): array => $this->extendInputFieldMap($type),
+            'astNode' => $type->astNode,
+            'extensionASTNodes' => $extensionASTNodes,
+            'parseValue' => [$type, 'parseValue'],
+        ]);
+    }
+
+    /**
+     * @throws \Exception
+     * @throws InvariantViolation
+     *
+     * @return array<string, UnnamedInputObjectFieldConfig>
+     */
+    protected function extendInputFieldMap(InputObjectType $type): array
+    {
+        /** @var array<string, UnnamedInputObjectFieldConfig> $newFieldMap */
         $newFieldMap = [];
+
         $oldFieldMap = $type->getFields();
         foreach ($oldFieldMap as $fieldName => $field) {
-            $newFieldMap[$fieldName] = [
+            $extendedType = $this->extendType($field->getType());
+
+            $newFieldConfig = [
                 'description' => $field->description,
-                'type' => static::extendType($field->type),
+                'type' => $extendedType,
+                'deprecationReason' => $field->deprecationReason,
                 'astNode' => $field->astNode,
             ];
 
-            if (! $field->defaultValueExists()) {
-                continue;
+            if ($field->defaultValueExists()) {
+                $newFieldConfig['defaultValue'] = $field->defaultValue;
             }
 
-            $newFieldMap[$fieldName]['defaultValue'] = $field->defaultValue;
+            $newFieldMap[$fieldName] = $newFieldConfig;
         }
 
-        $extensions = static::$typeExtensionsMap[$type->name] ?? null;
-        if ($extensions !== null) {
-            foreach ($extensions as $extension) {
-                foreach ($extension->fields as $field) {
-                    $fieldName = $field->name->value;
-                    if (isset($oldFieldMap[$fieldName])) {
-                        throw new Error('Field "' . $type->name . '.' . $fieldName . '" already exists in the schema. It cannot also be defined in this type extension.', [$field]);
-                    }
+        if (isset($this->typeExtensionsMap[$type->name])) {
+            foreach ($this->typeExtensionsMap[$type->name] as $extension) {
+                assert($extension instanceof InputObjectTypeExtensionNode, 'proven by schema validation');
 
-                    $newFieldMap[$fieldName] = static::$astBuilder->buildInputField($field);
+                foreach ($extension->fields as $field) {
+                    $newFieldMap[$field->name->value] = $this->astBuilder->buildInputField($field);
                 }
             }
         }
@@ -209,19 +327,17 @@ class SchemaExtender
     }
 
     /**
-     * @return mixed[]
+     * @throws \Exception
+     * @throws InvariantViolation
+     *
+     * @return array<string, array<string, mixed>>
      */
-    protected static function extendValueMap(EnumType $type) : array
+    protected function extendEnumValueMap(EnumType $type): array
     {
         $newValueMap = [];
-        /** @var EnumValueDefinition[] $oldValueMap */
-        $oldValueMap = [];
-        foreach ($type->getValues() as $value) {
-            $oldValueMap[$value->name] = $value;
-        }
 
-        foreach ($oldValueMap as $key => $value) {
-            $newValueMap[$key] = [
+        foreach ($type->getValues() as $value) {
+            $newValueMap[$value->name] = [
                 'name' => $value->name,
                 'description' => $value->description,
                 'value' => $value->value,
@@ -230,15 +346,12 @@ class SchemaExtender
             ];
         }
 
-        $extensions = static::$typeExtensionsMap[$type->name] ?? null;
-        if ($extensions !== null) {
-            foreach ($extensions as $extension) {
+        if (isset($this->typeExtensionsMap[$type->name])) {
+            foreach ($this->typeExtensionsMap[$type->name] as $extension) {
+                assert($extension instanceof EnumTypeExtensionNode, 'proven by schema validation');
+
                 foreach ($extension->values as $value) {
-                    $valueName = $value->name->value;
-                    if (isset($oldValueMap[$valueName])) {
-                        throw new Error('Enum value "' . $type->name . '.' . $valueName . '" already exists in the schema. It cannot also be defined in this type extension.', [$value]);
-                    }
-                    $newValueMap[$valueName] = static::$astBuilder->buildEnumValue($value);
+                    $newValueMap[$value->name->value] = $this->astBuilder->buildEnumValue($value);
                 }
             }
         }
@@ -247,125 +360,159 @@ class SchemaExtender
     }
 
     /**
-     * @return ObjectType[]
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws Error
+     * @throws InvariantViolation
+     *
+     * @return array<int, ObjectType>
      */
-    protected static function extendPossibleTypes(UnionType $type) : array
+    protected function extendUnionPossibleTypes(UnionType $type): array
     {
-        $possibleTypes = array_map(static function ($type) {
-            return static::extendNamedType($type);
-        }, $type->getTypes());
+        $possibleTypes = \array_map(
+            [$this, 'extendNamedType'],
+            $type->getTypes()
+        );
 
-        $extensions = static::$typeExtensionsMap[$type->name] ?? null;
-        if ($extensions !== null) {
-            foreach ($extensions as $extension) {
+        if (isset($this->typeExtensionsMap[$type->name])) {
+            foreach ($this->typeExtensionsMap[$type->name] as $extension) {
+                assert($extension instanceof UnionTypeExtensionNode, 'proven by schema validation');
+
                 foreach ($extension->types as $namedType) {
-                    $possibleTypes[] = static::$astBuilder->buildType($namedType);
+                    $possibleTypes[] = $this->astBuilder->buildType($namedType);
                 }
             }
         }
 
+        // @phpstan-ignore-next-line proven by schema validation
         return $possibleTypes;
     }
 
     /**
-     * @return InterfaceType[]
+     * @param ObjectType|InterfaceType $type
+     *
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws Error
+     * @throws InvariantViolation
+     *
+     * @return array<int, InterfaceType>
      */
-    protected static function extendImplementedInterfaces(ObjectType $type) : array
+    protected function extendImplementedInterfaces(ImplementingType $type): array
     {
-        $interfaces = array_map(static function (InterfaceType $interfaceType) {
-            return static::extendNamedType($interfaceType);
-        }, $type->getInterfaces());
+        $interfaces = \array_map(
+            [$this, 'extendNamedType'],
+            $type->getInterfaces()
+        );
 
-        $extensions = static::$typeExtensionsMap[$type->name] ?? null;
-        if ($extensions !== null) {
-            /** @var ObjectTypeExtensionNode $extension */
-            foreach ($extensions as $extension) {
+        if (isset($this->typeExtensionsMap[$type->name])) {
+            foreach ($this->typeExtensionsMap[$type->name] as $extension) {
+                assert(
+                    $extension instanceof ObjectTypeExtensionNode || $extension instanceof InterfaceTypeExtensionNode,
+                    'proven by schema validation'
+                );
+
                 foreach ($extension->interfaces as $namedType) {
-                    $interfaces[] = static::$astBuilder->buildType($namedType);
+                    $interface = $this->astBuilder->buildType($namedType);
+                    assert($interface instanceof InterfaceType, 'we know this, but PHP templates cannot express it');
+
+                    $interfaces[] = $interface;
                 }
             }
         }
 
+        // @phpstan-ignore-next-line will be caught in schema validation
         return $interfaces;
     }
 
-    protected static function extendType($typeDef)
+    /**
+     * @template T of Type
+     *
+     * @param T $typeDef
+     *
+     * @return T
+     */
+    protected function extendType(Type $typeDef): Type
     {
         if ($typeDef instanceof ListOfType) {
-            return Type::listOf(static::extendType($typeDef->ofType));
+            // @phpstan-ignore-next-line PHPStan does not understand this is the same generic type as the input
+            return Type::listOf($this->extendType($typeDef->getWrappedType()));
         }
 
         if ($typeDef instanceof NonNull) {
-            return Type::nonNull(static::extendType($typeDef->getWrappedType()));
+            // @phpstan-ignore-next-line PHPStan does not understand this is the same generic type as the input
+            return Type::nonNull($this->extendType($typeDef->getWrappedType()));
         }
 
-        return static::extendNamedType($typeDef);
+        // @phpstan-ignore-next-line PHPStan does not understand this is the same generic type as the input
+        return $this->extendNamedType($typeDef);
     }
 
     /**
-     * @param FieldArgument[] $args
+     * @param array<Argument> $args
      *
-     * @return mixed[]
+     * @return array<string, UnnamedArgumentConfig>
      */
-    protected static function extendArgs(array $args) : array
+    protected function extendArgs(array $args): array
     {
-        return Utils::keyValMap(
-            $args,
-            static function (FieldArgument $arg) {
-                return $arg->name;
-            },
-            static function (FieldArgument $arg) {
-                $def = [
-                    'type'        => static::extendType($arg->getType()),
-                    'description' => $arg->description,
-                    'astNode'     => $arg->astNode,
-                ];
+        $extended = [];
+        foreach ($args as $arg) {
+            $extendedType = $this->extendType($arg->getType());
 
-                if ($arg->defaultValueExists()) {
-                    $def['defaultValue'] = $arg->defaultValue;
-                }
+            $def = [
+                'type' => $extendedType,
+                'description' => $arg->description,
+                'deprecationReason' => $arg->deprecationReason,
+                'astNode' => $arg->astNode,
+            ];
 
-                return $def;
+            if ($arg->defaultValueExists()) {
+                $def['defaultValue'] = $arg->defaultValue;
             }
-        );
+
+            $extended[$arg->name] = $def;
+        }
+
+        return $extended;
     }
 
     /**
      * @param InterfaceType|ObjectType $type
      *
-     * @return mixed[]
-     *
+     * @throws \Exception
      * @throws Error
+     * @throws InvariantViolation
+     *
+     * @return array<string, array<string, mixed>>
      */
-    protected static function extendFieldMap($type) : array
+    protected function extendFieldMap(Type $type): array
     {
         $newFieldMap = [];
         $oldFieldMap = $type->getFields();
 
-        foreach (array_keys($oldFieldMap) as $fieldName) {
+        foreach (\array_keys($oldFieldMap) as $fieldName) {
             $field = $oldFieldMap[$fieldName];
 
             $newFieldMap[$fieldName] = [
                 'name' => $fieldName,
                 'description' => $field->description,
                 'deprecationReason' => $field->deprecationReason,
-                'type' => static::extendType($field->getType()),
-                'args' => static::extendArgs($field->args),
-                'astNode' => $field->astNode,
+                'type' => $this->extendType($field->getType()),
+                'args' => $this->extendArgs($field->args),
                 'resolve' => $field->resolveFn,
+                'astNode' => $field->astNode,
             ];
         }
 
-        $extensions = static::$typeExtensionsMap[$type->name] ?? null;
-        if ($extensions !== null) {
-            foreach ($extensions as $extension) {
-                foreach ($extension->fields as $field) {
-                    $fieldName = $field->name->value;
-                    if (isset($oldFieldMap[$fieldName])) {
-                        throw new Error('Field "' . $type->name . '.' . $fieldName . '" already exists in the schema. It cannot also be defined in this type extension.', [$field]);
-                    }
+        if (isset($this->typeExtensionsMap[$type->name])) {
+            foreach ($this->typeExtensionsMap[$type->name] as $extension) {
+                assert(
+                    $extension instanceof ObjectTypeExtensionNode || $extension instanceof InterfaceTypeExtensionNode,
+                    'proven by schema validation'
+                );
 
-                    $newFieldMap[$fieldName] = static::$astBuilder->buildField($field);
+                foreach ($extension->fields as $field) {
+                    $newFieldMap[$field->name->value] = $this->astBuilder->buildField($field);
                 }
             }
         }
@@ -373,259 +520,144 @@ class SchemaExtender
         return $newFieldMap;
     }
 
-    protected static function extendObjectType(ObjectType $type) : ObjectType
+    /** @throws InvariantViolation */
+    protected function extendObjectType(ObjectType $type): ObjectType
     {
+        /** @var array<int, ObjectTypeExtensionNode> $extensionASTNodes */
+        $extensionASTNodes = $this->extensionASTNodes($type);
+
         return new ObjectType([
             'name' => $type->name,
             'description' => $type->description,
-            'interfaces' => static function () use ($type) {
-                return static::extendImplementedInterfaces($type);
-            },
-            'fields' => static function () use ($type) {
-                return static::extendFieldMap($type);
-            },
+            'interfaces' => fn (): array => $this->extendImplementedInterfaces($type),
+            'fields' => fn (): array => $this->extendFieldMap($type),
+            'isTypeOf' => [$type, 'isTypeOf'],
+            'resolveField' => $type->resolveFieldFn ?? null,
             'astNode' => $type->astNode,
-            'extensionASTNodes' => static::getExtensionASTNodes($type),
-            'isTypeOf' => $type->config['isTypeOf'] ?? null,
+            'extensionASTNodes' => $extensionASTNodes,
         ]);
     }
 
-    protected static function extendInterfaceType(InterfaceType $type) : InterfaceType
+    /** @throws InvariantViolation */
+    protected function extendInterfaceType(InterfaceType $type): InterfaceType
     {
+        /** @var array<int, InterfaceTypeExtensionNode> $extensionASTNodes */
+        $extensionASTNodes = $this->extensionASTNodes($type);
+
         return new InterfaceType([
             'name' => $type->name,
             'description' => $type->description,
-            'fields' => static function () use ($type) {
-                return static::extendFieldMap($type);
-            },
+            'interfaces' => fn (): array => $this->extendImplementedInterfaces($type),
+            'fields' => fn (): array => $this->extendFieldMap($type),
+            'resolveType' => [$type, 'resolveType'],
             'astNode' => $type->astNode,
-            'extensionASTNodes' => static::getExtensionASTNodes($type),
-            'resolveType' => $type->config['resolveType'] ?? null,
+            'extensionASTNodes' => $extensionASTNodes,
         ]);
     }
 
-    protected static function isSpecifiedScalarType(Type $type) : bool
+    protected function isSpecifiedScalarType(Type $type): bool
     {
-        return $type instanceof NamedType &&
-            (
-                $type->name === Type::STRING ||
-                $type->name === Type::INT ||
-                $type->name === Type::FLOAT ||
-                $type->name === Type::BOOLEAN ||
-                $type->name === Type::ID
+        return $type instanceof NamedType
+            && (
+                $type->name === Type::STRING
+                || $type->name === Type::INT
+                || $type->name === Type::FLOAT
+                || $type->name === Type::BOOLEAN
+                || $type->name === Type::ID
             );
     }
 
-    protected static function extendNamedType(Type $type)
+    /**
+     * @template T of Type
+     *
+     * @param T&NamedType $type
+     *
+     * @throws \ReflectionException
+     * @throws InvariantViolation
+     *
+     * @return T&NamedType
+     */
+    protected function extendNamedType(Type $type): Type
     {
-        if (Introspection::isIntrospectionType($type) || static::isSpecifiedScalarType($type)) {
+        if (Introspection::isIntrospectionType($type) || $this->isSpecifiedScalarType($type)) {
             return $type;
         }
 
-        $name = $type->name;
-        if (! isset(static::$extendTypeCache[$name])) {
-            if ($type instanceof CustomScalarType) {
-                static::$extendTypeCache[$name] = static::extendCustomScalarType($type);
-            } elseif ($type instanceof ObjectType) {
-                static::$extendTypeCache[$name] = static::extendObjectType($type);
-            } elseif ($type instanceof InterfaceType) {
-                static::$extendTypeCache[$name] = static::extendInterfaceType($type);
-            } elseif ($type instanceof UnionType) {
-                static::$extendTypeCache[$name] = static::extendUnionType($type);
-            } elseif ($type instanceof EnumType) {
-                static::$extendTypeCache[$name] = static::extendEnumType($type);
-            } elseif ($type instanceof InputObjectType) {
-                static::$extendTypeCache[$name] = static::extendInputObjectType($type);
-            }
-        }
+        // @phpstan-ignore-next-line the subtypes line up
+        return $this->extendTypeCache[$type->name] ??= $this->extendNamedTypeWithoutCache($type);
+    }
 
-        return static::$extendTypeCache[$name];
+    /** @throws \Exception */
+    protected function extendNamedTypeWithoutCache(Type $type): Type
+    {
+        switch (true) {
+            case $type instanceof ScalarType: return $this->extendScalarType($type);
+            case $type instanceof ObjectType: return $this->extendObjectType($type);
+            case $type instanceof InterfaceType: return $this->extendInterfaceType($type);
+            case $type instanceof UnionType: return $this->extendUnionType($type);
+            case $type instanceof EnumType: return $this->extendEnumType($type);
+            case $type instanceof InputObjectType: return $this->extendInputObjectType($type);
+            default:
+                $unconsideredType = get_class($type);
+                throw new \Exception("Unconsidered type: {$unconsideredType}.");
+        }
     }
 
     /**
-     * @return mixed|null
+     * @template T of Type
+     *
+     * @param (T&NamedType)|null $type
+     *
+     * @throws \ReflectionException
+     * @throws InvariantViolation
+     *
+     * @return (T&NamedType)|null
      */
-    protected static function extendMaybeNamedType(?NamedType $type = null)
+    protected function extendMaybeNamedType(Type $type = null): ?Type
     {
         if ($type !== null) {
-            return static::extendNamedType($type);
+            return $this->extendNamedType($type);
         }
 
         return null;
     }
 
     /**
-     * @param DirectiveDefinitionNode[] $directiveDefinitions
+     * @param array<DirectiveDefinitionNode> $directiveDefinitions
      *
-     * @return Directive[]
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws InvariantViolation
+     *
+     * @return array<int, Directive>
      */
-    protected static function getMergedDirectives(Schema $schema, array $directiveDefinitions) : array
+    protected function getMergedDirectives(Schema $schema, array $directiveDefinitions): array
     {
-        $existingDirectives = array_map(static function (Directive $directive) {
-            return static::extendDirective($directive);
-        }, $schema->getDirectives());
-
-        Utils::invariant(count($existingDirectives) > 0, 'schema must have default directives');
-
-        return array_merge(
-            $existingDirectives,
-            array_map(static function (DirectiveDefinitionNode $directive) {
-                return static::$astBuilder->buildDirective($directive);
-            }, $directiveDefinitions)
+        $directives = \array_map(
+            [$this, 'extendDirective'],
+            $schema->getDirectives()
         );
+
+        if ($directives === []) {
+            throw new InvariantViolation('Schema must have default directives.');
+        }
+
+        foreach ($directiveDefinitions as $directive) {
+            $directives[] = $this->astBuilder->buildDirective($directive);
+        }
+
+        return $directives;
     }
 
-    protected static function extendDirective(Directive $directive) : Directive
+    protected function extendDirective(Directive $directive): Directive
     {
         return new Directive([
             'name' => $directive->name,
             'description' => $directive->description,
             'locations' => $directive->locations,
-            'args' => static::extendArgs($directive->args),
+            'args' => $this->extendArgs($directive->args),
+            'isRepeatable' => $directive->isRepeatable,
             'astNode' => $directive->astNode,
-        ]);
-    }
-
-    /**
-     * @param mixed[]|null $options
-     */
-    public static function extend(Schema $schema, DocumentNode $documentAST, ?array $options = null) : Schema
-    {
-        if ($options === null || ! (isset($options['assumeValid']) || isset($options['assumeValidSDL']))) {
-            DocumentValidator::assertValidSDLExtension($documentAST, $schema);
-        }
-
-        $typeDefinitionMap         = [];
-        static::$typeExtensionsMap = [];
-        $directiveDefinitions      = [];
-        /** @var SchemaDefinitionNode|null $schemaDef */
-        $schemaDef = null;
-        /** @var SchemaTypeExtensionNode[] $schemaExtensions */
-        $schemaExtensions = [];
-
-        $definitionsCount = count($documentAST->definitions);
-        for ($i = 0; $i < $definitionsCount; $i++) {
-
-            /** @var Node $def */
-            $def = $documentAST->definitions[$i];
-
-            if ($def instanceof SchemaDefinitionNode) {
-                $schemaDef = $def;
-            } elseif ($def instanceof SchemaTypeExtensionNode) {
-                $schemaExtensions[] = $def;
-            } elseif ($def instanceof TypeDefinitionNode) {
-                $typeName = isset($def->name) ? $def->name->value : null;
-
-                try {
-                    $type = $schema->getType($typeName);
-                } catch (Error $error) {
-                    $type = null;
-                }
-
-                if ($type) {
-                    throw new Error('Type "' . $typeName . '" already exists in the schema. It cannot also be defined in this type definition.', [$def]);
-                }
-                $typeDefinitionMap[$typeName] = $def;
-            } elseif ($def instanceof TypeExtensionNode) {
-                $extendedTypeName = isset($def->name) ? $def->name->value : null;
-                $existingType     = $schema->getType($extendedTypeName);
-                if ($existingType === null) {
-                    throw new Error('Cannot extend type "' . $extendedTypeName . '" because it does not exist in the existing schema.', [$def]);
-                }
-
-                static::checkExtensionNode($existingType, $def);
-
-                $existingTypeExtensions                       = static::$typeExtensionsMap[$extendedTypeName] ?? null;
-                static::$typeExtensionsMap[$extendedTypeName] = $existingTypeExtensions !== null ? array_merge($existingTypeExtensions, [$def]) : [$def];
-            } elseif ($def instanceof DirectiveDefinitionNode) {
-                $directiveName     = $def->name->value;
-                $existingDirective = $schema->getDirective($directiveName);
-                if ($existingDirective !== null) {
-                    throw new Error('Directive "' . $directiveName . '" already exists in the schema. It cannot be redefined.', [$def]);
-                }
-                $directiveDefinitions[] = $def;
-            }
-        }
-
-        if (count(static::$typeExtensionsMap) === 0 &&
-            count($typeDefinitionMap) === 0 &&
-            count($directiveDefinitions) === 0 &&
-            count($schemaExtensions) === 0 &&
-            $schemaDef === null
-        ) {
-            return $schema;
-        }
-
-        static::$astBuilder = new ASTDefinitionBuilder(
-            $typeDefinitionMap,
-            $options,
-            static function (string $typeName) use ($schema) {
-                /** @var NamedType $existingType */
-                $existingType = $schema->getType($typeName);
-                if ($existingType !== null) {
-                    return static::extendNamedType($existingType);
-                }
-
-                throw new Error('Unknown type: "' . $typeName . '". Ensure that this type exists either in the original schema, or is added in a type definition.', [$typeName]);
-            }
-        );
-
-        static::$extendTypeCache = [];
-
-        $operationTypes = [
-            'query' => static::extendMaybeNamedType($schema->getQueryType()),
-            'mutation' => static::extendMaybeNamedType($schema->getMutationType()),
-            'subscription' => static::extendMaybeNamedType($schema->getSubscriptionType()),
-        ];
-
-        if ($schemaDef) {
-            foreach ($schemaDef->operationTypes as $operationType) {
-                $operation = $operationType->operation;
-                $type      = $operationType->type;
-
-                if (isset($operationTypes[$operation])) {
-                    throw new Error('Must provide only one ' . $operation . ' type in schema.');
-                }
-
-                $operationTypes[$operation] = static::$astBuilder->buildType($type);
-            }
-        }
-
-        foreach ($schemaExtensions as $schemaExtension) {
-            if (! $schemaExtension->operationTypes) {
-                continue;
-            }
-
-            foreach ($schemaExtension->operationTypes as $operationType) {
-                $operation = $operationType->operation;
-                if (isset($operationTypes[$operation])) {
-                    throw new Error('Must provide only one ' . $operation . ' type in schema.');
-                }
-                $operationTypes[$operation] = static::$astBuilder->buildType($operationType->type);
-            }
-        }
-
-        $schemaExtensionASTNodes = count($schemaExtensions) > 0
-            ? ($schema->extensionASTNodes ? array_merge($schema->extensionASTNodes, $schemaExtensions) : $schemaExtensions)
-            : $schema->extensionASTNodes;
-
-        $types = array_merge(
-            array_map(static function ($type) {
-                return static::extendType($type);
-            }, array_values($schema->getTypeMap())),
-            array_map(static function ($type) {
-                return static::$astBuilder->buildType($type);
-            }, array_values($typeDefinitionMap))
-        );
-
-        return new Schema([
-            'query' => $operationTypes['query'],
-            'mutation' => $operationTypes['mutation'],
-            'subscription' => $operationTypes['subscription'],
-            'types' => $types,
-            'directives' => static::getMergedDirectives($schema, $directiveDefinitions),
-            'astNode' => $schema->getAstNode(),
-            'extensionASTNodes' => $schemaExtensionASTNodes,
         ]);
     }
 }

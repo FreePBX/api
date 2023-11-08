@@ -1,17 +1,15 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Type;
 
 class TypeKind
 {
-    const SCALAR         = 0;
-    const OBJECT         = 1;
-    const INTERFACE_KIND = 2;
-    const UNION          = 3;
-    const ENUM           = 4;
-    const INPUT_OBJECT   = 5;
-    const LIST_KIND      = 6;
-    const NON_NULL       = 7;
+    public const SCALAR = 'SCALAR';
+    public const OBJECT = 'OBJECT';
+    public const INTERFACE = 'INTERFACE';
+    public const UNION = 'UNION';
+    public const ENUM = 'ENUM';
+    public const INPUT_OBJECT = 'INPUT_OBJECT';
+    public const LIST = 'LIST';
+    public const NON_NULL = 'NON_NULL';
 }

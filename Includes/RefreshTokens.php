@@ -4,6 +4,7 @@ namespace FreePBX\modules\Api\Includes;
 
 use PDO;
 
+#[\AllowDynamicProperties]
 class RefreshTokens {
 	public function __construct($database) {
 		$this->database = $database;

@@ -1,20 +1,27 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
 class EnumTypeExtensionNode extends Node implements TypeExtensionNode
 {
-    /** @var string */
-    public $kind = NodeKind::ENUM_TYPE_EXTENSION;
+    public string $kind = NodeKind::ENUM_TYPE_EXTENSION;
 
-    /** @var NameNode */
-    public $name;
+    public NameNode $name;
 
-    /** @var DirectiveNode[]|null */
-    public $directives;
+    /** @var NodeList<DirectiveNode> */
+    public NodeList $directives;
 
-    /** @var EnumValueDefinitionNode[]|null */
-    public $values;
+    /** @var NodeList<EnumValueDefinitionNode> */
+    public NodeList $values;
+
+    public function __construct(array $vars)
+    {
+        parent::__construct($vars);
+        $this->directives ??= new NodeList([]);
+    }
+
+    public function getName(): NameNode
+    {
+        return $this->name;
+    }
 }

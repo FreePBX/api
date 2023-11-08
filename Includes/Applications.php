@@ -4,6 +4,7 @@ namespace FreePBX\modules\Api\Includes;
 
 use PDO;
 
+#[\AllowDynamicProperties]
 class Applications {
 	private string $secretHashAlgo = 'sha256';
 

@@ -1,14 +1,11 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
 class ListTypeNode extends Node implements TypeNode
 {
-    /** @var string */
-    public $kind = NodeKind::LIST_TYPE;
+    public string $kind = NodeKind::LIST_TYPE;
 
-    /** @var Node */
-    public $type;
+    /** @var NamedTypeNode|ListTypeNode|NonNullTypeNode */
+    public TypeNode $type;
 }

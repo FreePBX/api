@@ -8,9 +8,9 @@
 namespace GraphQLRelay\tests;
 
 
-use GraphQL\Schema;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Schema;
 use GraphQLRelay\Relay;
 
 class StarWarsSchema {
@@ -38,7 +38,7 @@ class StarWarsSchema {
 
     /**
      * Using our shorthand to describe type systems, the type system for our
-     * example will be the followng:
+     * example will be the following:
      *
      * interface Node {
      *   id: ID!
@@ -117,7 +117,9 @@ class StarWarsSchema {
                     }
                 },
                 // Type resolver
-                fn($object) => isset($object['ships']) ? self::getFactionType() : self::getShipType()
+                function ($object) {
+                    return isset($object['ships']) ? self::getFactionType() : self::getShipType();
+                }
             );
             self::$nodeDefinition = $nodeDefinition;
         }
@@ -144,13 +146,15 @@ class StarWarsSchema {
             $shipType = new ObjectType([
                 'name' => 'Ship',
                 'description' => 'A ship in the Star Wars saga',
-                'fields' => fn() => [
-                    'id' => Relay::globalIdField(),
-                    'name' => [
-                        'type' => Type::string(),
-                        'description' => 'The name of the ship.'
-                    ]
-                ],
+                'fields' => function() {
+                    return [
+                        'id' => Relay::globalIdField(),
+                        'name' => [
+                            'type' => Type::string(),
+                            'description' => 'The name of the ship.'
+                        ]
+                    ];
+                },
                 'interfaces' => [$nodeDefinition['nodeInterface']]
             ]);
             self::$shipType = $shipType;
@@ -179,23 +183,27 @@ class StarWarsSchema {
             $factionType = new ObjectType([
                 'name' => 'Faction',
                 'description' => 'A faction in the Star Wars saga',
-                'fields' => fn() => [
-                    'id' => Relay::globalIdField(),
-                    'name' => [
-                        'type' => Type::string(),
-                        'description' => 'The name of the faction.'
-                    ],
-                    'ships' => [
-                        'type' => $shipConnection['connectionType'],
-                        'description' => 'The ships used by the faction.',
-                        'args' => Relay::connectionArgs(),
-                        'resolve' => function($faction, $args) {
-                            // Map IDs from faction back to ships
-                            $data = array_map(fn($id) => StarWarsData::getShip($id), $faction['ships']);
-                            return Relay::connectionFromArray($data, $args);
-                        }
-                    ]
-                ],
+                'fields' => function() use ($shipConnection) {
+                    return [
+                        'id' => Relay::globalIdField(),
+                        'name' => [
+                            'type' => Type::string(),
+                            'description' => 'The name of the faction.'
+                        ],
+                        'ships' => [
+                            'type' => $shipConnection['connectionType'],
+                            'description' => 'The ships used by the faction.',
+                            'args' => Relay::connectionArgs(),
+                            'resolve' => function($faction, $args) {
+                                // Map IDs from faction back to ships
+                                $data = array_map(function($id) {
+                                    return StarWarsData::getShip($id);
+                                }, $faction['ships']);
+                                return Relay::connectionFromArray($data, $args);
+                            }
+                        ]
+                    ];
+                },
                 'interfaces' => [$nodeDefinition['nodeInterface']]
             ]);
 
@@ -271,11 +279,15 @@ class StarWarsSchema {
                 'outputFields' => [
                     'ship' => [
                         'type' => $shipType,
-                        'resolve' => fn($payload) => StarWarsData::getShip($payload['shipId'])
+                        'resolve' => function ($payload) {
+                            return StarWarsData::getShip($payload['shipId']);
+                        }
                     ],
                     'faction' => [
                         'type' => $factionType,
-                        'resolve' => fn($payload) => StarWarsData::getFaction($payload['factionId'])
+                        'resolve' => function ($payload) {
+                            return StarWarsData::getFaction($payload['factionId']);
+                        }
                     ]
                 ],
                 'mutateAndGetPayload' => function ($input) {
@@ -316,17 +328,23 @@ class StarWarsSchema {
          */
         $queryType = new ObjectType([
             'name' => 'Query',
-            'fields' => fn() => [
-                'rebels' => [
-                    'type' => $factionType,
-                    'resolve' => fn() => StarWarsData::getRebels()
-                ],
-                'empire' => [
-                    'type' => $factionType,
-                    'resolve' => fn() => StarWarsData::getEmpire()
-                ],
-                'node' => $nodeDefinition['nodeField']
-            ],
+            'fields' => function () use ($factionType, $nodeDefinition) {
+                return [
+                    'rebels' => [
+                        'type' => $factionType,
+                        'resolve' => function (){
+                            return StarWarsData::getRebels();
+                        }
+                    ],
+                    'empire' => [
+                        'type' => $factionType,
+                        'resolve' => function () {
+                            return StarWarsData::getEmpire();
+                        }
+                    ],
+                    'node' => $nodeDefinition['nodeField']
+                ];
+            },
         ]);
 
         /**
@@ -340,9 +358,11 @@ class StarWarsSchema {
          */
         $mutationType = new ObjectType([
             'name' => 'Mutation',
-            'fields' => fn() => [
-                'introduceShip' => $shipMutation
-            ]
+            'fields' => function () use ($shipMutation) {
+                return [
+                    'introduceShip' => $shipMutation
+                ];
+            }
         ]);
 
         /**

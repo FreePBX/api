@@ -1,71 +1,51 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Type\Definition;
 
-use GraphQL\Utils\Utils;
+use GraphQL\Type\Schema;
 
+/**
+ * @phpstan-type WrappedType (NullableType&Type)|callable():(NullableType&Type)
+ */
 class NonNull extends Type implements WrappingType, OutputType, InputType
 {
-    /** @var NullableType */
-    private $ofType;
+    /**
+     * @var Type|callable
+     *
+     * @phpstan-var WrappedType
+     */
+    private $wrappedType;
 
     /**
-     * @param NullableType $type
+     * @param Type|callable $type
+     *
+     * @phpstan-param WrappedType $type
      */
     public function __construct($type)
     {
-        $this->ofType = self::assertNullableType($type);
+        $this->wrappedType = $type;
     }
 
-    /**
-     * @param mixed $type
-     *
-     * @return NullableType
-     */
-    public static function assertNullableType($type)
-    {
-        Utils::invariant(
-            Type::isType($type) && ! $type instanceof self,
-            'Expected ' . Utils::printSafe($type) . ' to be a GraphQL nullable type.'
-        );
-
-        return $type;
-    }
-
-    /**
-     * @param mixed $type
-     *
-     * @return self
-     */
-    public static function assertNullType($type)
-    {
-        Utils::invariant(
-            $type instanceof self,
-            'Expected ' . Utils::printSafe($type) . ' to be a GraphQL Non-Null type.'
-        );
-
-        return $type;
-    }
-
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         return $this->getWrappedType()->toString() . '!';
     }
 
-    /**
-     * @param bool $recurse
-     *
-     * @return Type
-     */
-    public function getWrappedType($recurse = false)
+    /** @return NullableType&Type */
+    public function getWrappedType(): Type
     {
-        $type = $this->ofType;
+        return Schema::resolveType($this->wrappedType);
+    }
 
-        return $recurse && $type instanceof WrappingType ? $type->getWrappedType($recurse) : $type;
+    public function getInnermostType(): NamedType
+    {
+        $type = $this->getWrappedType();
+        while ($type instanceof WrappingType) {
+            $type = $type->getWrappedType();
+        }
+
+        assert($type instanceof NamedType, 'known because we unwrapped all the way down');
+
+        return $type;
     }
 }

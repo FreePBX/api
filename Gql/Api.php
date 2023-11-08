@@ -2,6 +2,7 @@
 
 namespace FreePBX\modules\Api\Gql;
 
+use DI\Container;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
@@ -20,7 +21,9 @@ use GraphQL\Error\Debug;
 use DirectoryIterator;
 
 use Slim\App;
+use Slim\Factory\AppFactory;
 
+#[\AllowDynamicProperties]
 class Api {
 	private ?array $classes = null;
 	private bool $safeMode = false;
@@ -76,20 +79,21 @@ class Api {
 			$publicKeyPath
 		);
 
-		$app = new App($config);
-
-		$app->add(new ResourceServerMiddleware($server));
-
-		$container             = $app->getContainer();
-		$container['setupGql'] = $container->protect(fn ($request, $response, $args) => $this->setupGql($request, $response, $args));
+		AppFactory::setSlimHttpDecoratorsAutomaticDetection(false);
+		$container = new Container();
+		AppFactory::setContainer($container);
+		$app = AppFactory::create();
+		$app->addBodyParsingMiddleware();
 
 		$self = $this;
-		$app->post('/api/gql', function ($request, $response, $args) use ($self)
+		$app->post('/api/gql', function ($request, $response, $args) use ($self, $server)
 		{
+			$request = $server->validateAuthenticatedRequest($request);
 			$data   = [];
+			$rootValue = ['prefix' => 'You said: '];
 			$server = new StandardServer([
-				'schema' => call_user_func($this->setupGql, $request, $response, $args),
-				'debug'  => true
+				'schema' => $self->setupGql($request, $response, $args),
+				'rootValue'  => $rootValue
 			]);
 
 			$newResponse = $server->processPsrRequest($request, $response, $response->getBody());
@@ -99,10 +103,12 @@ class Api {
 				$self->freepbx->api->writelog(print_r(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->errors[0], true));
 				dbug(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->errors[0]);
 				$data['errors'][] = [ "message" => json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->errors[0]->message, "status" => false ];
-				return $response->withJson($data, 400);
+				return  $response->withBody($newResponse->getBody(), 400);
 			} //handling the error response defined 
 			elseif (isset(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->data)) {
-				$value = key(json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->data);
+				$decodedData = json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->data;
+				$keys = array_keys((array)$decodedData);
+				$value = isset($keys[0]) ? $keys[0]:'';
 				$res   = json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->data->$value;
 				//checking for the error case where status is false
 				if (isset($res->status) && json_decode((string) $res->status, null, 512, JSON_THROW_ON_ERROR) == false) {
@@ -115,7 +121,13 @@ class Api {
 					else {
 						$data['errors'][] = $status;
 					}
-					return $response->withJson($data, $httpCode);
+					$jsonData = json_encode($data);
+					$response = new \GuzzleHttp\Psr7\Response(
+						$httpCode,
+						['Content-Type' => 'application/json'], // Set the JSON content type
+						$jsonData // Set the JSON data
+					);
+					return $response;
 				}
 			}
 			//default when proper response is true

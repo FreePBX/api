@@ -6,9 +6,9 @@ use Defuse\Crypto\Exception as Ex;
 
 final class Encoding
 {
-    public const CHECKSUM_BYTE_SIZE     = 32;
-    public const CHECKSUM_HASH_ALGO     = 'sha256';
-    public const SERIALIZE_HEADER_BYTES = 4;
+    const CHECKSUM_BYTE_SIZE     = 32;
+    const CHECKSUM_HASH_ALGO     = 'sha256';
+    const SERIALIZE_HEADER_BYTES = 4;
 
     /**
      * Converts a byte string to a hexadecimal string without leaking
@@ -175,7 +175,11 @@ final class Encoding
      *
      * @return string
      */
-    public static function saveBytesToChecksummedAsciiSafeString($header, $bytes)
+    public static function saveBytesToChecksummedAsciiSafeString(
+        $header,
+        #[\SensitiveParameter]
+        $bytes
+    )
     {
         // Headers must be a constant length to prevent one type's header from
         // being a prefix of another type's header, leading to ambiguity.
@@ -207,7 +211,11 @@ final class Encoding
      *
      * @return string
      */
-    public static function loadBytesFromChecksummedAsciiSafeString($expected_header, $string)
+    public static function loadBytesFromChecksummedAsciiSafeString(
+        $expected_header,
+        #[\SensitiveParameter]
+        $string
+    )
     {
         // Headers must be a constant length to prevent one type's header from
         // being a prefix of another type's header, leading to ambiguity.

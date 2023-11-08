@@ -1,13 +1,12 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
+/**
+ * export type DefinitionNode = OperationDefinitionNode
+ *                        | FragmentDefinitionNode.
+ */
 interface HasSelectionSet
 {
-    /**
-     * export type DefinitionNode = OperationDefinitionNode
-     *                        | FragmentDefinitionNode
-     */
+    public function getSelectionSet(): SelectionSetNode;
 }

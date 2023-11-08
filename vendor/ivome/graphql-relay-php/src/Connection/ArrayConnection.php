@@ -10,7 +10,7 @@ namespace GraphQLRelay\Connection;
 
 class ArrayConnection
 {
-    final public const PREFIX = 'arrayconnection:';
+    const PREFIX = 'arrayconnection:';
 
     /**
      * Creates the cursor string from an offset.
@@ -44,14 +44,16 @@ class ArrayConnection
             return $defaultOffset;
         }
         $offset = self::cursorToOffset($cursor);
-        return $offset ?? $defaultOffset;
+        return $offset !== null ? $offset: $defaultOffset;
     }
 
     /**
      * A simple function that accepts an array and connection arguments, and returns
      * a connection object for use in GraphQL. It uses array offsets as pagination,
      * so pagination will only work if the array is static.
+     * @param array $data
      * @param $args
+     *
      * @return array
      */
     public static function connectionFromArray(array $data, $args)
@@ -115,10 +117,12 @@ class ArrayConnection
             count($arraySlice) - ($sliceEnd - $endOffset) - max($startOffset - $sliceStart, 0)
         );
 
-        $edges = array_map(fn($item, $index) => [
-            'cursor' => self::offsetToCursor($startOffset + $index),
-            'node' => $item
-        ], $slice, array_keys($slice));
+        $edges = array_map(function($item, $index) use ($startOffset) {
+            return [
+                'cursor' => self::offsetToCursor($startOffset + $index),
+                'node' => $item
+            ];
+        }, $slice, array_keys($slice));
 
         $firstEdge = $edges ? $edges[0] : null;
         $lastEdge = $edges ? $edges[count($edges) - 1] : null;
@@ -139,6 +143,7 @@ class ArrayConnection
     /**
      * Return the cursor associated with an object in an array.
      *
+     * @param array $data
      * @param $object
      * @return null|string
      */
@@ -162,6 +167,7 @@ class ArrayConnection
     /**
      * Returns the value for the given array key, NULL, if it does not exist
      *
+     * @param array $array
      * @param string $key
      * @return mixed
      */

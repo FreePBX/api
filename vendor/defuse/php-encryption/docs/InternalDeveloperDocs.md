@@ -111,7 +111,7 @@ Check out the branch you want to release:
 git checkout <branchname>
 ```
 
-Check that the version number in composer.json is correct:
+Check that the version number in composer.json is correct (or not specified so that it gets picked up from the git tag):
 
 ```
 cat composer.json
@@ -141,7 +141,7 @@ Test the `.phar`:
 
 ```
 cd ../
-./test.sh dist/defuse-crypto.phar
+./test.sh dist/phar-testing-autoload.php
 ```
 
 Sign the `.phar`:
@@ -154,7 +154,7 @@ make sign-phar
 Tag the release:
 
 ```
-git -c user.signingkey=7B4B2D98 tag -s "<TAG NAME>" -m "<TAG MESSAGE>"
+git -c user.signingkey=DD2E507F7BDB1669 tag -s "<TAG NAME>" -m "<TAG MESSAGE>"
 ```
 
 `<TAG NAME>` should be in the format `v2.0.0` and `<TAG MESSAGE>` should look

@@ -9,8 +9,9 @@ namespace GraphQLRelay\tests;
 
 
 use GraphQL\GraphQL;
+use PHPUnit\Framework\TestCase;
 
-class StarWarsMutationTest extends \PHPUnit_Framework_TestCase
+class StarWarsMutationTest extends TestCase
 {
     public function testMutatesTheDataSet()
     {
@@ -27,15 +28,32 @@ class StarWarsMutationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $params = ['input' =>
-            ['shipName' => 'B-Wing', 'factionId' => '1', 'clientMutationId' => 'abcde']];
+        $params = array (
+            'input' =>
+                array (
+                    'shipName' => 'B-Wing',
+                    'factionId' => '1',
+                    'clientMutationId' => 'abcde',
+                ),
+        );
 
-        $expected = ['introduceShip' =>
-            ['ship' =>
-                ['id' => 'U2hpcDo5', 'name' => 'B-Wing'], 'faction' =>
-                ['name' => 'Alliance to Restore the Republic'], 'clientMutationId' => 'abcde']];
+        $expected = array (
+            'introduceShip' =>
+                array (
+                    'ship' =>
+                        array (
+                            'id' => 'U2hpcDo5',
+                            'name' => 'B-Wing',
+                        ),
+                    'faction' =>
+                        array (
+                            'name' => 'Alliance to Restore the Republic',
+                        ),
+                    'clientMutationId' => 'abcde',
+                ),
+        );
 
-        $result = GraphQL::execute(StarWarsSchema::getSchema(), $mutation, null, null, $params);
+        $result = GraphQL::executeQuery(StarWarsSchema::getSchema(), $mutation, null, null, $params)->toArray();
 
         $this->assertEquals(['data' => $expected], $result);
     }

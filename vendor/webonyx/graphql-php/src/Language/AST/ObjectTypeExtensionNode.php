@@ -1,23 +1,24 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
 class ObjectTypeExtensionNode extends Node implements TypeExtensionNode
 {
-    /** @var string */
-    public $kind = NodeKind::OBJECT_TYPE_EXTENSION;
+    public string $kind = NodeKind::OBJECT_TYPE_EXTENSION;
 
-    /** @var NameNode */
-    public $name;
+    public NameNode $name;
 
-    /** @var NamedTypeNode[] */
-    public $interfaces = [];
+    /** @var NodeList<NamedTypeNode> */
+    public NodeList $interfaces;
 
-    /** @var DirectiveNode[] */
-    public $directives;
+    /** @var NodeList<DirectiveNode> */
+    public NodeList $directives;
 
-    /** @var FieldDefinitionNode[] */
-    public $fields;
+    /** @var NodeList<FieldDefinitionNode> */
+    public NodeList $fields;
+
+    public function getName(): NameNode
+    {
+        return $this->name;
+    }
 }
