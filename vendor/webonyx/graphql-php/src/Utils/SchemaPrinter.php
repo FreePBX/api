@@ -1,489 +1,574 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Utils;
 
 use GraphQL\Error\Error;
+use GraphQL\Error\InvariantViolation;
+use GraphQL\Error\SerializationError;
+use GraphQL\Language\AST\StringValueNode;
+use GraphQL\Language\BlockString;
 use GraphQL\Language\Printer;
+use GraphQL\Type\Definition\Argument;
 use GraphQL\Type\Definition\Directive;
 use GraphQL\Type\Definition\EnumType;
+use GraphQL\Type\Definition\EnumValueDefinition;
+use GraphQL\Type\Definition\FieldDefinition;
+use GraphQL\Type\Definition\ImplementingType;
+use GraphQL\Type\Definition\InputObjectField;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
+use GraphQL\Type\Definition\NamedType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Introspection;
 use GraphQL\Type\Schema;
-use function array_filter;
-use function array_keys;
-use function array_map;
-use function array_merge;
-use function array_values;
-use function count;
-use function explode;
-use function implode;
-use function ksort;
-use function mb_strlen;
-use function preg_match_all;
-use function sprintf;
-use function str_replace;
-use function strlen;
-use function substr;
 
 /**
- * Given an instance of Schema, prints it in GraphQL type language.
+ * Prints the contents of a Schema in schema definition language.
+ *
+ * All sorting options sort alphabetically. If not given or `false`, the original schema definition order will be used.
+ *
+ * @phpstan-type Options array{
+ *   sortArguments?: bool,
+ *   sortEnumValues?: bool,
+ *   sortFields?: bool,
+ *   sortInputFields?: bool,
+ *   sortTypes?: bool,
+ * }
+ *
+ * @see \GraphQL\Tests\Utils\SchemaPrinterTest
  */
 class SchemaPrinter
 {
     /**
-     * Accepts options as a second argument:
+     * @param array<string, bool> $options
      *
-     *    - commentDescriptions:
-     *        Provide true to use preceding comments as the description.
-     *
-     * @param bool[] $options
+     * @phpstan-param Options $options
      *
      * @api
+     *
+     * @throws \JsonException
+     * @throws Error
+     * @throws InvariantViolation
+     * @throws SerializationError
      */
-    public static function doPrint(Schema $schema, array $options = []) : string
+    public static function doPrint(Schema $schema, array $options = []): string
     {
-        return self::printFilteredSchema(
+        return static::printFilteredSchema(
             $schema,
-            static function ($type) {
-                return ! Directive::isSpecifiedDirective($type);
-            },
-            static function ($type) {
-                return ! Type::isBuiltInType($type);
-            },
+            static fn (Directive $directive): bool => ! Directive::isSpecifiedDirective($directive),
+            static fn (NamedType $type): bool => ! $type->isBuiltInType(),
             $options
         );
     }
 
     /**
-     * @param bool[] $options
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @api
+     *
+     * @throws \JsonException
+     * @throws Error
+     * @throws InvariantViolation
+     * @throws SerializationError
      */
-    private static function printFilteredSchema(Schema $schema, $directiveFilter, $typeFilter, $options) : string
+    public static function printIntrospectionSchema(Schema $schema, array $options = []): string
     {
-        $directives = array_filter(
-            $schema->getDirectives(),
-            static function ($directive) use ($directiveFilter) {
-                return $directiveFilter($directive);
-            }
-        );
-
-        $types = $schema->getTypeMap();
-        ksort($types);
-        $types = array_filter($types, $typeFilter);
-
-        return sprintf(
-            "%s\n",
-            implode(
-                "\n\n",
-                array_filter(
-                    array_merge(
-                        [self::printSchemaDefinition($schema)],
-                        array_map(
-                            static function ($directive) use ($options) {
-                                return self::printDirective($directive, $options);
-                            },
-                            $directives
-                        ),
-                        array_map(
-                            static function ($type) use ($options) {
-                                return self::printType($type, $options);
-                            },
-                            $types
-                        )
-                    )
-                )
-            )
+        return static::printFilteredSchema(
+            $schema,
+            [Directive::class, 'isSpecifiedDirective'],
+            [Introspection::class, 'isIntrospectionType'],
+            $options
         );
     }
 
-    private static function printSchemaDefinition(Schema $schema)
+    /**
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws Error
+     * @throws InvariantViolation
+     * @throws SerializationError
+     */
+    public static function printType(Type $type, array $options = []): string
     {
-        if (self::isSchemaOfCommonNames($schema)) {
-            return;
+        if ($type instanceof ScalarType) {
+            return static::printScalar($type, $options);
         }
 
-        $operationTypes = [];
+        if ($type instanceof ObjectType) {
+            return static::printObject($type, $options);
+        }
 
+        if ($type instanceof InterfaceType) {
+            return static::printInterface($type, $options);
+        }
+
+        if ($type instanceof UnionType) {
+            return static::printUnion($type, $options);
+        }
+
+        if ($type instanceof EnumType) {
+            return static::printEnum($type, $options);
+        }
+
+        if ($type instanceof InputObjectType) {
+            return static::printInputObject($type, $options);
+        }
+
+        $unknownType = Utils::printSafe($type);
+        throw new Error("Unknown type: {$unknownType}.");
+    }
+
+    /**
+     * @param callable(Directive  $directive): bool $directiveFilter
+     * @param callable(Type&NamedType $type): bool $typeFilter
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws Error
+     * @throws InvariantViolation
+     * @throws SerializationError
+     */
+    protected static function printFilteredSchema(Schema $schema, callable $directiveFilter, callable $typeFilter, array $options): string
+    {
+        $directives = \array_filter($schema->getDirectives(), $directiveFilter);
+        $types = \array_filter($schema->getTypeMap(), $typeFilter);
+
+        if (isset($options['sortTypes']) && $options['sortTypes']) {
+            ksort($types);
+        }
+
+        $elements = [static::printSchemaDefinition($schema)];
+
+        foreach ($directives as $directive) {
+            $elements[] = static::printDirective($directive, $options);
+        }
+
+        foreach ($types as $type) {
+            $elements[] = static::printType($type, $options);
+        }
+
+        return \implode("\n\n", \array_filter($elements)) . "\n";
+    }
+
+    /** @throws InvariantViolation */
+    protected static function printSchemaDefinition(Schema $schema): ?string
+    {
         $queryType = $schema->getQueryType();
-        if ($queryType) {
-            $operationTypes[] = sprintf('  query: %s', $queryType->name);
-        }
-
         $mutationType = $schema->getMutationType();
-        if ($mutationType) {
-            $operationTypes[] = sprintf('  mutation: %s', $mutationType->name);
-        }
-
         $subscriptionType = $schema->getSubscriptionType();
-        if ($subscriptionType) {
-            $operationTypes[] = sprintf('  subscription: %s', $subscriptionType->name);
+
+        // Special case: When a schema has no root operation types, no valid schema
+        // definition can be printed.
+        if ($queryType === null && $mutationType === null && $subscriptionType === null) {
+            return null;
         }
 
-        return sprintf("schema {\n%s\n}", implode("\n", $operationTypes));
+        // TODO add condition for schema.description
+        // Only print a schema definition if there is a description or if it should
+        // not be omitted because of having default type names.
+        if (! static::hasDefaultRootOperationTypes($schema)) {
+            return "schema {\n"
+                . ($queryType !== null ? "  query: {$queryType->name}\n" : '')
+                . ($mutationType !== null ? "  mutation: {$mutationType->name}\n" : '')
+                . ($subscriptionType !== null ? "  subscription: {$subscriptionType->name}\n" : '')
+                . '}';
+        }
+
+        return null;
     }
 
     /**
      * GraphQL schema define root types for each type of operation. These types are
      * the same as any other type and can be named in any manner, however there is
-     * a common naming convention:
+     * a common naming convention:.
      *
+     * ```graphql
      *   schema {
      *     query: Query
      *     mutation: Mutation
+     *     subscription: Subscription
      *   }
+     * ```
      *
      * When using this naming convention, the schema description can be omitted.
+     * When using this naming convention, the schema description can be omitted so
+     * long as these names are only used for operation types.
+     *
+     * Note however that if any of these default names are used elsewhere in the
+     * schema but not as a root operation type, the schema definition must still
+     * be printed to avoid ambiguity.
+     *
+     * @throws InvariantViolation
      */
-    private static function isSchemaOfCommonNames(Schema $schema)
+    protected static function hasDefaultRootOperationTypes(Schema $schema): bool
     {
-        $queryType = $schema->getQueryType();
-        if ($queryType && $queryType->name !== 'Query') {
-            return false;
-        }
-
-        $mutationType = $schema->getMutationType();
-        if ($mutationType && $mutationType->name !== 'Mutation') {
-            return false;
-        }
-
-        $subscriptionType = $schema->getSubscriptionType();
-
-        return ! $subscriptionType || $subscriptionType->name === 'Subscription';
-    }
-
-    private static function printDirective($directive, $options) : string
-    {
-        return self::printDescription($options, $directive) .
-            'directive @' . $directive->name . self::printArgs($options, $directive->args) .
-            ' on ' . implode(' | ', $directive->locations);
-    }
-
-    private static function printDescription($options, $def, $indentation = '', $firstInBlock = true) : string
-    {
-        if (! $def->description) {
-            return '';
-        }
-        $lines = self::descriptionLines($def->description, 120 - strlen($indentation));
-        if (isset($options['commentDescriptions'])) {
-            return self::printDescriptionWithComments($lines, $indentation, $firstInBlock);
-        }
-
-        $description = $indentation && ! $firstInBlock
-            ? "\n" . $indentation . '"""'
-            : $indentation . '"""';
-
-        // In some circumstances, a single line can be used for the description.
-        if (count($lines) === 1 &&
-            mb_strlen($lines[0]) < 70 &&
-            substr($lines[0], -1) !== '"'
-        ) {
-            return $description . self::escapeQuote($lines[0]) . "\"\"\"\n";
-        }
-
-        // Format a multi-line block quote to account for leading space.
-        $hasLeadingSpace = isset($lines[0]) &&
-            (
-                substr($lines[0], 0, 1) === ' ' ||
-                substr($lines[0], 0, 1) === '\t'
-            );
-        if (! $hasLeadingSpace) {
-            $description .= "\n";
-        }
-
-        $lineLength = count($lines);
-        for ($i = 0; $i < $lineLength; $i++) {
-            if ($i !== 0 || ! $hasLeadingSpace) {
-                $description .= $indentation;
-            }
-            $description .= self::escapeQuote($lines[$i]) . "\n";
-        }
-        $description .= $indentation . "\"\"\"\n";
-
-        return $description;
+        return $schema->getQueryType() === $schema->getType('Query')
+            && $schema->getMutationType() === $schema->getType('Mutation')
+            && $schema->getSubscriptionType() === $schema->getType('Subscription');
     }
 
     /**
-     * @return string[]
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
      */
-    private static function descriptionLines(string $description, int $maxLen) : array
+    protected static function printDirective(Directive $directive, array $options): string
     {
-        $lines    = [];
-        $rawLines = explode("\n", $description);
-        foreach ($rawLines as $line) {
-            if ($line === '') {
-                $lines[] = $line;
-            } else {
-                // For > 120 character long lines, cut at space boundaries into sublines
-                // of ~80 chars.
-                $sublines = self::breakLine($line, $maxLen);
-                foreach ($sublines as $subline) {
-                    $lines[] = $subline;
-                }
-            }
-        }
-
-        return $lines;
+        return static::printDescription($options, $directive)
+            . 'directive @' . $directive->name
+            . static::printArgs($options, $directive->args)
+            . ($directive->isRepeatable ? ' repeatable' : '')
+            . ' on ' . \implode(' | ', $directive->locations);
     }
 
     /**
-     * @return string[]
+     * @param array<string, bool>                                                          $options
+     * @param (Type&NamedType)|Directive|EnumValueDefinition|Argument|FieldDefinition|InputObjectField $def
+     *
+     * @throws \JsonException
      */
-    private static function breakLine(string $line, int $maxLen) : array
+    protected static function printDescription(array $options, $def, string $indentation = '', bool $firstInBlock = true): string
     {
-        if (strlen($line) < $maxLen + 5) {
-            return [$line];
-        }
-        preg_match_all('/((?: |^).{15,' . ($maxLen - 40) . '}(?= |$))/', $line, $parts);
-        $parts = $parts[0];
-
-        return array_map('trim', $parts);
-    }
-
-    private static function printDescriptionWithComments($lines, $indentation, $firstInBlock) : string
-    {
-        $description = $indentation && ! $firstInBlock ? "\n" : '';
-        foreach ($lines as $line) {
-            if ($line === '') {
-                $description .= $indentation . "#\n";
-            } else {
-                $description .= $indentation . '# ' . $line . "\n";
-            }
-        }
-
-        return $description;
-    }
-
-    private static function escapeQuote($line) : string
-    {
-        return str_replace('"""', '\\"""', $line);
-    }
-
-    private static function printArgs($options, $args, $indentation = '') : string
-    {
-        if (! $args) {
+        $description = $def->description;
+        if ($description === null) {
             return '';
         }
 
-        // If every arg does not have a description, print them on one line.
-        if (Utils::every(
-            $args,
-            static function ($arg) {
-                return empty($arg->description);
-            }
-        )) {
-            return '(' . implode(', ', array_map('self::printInputValue', $args)) . ')';
+        $prefix = $indentation !== '' && ! $firstInBlock
+            ? "\n{$indentation}"
+            : $indentation;
+
+        if (count(Utils::splitLines($description)) === 1) {
+            $description = \json_encode($description, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        } else {
+            $description = BlockString::print($description);
+            $description = $indentation !== ''
+                ? \str_replace("\n", "\n{$indentation}", $description)
+                : $description;
         }
 
-        return sprintf(
-            "(\n%s\n%s)",
-            implode(
-                "\n",
-                array_map(
-                    static function ($arg, $i) use ($indentation, $options) {
-                        return self::printDescription($options, $arg, '  ' . $indentation, ! $i) . '  ' . $indentation .
-                            self::printInputValue($arg);
-                    },
-                    $args,
-                    array_keys($args)
+        return "{$prefix}{$description}\n";
+    }
+
+    /**
+     * @param array<string, bool>  $options
+     * @param array<int, Argument> $args
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
+     */
+    protected static function printArgs(array $options, array $args, string $indentation = ''): string
+    {
+        if ($args === []) {
+            return '';
+        }
+
+        if (isset($options['sortArguments']) && $options['sortArguments']) {
+            usort($args, static fn (Argument $left, Argument $right): int => $left->name <=> $right->name);
+        }
+
+        $allArgsWithoutDescription = true;
+        foreach ($args as $arg) {
+            $description = $arg->description;
+            if ($description !== null && $description !== '') {
+                $allArgsWithoutDescription = false;
+                break;
+            }
+        }
+
+        if ($allArgsWithoutDescription) {
+            return '('
+                . \implode(
+                    ', ',
+                    \array_map(
+                        [static::class, 'printInputValue'],
+                        $args
+                    )
                 )
-            ),
-            $indentation
-        );
+                . ')';
+        }
+
+        $argsStrings = [];
+        $firstInBlock = true;
+        $previousHasDescription = false;
+        foreach ($args as $arg) {
+            $hasDescription = $arg->description !== null;
+            if ($previousHasDescription && ! $hasDescription) {
+                $argsStrings[] = '';
+            }
+
+            $argsStrings[] = static::printDescription($options, $arg, '  ' . $indentation, $firstInBlock)
+                . '  '
+                . $indentation
+                . static::printInputValue($arg);
+            $firstInBlock = false;
+            $previousHasDescription = $hasDescription;
+        }
+
+        return "(\n"
+            . \implode("\n", $argsStrings)
+            . "\n"
+            . $indentation
+            . ')';
     }
 
-    private static function printInputValue($arg) : string
+    /**
+     * @param InputObjectField|Argument $arg
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
+     */
+    protected static function printInputValue($arg): string
     {
-        $argDecl = $arg->name . ': ' . (string) $arg->getType();
+        $argDecl = "{$arg->name}: {$arg->getType()->toString()}" . static::printDeprecated($arg);
+
         if ($arg->defaultValueExists()) {
-            $argDecl .= ' = ' . Printer::doPrint(AST::astFromValue($arg->defaultValue, $arg->getType()));
+            $defaultValueAST = AST::astFromValue($arg->defaultValue, $arg->getType());
+
+            if ($defaultValueAST === null) {
+                $inconvertibleDefaultValue = Utils::printSafe($arg->defaultValue);
+                throw new InvariantViolation("Unable to convert defaultValue of argument {$arg->name} into AST: {$inconvertibleDefaultValue}.");
+            }
+
+            $argDecl .= ' = ' . Printer::doPrint($defaultValueAST);
         }
 
         return $argDecl;
     }
 
     /**
-     * @param bool[] $options
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
      */
-    public static function printType(Type $type, array $options = []) : string
+    protected static function printScalar(ScalarType $type, array $options): string
     {
-        if ($type instanceof ScalarType) {
-            return self::printScalar($type, $options);
-        }
-
-        if ($type instanceof ObjectType) {
-            return self::printObject($type, $options);
-        }
-
-        if ($type instanceof InterfaceType) {
-            return self::printInterface($type, $options);
-        }
-
-        if ($type instanceof UnionType) {
-            return self::printUnion($type, $options);
-        }
-
-        if ($type instanceof EnumType) {
-            return self::printEnum($type, $options);
-        }
-
-        if ($type instanceof InputObjectType) {
-            return self::printInputObject($type, $options);
-        }
-
-        throw new Error(sprintf('Unknown type: %s.', Utils::printSafe($type)));
+        return static::printDescription($options, $type)
+            . "scalar {$type->name}";
     }
 
     /**
-     * @param bool[] $options
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
      */
-    private static function printScalar(ScalarType $type, array $options) : string
+    protected static function printObject(ObjectType $type, array $options): string
     {
-        return sprintf('%sscalar %s', self::printDescription($options, $type), $type->name);
+        return static::printDescription($options, $type)
+            . "type {$type->name}"
+            . static::printImplementedInterfaces($type)
+            . static::printFields($options, $type);
     }
 
     /**
-     * @param bool[] $options
+     * @param array<string, bool>      $options
+     * @param ObjectType|InterfaceType $type
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
      */
-    private static function printObject(ObjectType $type, array $options) : string
+    protected static function printFields(array $options, $type): string
     {
-        $interfaces            = $type->getInterfaces();
-        $implementedInterfaces = ! empty($interfaces) ?
-            ' implements ' . implode(
-                ' & ',
-                array_map(
-                    static function ($i) {
-                        return $i->name;
-                    },
-                    $interfaces
-                )
-            ) : '';
+        $fields = [];
+        $firstInBlock = true;
+        $previousHasDescription = false;
+        $fieldDefinitions = $type->getFields();
 
-        return self::printDescription($options, $type) .
-            sprintf("type %s%s {\n%s\n}", $type->name, $implementedInterfaces, self::printFields($options, $type));
+        if (isset($options['sortFields']) && $options['sortFields']) {
+            ksort($fieldDefinitions);
+        }
+
+        foreach ($fieldDefinitions as $f) {
+            $hasDescription = $f->description !== null;
+            if ($previousHasDescription && ! $hasDescription) {
+                $fields[] = '';
+            }
+
+            $fields[] = static::printDescription($options, $f, '  ', $firstInBlock)
+                . '  '
+                . $f->name
+                . static::printArgs($options, $f->args, '  ')
+                . ': '
+                . $f->getType()->toString()
+                . static::printDeprecated($f);
+            $firstInBlock = false;
+            $previousHasDescription = $hasDescription;
+        }
+
+        return static::printBlock($fields);
     }
 
     /**
-     * @param bool[] $options
+     * @param FieldDefinition|EnumValueDefinition|InputObjectField|Argument $deprecation
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
      */
-    private static function printFields($options, $type) : string
+    protected static function printDeprecated($deprecation): string
     {
-        $fields = array_values($type->getFields());
-
-        return implode(
-            "\n",
-            array_map(
-                static function ($f, $i) use ($options) {
-                    return self::printDescription($options, $f, '  ', ! $i) . '  ' .
-                        $f->name . self::printArgs($options, $f->args, '  ') . ': ' .
-                        (string) $f->getType() . self::printDeprecated($f);
-                },
-                $fields,
-                array_keys($fields)
-            )
-        );
-    }
-
-    private static function printDeprecated($fieldOrEnumVal) : string
-    {
-        $reason = $fieldOrEnumVal->deprecationReason;
-        if (empty($reason)) {
+        $reason = $deprecation->deprecationReason;
+        if ($reason === null) {
             return '';
         }
+
         if ($reason === '' || $reason === Directive::DEFAULT_DEPRECATION_REASON) {
             return ' @deprecated';
         }
 
-        return ' @deprecated(reason: ' .
-            Printer::doPrint(AST::astFromValue($reason, Type::string())) . ')';
+        $reasonAST = AST::astFromValue($reason, Type::string());
+        assert($reasonAST instanceof StringValueNode);
+
+        $reasonASTString = Printer::doPrint($reasonAST);
+
+        return " @deprecated(reason: {$reasonASTString})";
     }
 
-    /**
-     * @param bool[] $options
-     */
-    private static function printInterface(InterfaceType $type, array $options) : string
+    protected static function printImplementedInterfaces(ImplementingType $type): string
     {
-        return self::printDescription($options, $type) .
-            sprintf("interface %s {\n%s\n}", $type->name, self::printFields($options, $type));
-    }
+        $interfaces = $type->getInterfaces();
 
-    /**
-     * @param bool[] $options
-     */
-    private static function printUnion(UnionType $type, array $options) : string
-    {
-        return self::printDescription($options, $type) .
-            sprintf('union %s = %s', $type->name, implode(' | ', $type->getTypes()));
-    }
-
-    /**
-     * @param bool[] $options
-     */
-    private static function printEnum(EnumType $type, array $options) : string
-    {
-        return self::printDescription($options, $type) .
-            sprintf("enum %s {\n%s\n}", $type->name, self::printEnumValues($type->getValues(), $options));
-    }
-
-    /**
-     * @param bool[] $options
-     */
-    private static function printEnumValues($values, $options) : string
-    {
-        return implode(
-            "\n",
-            array_map(
-                static function ($value, $i) use ($options) {
-                    return self::printDescription($options, $value, '  ', ! $i) . '  ' .
-                        $value->name . self::printDeprecated($value);
-                },
-                $values,
-                array_keys($values)
-            )
-        );
-    }
-
-    /**
-     * @param bool[] $options
-     */
-    private static function printInputObject(InputObjectType $type, array $options) : string
-    {
-        $fields = array_values($type->getFields());
-
-        return self::printDescription($options, $type) .
-            sprintf(
-                "input %s {\n%s\n}",
-                $type->name,
-                implode(
-                    "\n",
-                    array_map(
-                        static function ($f, $i) use ($options) {
-                            return self::printDescription($options, $f, '  ', ! $i) . '  ' . self::printInputValue($f);
-                        },
-                        $fields,
-                        array_keys($fields)
-                    )
+        return $interfaces === []
+            ? ''
+            : ' implements ' . \implode(
+                ' & ',
+                \array_map(
+                    static fn (InterfaceType $interface): string => $interface->name,
+                    $interfaces
                 )
             );
     }
 
     /**
-     * @param bool[] $options
+     * @param array<string, bool> $options
      *
-     * @api
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
      */
-    public static function printIntrospectionSchema(Schema $schema, array $options = []) : string
+    protected static function printInterface(InterfaceType $type, array $options): string
     {
-        return self::printFilteredSchema(
-            $schema,
-            [Directive::class, 'isSpecifiedDirective'],
-            [Introspection::class, 'isIntrospectionType'],
-            $options
-        );
+        return static::printDescription($options, $type)
+            . "interface {$type->name}"
+            . static::printImplementedInterfaces($type)
+            . static::printFields($options, $type);
+    }
+
+    /**
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     */
+    protected static function printUnion(UnionType $type, array $options): string
+    {
+        $types = $type->getTypes();
+        $types = $types === []
+            ? ''
+            : ' = ' . \implode(' | ', $types);
+
+        return static::printDescription($options, $type) . 'union ' . $type->name . $types;
+    }
+
+    /**
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
+     */
+    protected static function printEnum(EnumType $type, array $options): string
+    {
+        $values = [];
+        $firstInBlock = true;
+        $valueDefinitions = $type->getValues();
+
+        if (isset($options['sortEnumValues']) && $options['sortEnumValues']) {
+            usort($valueDefinitions, static fn (EnumValueDefinition $left, EnumValueDefinition $right): int => $left->name <=> $right->name);
+        }
+
+        foreach ($valueDefinitions as $value) {
+            $values[] = static::printDescription($options, $value, '  ', $firstInBlock)
+                . '  '
+                . $value->name
+                . static::printDeprecated($value);
+            $firstInBlock = false;
+        }
+
+        return static::printDescription($options, $type)
+            . "enum {$type->name}"
+            . static::printBlock($values);
+    }
+
+    /**
+     * @param array<string, bool> $options
+     *
+     * @phpstan-param Options $options
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     * @throws SerializationError
+     */
+    protected static function printInputObject(InputObjectType $type, array $options): string
+    {
+        $fields = [];
+        $firstInBlock = true;
+        $fieldDefinitions = $type->getFields();
+
+        if (isset($options['sortInputFields']) && $options['sortInputFields']) {
+            ksort($fieldDefinitions);
+        }
+
+        foreach ($fieldDefinitions as $field) {
+            $fields[] = static::printDescription($options, $field, '  ', $firstInBlock)
+                . '  '
+                . static::printInputValue($field);
+            $firstInBlock = false;
+        }
+
+        return static::printDescription($options, $type)
+            . "input {$type->name}"
+            . static::printBlock($fields);
+    }
+
+    /** @param array<string> $items */
+    protected static function printBlock(array $items): string
+    {
+        return $items === []
+            ? ''
+            : " {\n" . \implode("\n", $items) . "\n}";
     }
 }

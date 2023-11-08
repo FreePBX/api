@@ -1,144 +1,67 @@
 <?php
-/**
- * This file is part of Lcobucci\JWT, a simple library to handle JWT and JWS
- *
- * @license http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- */
+declare(strict_types=1);
 
 namespace Lcobucci\JWT\Signer;
 
-use Lcobucci\JWT\Signer\Ecdsa\KeyParser;
-use Mdanter\Ecc\Crypto\Signature\Signature;
-use Mdanter\Ecc\Crypto\Signature\Signer;
-use Mdanter\Ecc\EccFactory;
-use Mdanter\Ecc\Math\MathAdapterInterface as Adapter;
-use Mdanter\Ecc\Random\RandomGeneratorFactory;
-use Mdanter\Ecc\Random\RandomNumberGeneratorInterface;
+use Lcobucci\JWT\Signer\Ecdsa\MultibyteStringConverter;
+use Lcobucci\JWT\Signer\Ecdsa\SignatureConverter;
 
-/**
- * Base class for ECDSA signers
- *
- * @author Luís Otávio Cobucci Oblonczyk <lcobucci@gmail.com>
- * @since 2.1.0
- */
-abstract class Ecdsa extends BaseSigner
+use const OPENSSL_KEYTYPE_EC;
+
+abstract class Ecdsa extends OpenSSL
 {
-    /**
-     * @var Adapter
-     */
-    private $adapter;
-
-    /**
-     * @var Signer
-     */
-    private $signer;
-
-    private readonly \Lcobucci\JWT\Signer\Ecdsa\KeyParser $parser;
-
-    /**
-     * @param EcdsaSigner $signer
-     */
-    public function __construct(Adapter $adapter = null, Signer $signer = null, KeyParser $parser = null)
-    {
-        $this->adapter = $adapter ?: EccFactory::getAdapter();
-        $this->signer = $signer ?: EccFactory::getSigner($this->adapter);
-        $this->parser = $parser ?: new KeyParser($this->adapter);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createHash(
-        $payload,
-        Key $key,
-        RandomNumberGeneratorInterface $generator = null
+    public function __construct(
+        private readonly SignatureConverter $converter = new MultibyteStringConverter(),
     ) {
-        $privateKey = $this->parser->getPrivateKey($key);
-        $generator = $generator ?: RandomGeneratorFactory::getRandomGenerator();
+    }
 
-        return $this->createSignatureHash(
-            $this->signer->sign(
-                $privateKey,
-                $this->createSigningHash($payload),
-                $generator->generate($privateKey->getPoint()->getOrder())
-            )
+    final public function sign(string $payload, Key $key): string
+    {
+        return $this->converter->fromAsn1(
+            $this->createSignature($key->contents(), $key->passphrase(), $payload),
+            $this->pointLength(),
         );
     }
 
-    /**
-     * Creates a binary signature with R and S coordinates
-     *
-     * @param Signature $signature
-     *
-     * @return string
-     */
-    private function createSignatureHash(Signature $signature)
+    final public function verify(string $expected, string $payload, Key $key): bool
     {
-        $length = $this->getSignatureLength();
-
-        return pack(
-            'H*',
-            sprintf(
-                '%s%s',
-                str_pad((string) $this->adapter->decHex($signature->getR()), $length, '0', STR_PAD_LEFT),
-                str_pad((string) $this->adapter->decHex($signature->getS()), $length, '0', STR_PAD_LEFT)
-            )
+        return $this->verifySignature(
+            $this->converter->toAsn1($expected, $this->pointLength()),
+            $payload,
+            $key->contents(),
         );
     }
 
-    /**
-     * Creates a hash using the signer algorithm with given payload
-     *
-     * @param string $payload
-     *
-     * @return int|string
-     */
-    private function createSigningHash($payload)
+    /** {@inheritDoc} */
+    final protected function guardAgainstIncompatibleKey(int $type, int $lengthInBits): void
     {
-        return $this->adapter->hexDec(hash($this->getAlgorithm(), $payload));
+        if ($type !== OPENSSL_KEYTYPE_EC) {
+            throw InvalidKeyProvided::incompatibleKeyType(
+                self::KEY_TYPE_MAP[OPENSSL_KEYTYPE_EC],
+                self::KEY_TYPE_MAP[$type],
+            );
+        }
+
+        $expectedKeyLength = $this->expectedKeyLength();
+
+        if ($lengthInBits !== $expectedKeyLength) {
+            throw InvalidKeyProvided::incompatibleKeyLength($expectedKeyLength, $lengthInBits);
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * @internal
+     *
+     * @return positive-int
      */
-    public function doVerify($expected, $payload, Key $key)
-    {
-        return $this->signer->verify(
-            $this->parser->getPublicKey($key),
-            $this->extractSignature($expected),
-            $this->createSigningHash($payload)
-        );
-    }
+    abstract public function expectedKeyLength(): int;
 
     /**
-     * Extracts R and S values from given data
+     * Returns the length of each point in the signature, so that we can calculate and verify R and S points properly
      *
-     * @param string $value
+     * @internal
      *
-     * @return \Mdanter\Ecc\Crypto\Signature\Signature
+     * @return positive-int
      */
-    private function extractSignature($value)
-    {
-        $length = $this->getSignatureLength();
-        $value = unpack('H*', $value)[1];
-
-        return new Signature(
-            $this->adapter->hexDec(substr((string) $value, 0, $length)),
-            $this->adapter->hexDec(substr((string) $value, $length))
-        );
-    }
-
-    /**
-     * Returns the lenght of signature parts
-     *
-     * @return int
-     */
-    abstract public function getSignatureLength();
-
-    /**
-     * Returns the name of algorithm to be used to create the signing hash
-     *
-     * @return string
-     */
-    abstract public function getAlgorithm();
+    abstract public function pointLength(): int;
 }

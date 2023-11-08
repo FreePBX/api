@@ -10,6 +10,7 @@ use DirectoryIterator;
 
 use Slim\App;
 
+#[\AllowDynamicProperties]
 class Api {
 	public function __construct($freepbx, $publicKey) {
 		$this->freepbx = $freepbx;

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Type\Definition;
 
@@ -11,6 +9,4 @@ GraphQLInterfaceType |
 GraphQLUnionType;
 */
 
-interface CompositeType
-{
-}
+interface CompositeType {}

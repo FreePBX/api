@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Type\Definition;
 
@@ -15,6 +13,4 @@ export type GraphQLNullableType =
   | GraphQLList<any>;
  */
 
-interface NullableType
-{
-}
+interface NullableType {}

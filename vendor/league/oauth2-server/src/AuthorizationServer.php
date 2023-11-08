@@ -9,6 +9,8 @@
 
 namespace League\OAuth2\Server;
 
+use DateInterval;
+use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -17,6 +19,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -32,7 +35,7 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $enabledGrantTypes = [];
 
     /**
-     * @var \DateInterval[]
+     * @var DateInterval[]
      */
     protected $grantTypeAccessTokenTTL = [];
 
@@ -47,7 +50,7 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $publicKey;
 
     /**
-     * @var null|ResponseTypeInterface
+     * @var ResponseTypeInterface
      */
     protected $responseType;
 
@@ -67,7 +70,7 @@ class AuthorizationServer implements EmitterAwareInterface
     private $scopeRepository;
 
     /**
-     * @var string
+     * @var string|Key
      */
     private $encryptionKey;
 
@@ -77,13 +80,18 @@ class AuthorizationServer implements EmitterAwareInterface
     private $defaultScope = '';
 
     /**
+     * @var bool
+     */
+    private $revokeRefreshTokens = true;
+
+    /**
      * New server instance.
      *
      * @param ClientRepositoryInterface      $clientRepository
      * @param AccessTokenRepositoryInterface $accessTokenRepository
      * @param ScopeRepositoryInterface       $scopeRepository
      * @param CryptKey|string                $privateKey
-     * @param string                         $encryptionKey
+     * @param string|Key                     $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
      */
     public function __construct(
@@ -101,8 +109,16 @@ class AuthorizationServer implements EmitterAwareInterface
         if ($privateKey instanceof CryptKey === false) {
             $privateKey = new CryptKey($privateKey);
         }
+
         $this->privateKey = $privateKey;
         $this->encryptionKey = $encryptionKey;
+
+        if ($responseType === null) {
+            $responseType = new BearerTokenResponse();
+        } else {
+            $responseType = clone $responseType;
+        }
+
         $this->responseType = $responseType;
     }
 
@@ -110,12 +126,12 @@ class AuthorizationServer implements EmitterAwareInterface
      * Enable a grant type on the server.
      *
      * @param GrantTypeInterface $grantType
-     * @param null|\DateInterval $accessTokenTTL
+     * @param null|DateInterval  $accessTokenTTL
      */
-    public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL = null)
+    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL = null)
     {
-        if ($accessTokenTTL instanceof \DateInterval === false) {
-            $accessTokenTTL = new \DateInterval('PT1H');
+        if ($accessTokenTTL === null) {
+            $accessTokenTTL = new DateInterval('PT1H');
         }
 
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
@@ -125,6 +141,7 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
+        $grantType->revokeRefreshTokens($this->revokeRefreshTokens);
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
@@ -203,14 +220,15 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     protected function getResponseType()
     {
-        if ($this->responseType instanceof ResponseTypeInterface === false) {
-            $this->responseType = new BearerTokenResponse();
+        $responseType = clone $this->responseType;
+
+        if ($responseType instanceof AbstractResponseType) {
+            $responseType->setPrivateKey($this->privateKey);
         }
 
-        $this->responseType->setPrivateKey($this->privateKey);
-        $this->responseType->setEncryptionKey($this->encryptionKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
-        return $this->responseType;
+        return $responseType;
     }
 
     /**
@@ -221,5 +239,15 @@ class AuthorizationServer implements EmitterAwareInterface
     public function setDefaultScope($defaultScope)
     {
         $this->defaultScope = $defaultScope;
+    }
+
+    /**
+     * Sets whether to revoke refresh tokens or not (for all grant types).
+     *
+     * @param bool $revokeRefreshTokens
+     */
+    public function revokeRefreshTokens(bool $revokeRefreshTokens): void
+    {
+        $this->revokeRefreshTokens = $revokeRefreshTokens;
     }
 }

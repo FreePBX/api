@@ -27,7 +27,7 @@ class Mutation {
      * An input object will be created containing the input fields, and an
      * object will be created containing the output fields.
      *
-     * mutateAndGetPayload will receieve an Object with a key for each
+     * mutateAndGetPayload will receive an Object with a key for each
      * input field, and it should return an Object with a key for each
      * output field. It may return synchronously, or return a Promise.
      *
@@ -49,7 +49,7 @@ class Mutation {
 
         $augmentedInputFields = function() use ($inputFields) {
             $inputFieldsResolved = self::resolveMaybeThunk($inputFields);
-            return array_merge($inputFieldsResolved ?? [], [
+            return array_merge($inputFieldsResolved !== null ? $inputFieldsResolved : [], [
                 'clientMutationId' => [
                     'type' => Type::string()
                 ]
@@ -58,7 +58,7 @@ class Mutation {
 
         $augmentedOutputFields = function () use ($outputFields) {
             $outputFieldsResolved = self::resolveMaybeThunk($outputFields);
-            return array_merge($outputFieldsResolved ?? [], [
+            return array_merge($outputFieldsResolved !== null ? $outputFieldsResolved : [], [
                 'clientMutationId' => [
                     'type' => Type::string()
                 ]
@@ -84,7 +84,7 @@ class Mutation {
             ],
             'resolve' => function ($query, $args, $context, ResolveInfo $info) use ($mutateAndGetPayload) {
                 $payload = call_user_func($mutateAndGetPayload, $args['input'], $context, $info);
-                $payload['clientMutationId'] = $args['input']['clientMutationId'] ?? null;
+                $payload['clientMutationId'] = isset($args['input']['clientMutationId']) ? $args['input']['clientMutationId'] : null;
                 return $payload;
             }
         ];
@@ -100,6 +100,7 @@ class Mutation {
     /**
      * Returns the value for the given array key, NULL, if it does not exist
      *
+     * @param array $array
      * @param string $key
      * @return mixed
      */

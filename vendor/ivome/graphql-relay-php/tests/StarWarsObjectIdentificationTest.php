@@ -9,8 +9,9 @@ namespace GraphQLRelay\tests;
 
 
 use GraphQL\GraphQL;
+use PHPUnit\Framework\TestCase;
 
-class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
+class StarWarsObjectIdentificationTest extends TestCase
 {
     public function testFetchesTheIDAndNameOfTheRebels()
     {
@@ -21,8 +22,13 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = ['rebels' =>
-            ['id' => 'RmFjdGlvbjox', 'name' => 'Alliance to Restore the Republic']];
+        $expected = array (
+            'rebels' =>
+                array (
+                    'id' => 'RmFjdGlvbjox',
+                    'name' => 'Alliance to Restore the Republic',
+                ),
+        );
 
         $this->assertValidQuery($query, $expected);
     }
@@ -38,8 +44,13 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = ['node' =>
-            ['id' => 'RmFjdGlvbjox', 'name' => 'Alliance to Restore the Republic']];
+        $expected = array (
+            'node' =>
+                array (
+                    'id' => 'RmFjdGlvbjox',
+                    'name' => 'Alliance to Restore the Republic',
+                ),
+        );
 
         $this->assertValidQuery($query, $expected);
     }
@@ -53,8 +64,13 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = ['empire' =>
-            ['id' => 'RmFjdGlvbjoy', 'name' => 'Galactic Empire']];
+        $expected = array (
+            'empire' =>
+                array (
+                    'id' => 'RmFjdGlvbjoy',
+                    'name' => 'Galactic Empire',
+                ),
+        );
 
         $this->assertValidQuery($query, $expected);
     }
@@ -70,8 +86,13 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = ['node' =>
-            ['id' => 'RmFjdGlvbjoy', 'name' => 'Galactic Empire']];
+        $expected = array (
+            'node' =>
+                array (
+                    'id' => 'RmFjdGlvbjoy',
+                    'name' => 'Galactic Empire',
+                ),
+        );
 
         $this->assertValidQuery($query, $expected);
     }
@@ -87,8 +108,13 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $expected = ['node' =>
-            ['id' => 'U2hpcDox', 'name' => 'X-Wing']];
+        $expected = array (
+            'node' =>
+                array (
+                    'id' => 'U2hpcDox',
+                    'name' => 'X-Wing',
+                ),
+        );
 
         $this->assertValidQuery($query, $expected);
     }
@@ -98,7 +124,7 @@ class StarWarsObjectIdentificationTest extends \PHPUnit_Framework_TestCase
      */
     private function assertValidQuery($query, $expected)
     {
-        $result = GraphQL::execute(StarWarsSchema::getSchema(), $query);
+        $result = GraphQL::executeQuery(StarWarsSchema::getSchema(), $query)->toArray();
 
         $this->assertEquals(['data' => $expected], $result);
     }

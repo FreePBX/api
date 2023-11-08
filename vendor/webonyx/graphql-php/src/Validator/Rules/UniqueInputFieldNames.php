@@ -1,46 +1,63 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Validator\Rules;
 
 use GraphQL\Error\Error;
+use GraphQL\Language\AST\NameNode;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\AST\ObjectFieldNode;
 use GraphQL\Language\Visitor;
+use GraphQL\Language\VisitorOperation;
+use GraphQL\Validator\QueryValidationContext;
+use GraphQL\Validator\SDLValidationContext;
 use GraphQL\Validator\ValidationContext;
-use function array_pop;
-use function sprintf;
 
+/**
+ * @phpstan-import-type VisitorArray from Visitor
+ */
 class UniqueInputFieldNames extends ValidationRule
 {
-    /** @var string[] */
-    public $knownNames;
+    /** @var array<string, NameNode> */
+    protected array $knownNames;
 
-    /** @var string[][] */
-    public $knownNameStack;
+    /** @var array<array<string, NameNode>> */
+    protected array $knownNameStack;
 
-    public function getVisitor(ValidationContext $context)
+    public function getVisitor(QueryValidationContext $context): array
     {
-        $this->knownNames     = [];
+        return $this->getASTVisitor($context);
+    }
+
+    public function getSDLVisitor(SDLValidationContext $context): array
+    {
+        return $this->getASTVisitor($context);
+    }
+
+    /** @phpstan-return VisitorArray */
+    public function getASTVisitor(ValidationContext $context): array
+    {
+        $this->knownNames = [];
         $this->knownNameStack = [];
 
         return [
-            NodeKind::OBJECT       => [
-                'enter' => function () {
+            NodeKind::OBJECT => [
+                'enter' => function (): void {
                     $this->knownNameStack[] = $this->knownNames;
-                    $this->knownNames       = [];
+                    $this->knownNames = [];
                 },
-                'leave' => function () {
-                    $this->knownNames = array_pop($this->knownNameStack);
+                'leave' => function (): void {
+                    $knownNames = \array_pop($this->knownNameStack);
+                    assert(is_array($knownNames), 'should not happen if the visitor works correctly');
+
+                    $this->knownNames = $knownNames;
                 },
             ],
-            NodeKind::OBJECT_FIELD => function (ObjectFieldNode $node) use ($context) {
+            NodeKind::OBJECT_FIELD => function (ObjectFieldNode $node) use ($context): VisitorOperation {
                 $fieldName = $node->name->value;
 
-                if (! empty($this->knownNames[$fieldName])) {
+                if (isset($this->knownNames[$fieldName])) {
                     $context->reportError(new Error(
-                        self::duplicateInputFieldMessage($fieldName),
+                        static::duplicateInputFieldMessage($fieldName),
                         [$this->knownNames[$fieldName], $node->name]
                     ));
                 } else {
@@ -52,8 +69,8 @@ class UniqueInputFieldNames extends ValidationRule
         ];
     }
 
-    public static function duplicateInputFieldMessage($fieldName)
+    public static function duplicateInputFieldMessage(string $fieldName): string
     {
-        return sprintf('There can be only one input field named "%s".', $fieldName);
+        return "There can be only one input field named \"{$fieldName}\".";
     }
 }

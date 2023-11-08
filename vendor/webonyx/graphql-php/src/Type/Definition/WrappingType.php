@@ -1,15 +1,16 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Type\Definition;
 
 interface WrappingType
 {
+    /** Return the wrapped type, which may itself be a wrapping type. */
+    public function getWrappedType(): Type;
+
     /**
-     * @param bool $recurse
+     * Return the innermost wrapped type, which is guaranteed to be a named type.
      *
-     * @return ObjectType|InterfaceType|UnionType|ScalarType|InputObjectType|EnumType
+     * @return Type&NamedType
      */
-    public function getWrappedType($recurse = false);
+    public function getInnermostType(): NamedType;
 }

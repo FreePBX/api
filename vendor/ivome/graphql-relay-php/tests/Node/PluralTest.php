@@ -9,40 +9,47 @@ namespace GraphQLRelay\tests\Node;
 
 
 use GraphQL\GraphQL;
-use GraphQL\Schema;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Schema;
 use GraphQLRelay\Node\Plural;
+use PHPUnit\Framework\TestCase;
 
-class PluralTest extends \PHPUnit_Framework_TestCase {
+class PluralTest extends TestCase {
     protected static function getSchema()
     {
         $userType = new ObjectType([
             'name' => 'User',
-            'fields' => fn() => [
-                'username' => [
-                    'type' => Type::string()
-                ],
-                'url' => [
-                    'type' => Type::string()
-                ]
-            ]
+            'fields' => function() {
+                return [
+                    'username' => [
+                        'type' => Type::string()
+                    ],
+                    'url' => [
+                        'type' => Type::string()
+                    ]
+                ];
+            }
         ]);
 
         $queryType = new ObjectType([
             'name' => 'Query',
-            'fields' => fn() => [
-                'usernames' => Plural::pluralIdentifyingRootField([
-                    'argName' => 'usernames',
-                    'description' => 'Map from a username to the user',
-                    'inputType' => Type::string(),
-                    'outputType' => $userType,
-                    'resolveSingleInput' => fn($userName, $context, $info) => [
-                        'username' => $userName,
-                        'url' => 'www.facebook.com/' . $userName . '?lang=' . $info->rootValue['lang']
-                    ]
-                ])
-            ]
+            'fields' => function() use ($userType) {
+                return [
+                    'usernames' => Plural::pluralIdentifyingRootField([
+                        'argName' => 'usernames',
+                        'description' => 'Map from a username to the user',
+                        'inputType' => Type::string(),
+                        'outputType' => $userType,
+                        'resolveSingleInput' => function ($userName, $context, $info) {
+                            return [
+                                'username' => $userName,
+                                'url' => 'www.facebook.com/' . $userName . '?lang=' . $info->rootValue['lang']
+                            ];
+                        }
+                    ])
+                ];
+            }
         ]);
 
         return new Schema([
@@ -58,11 +65,26 @@ class PluralTest extends \PHPUnit_Framework_TestCase {
           }
         }';
 
-        $expected = ['usernames' =>
-            [0 =>
-                ['username' => 'dschafer', 'url' => 'www.facebook.com/dschafer?lang=en'], 1 =>
-                ['username' => 'leebyron', 'url' => 'www.facebook.com/leebyron?lang=en'], 2 =>
-                ['username' => 'schrockn', 'url' => 'www.facebook.com/schrockn?lang=en']]];
+        $expected = array (
+            'usernames' =>
+                array (
+                    0 =>
+                        array (
+                            'username' => 'dschafer',
+                            'url' => 'www.facebook.com/dschafer?lang=en',
+                        ),
+                    1 =>
+                        array (
+                            'username' => 'leebyron',
+                            'url' => 'www.facebook.com/leebyron?lang=en',
+                        ),
+                    2 =>
+                        array (
+                            'username' => 'schrockn',
+                            'url' => 'www.facebook.com/schrockn?lang=en',
+                        ),
+                ),
+        );
 
         $this->assertValidQuery($query, $expected);
     }
@@ -101,19 +123,54 @@ class PluralTest extends \PHPUnit_Framework_TestCase {
             }
           }
         }';
-        $expected = ['__schema' =>
-            ['queryType' =>
-                ['fields' =>
-                    [0 =>
-                        ['name' => 'usernames', 'args' =>
-                            [0 =>
-                                ['name' => 'usernames', 'type' =>
-                                    ['kind' => 'NON_NULL', 'ofType' =>
-                                        ['kind' => 'LIST', 'ofType' =>
-                                            ['kind' => 'NON_NULL', 'ofType' =>
-                                                ['name' => 'String', 'kind' => 'SCALAR']]]]]], 'type' =>
-                            ['kind' => 'LIST', 'ofType' =>
-                                ['name' => 'User', 'kind' => 'OBJECT']]]]]]];
+        $expected = array (
+            '__schema' =>
+                array (
+                    'queryType' =>
+                        array (
+                            'fields' =>
+                                array (
+                                    0 =>
+                                        array (
+                                            'name' => 'usernames',
+                                            'args' =>
+                                                array (
+                                                    0 =>
+                                                        array (
+                                                            'name' => 'usernames',
+                                                            'type' =>
+                                                                array (
+                                                                    'kind' => 'NON_NULL',
+                                                                    'ofType' =>
+                                                                        array (
+                                                                            'kind' => 'LIST',
+                                                                            'ofType' =>
+                                                                                array (
+                                                                                    'kind' => 'NON_NULL',
+                                                                                    'ofType' =>
+                                                                                        array (
+                                                                                            'name' => 'String',
+                                                                                            'kind' => 'SCALAR',
+                                                                                        ),
+                                                                                ),
+                                                                        ),
+                                                                ),
+                                                        ),
+                                                ),
+                                            'type' =>
+                                                array (
+                                                    'kind' => 'LIST',
+                                                    'ofType' =>
+                                                        array (
+                                                            'name' => 'User',
+                                                            'kind' => 'OBJECT',
+                                                        ),
+                                                ),
+                                        ),
+                                ),
+                        ),
+                ),
+        );
 
         $this->assertValidQuery($query, $expected);
     }
@@ -123,7 +180,7 @@ class PluralTest extends \PHPUnit_Framework_TestCase {
      */
     private function assertValidQuery($query, $expected)
     {
-        $result = GraphQL::execute(static::getSchema(), $query, ['lang' => 'en']);
+        $result = GraphQL::executeQuery($this->getSchema(), $query, ['lang' => 'en'])->toArray();
         $this->assertEquals(['data' => $expected], $result);
     }
 }

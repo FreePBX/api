@@ -1,35 +1,43 @@
 {
     "name": "lcobucci/jwt",
     "description": "A simple library to work with JSON Web Token and JSON Web Signature",
-    "type": "library",
-    "authors": [
-        {
-            "name": "Luís Otávio Cobucci Oblonczyk",
-            "email": "lcobucci@gmail.com",
-            "role": "Developer"
-        }
+    "license": [
+        "BSD-3-Clause"
     ],
+    "type": "library",
     "keywords": [
         "JWT",
         "JWS"
     ],
-    "license": [
-        "BSD-3-Clause"
+    "authors": [
+        {
+            "name": "Luís Cobucci",
+            "email": "lcobucci@gmail.com",
+            "role": "Developer"
+        }
     ],
     "require": {
-        "php": ">=5.5",
-        "ext-openssl": "*"
+        "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-sodium": "*",
+        "psr/clock": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.5",
-        "squizlabs/php_codesniffer": "~2.3",
-        "phpmd/phpmd": "~2.2",
-        "phpunit/php-invoker": "~1.1",
-        "mikey179/vfsStream": "~1.5",
-        "mdanter/ecc": "~0.3.1"
+        "infection/infection": "^0.27.0",
+        "lcobucci/clock": "^3.0",
+        "lcobucci/coding-standard": "^11.0",
+        "phpbench/phpbench": "^1.2.9",
+        "phpstan/extension-installer": "^1.2",
+        "phpstan/phpstan": "^1.10.7",
+        "phpstan/phpstan-deprecation-rules": "^1.1.3",
+        "phpstan/phpstan-phpunit": "^1.3.10",
+        "phpstan/phpstan-strict-rules": "^1.5.0",
+        "phpunit/phpunit": "^10.2.6"
     },
-    "suggest":{
-        "mdanter/ecc": "Required to use Elliptic Curves based algorithms."
+    "suggest": {
+        "lcobucci/clock": ">= 3.0"
     },
     "autoload": {
         "psr-4": {
@@ -38,15 +46,20 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Lcobucci\\JWT\\": [
-                "test/unit", 
-                "test/functional"
-            ]
+            "Lcobucci\\JWT\\Tests\\": "tests"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "3.1-dev"
-        }
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "infection/extension-installer": true,
+            "ocramius/package-versions": true,
+            "phpstan/extension-installer": true
+        },
+        "platform": {
+            "php": "8.1.99"
+        },
+        "preferred-install": "dist",
+        "sort-packages": true
     }
 }

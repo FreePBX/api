@@ -5,6 +5,8 @@ namespace FreePBX\modules\Api\Oauth\Repositories;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use FreePBX\modules\Api\Oauth\Entities\AuthCodeEntity;
+
+#[\AllowDynamicProperties]
 class AuthCodeRepository implements AuthCodeRepositoryInterface {
 	public function __construct($api) {
 		$this->api = $api;

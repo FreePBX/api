@@ -6,28 +6,28 @@ use Defuse\Crypto\Exception as Ex;
 
 final class Core
 {
-    public const HEADER_VERSION_SIZE               = 4;
-    public const MINIMUM_CIPHERTEXT_SIZE           = 84;
+    const HEADER_VERSION_SIZE               = 4;
+    const MINIMUM_CIPHERTEXT_SIZE           = 84;
 
-    public const CURRENT_VERSION                   = "\xDE\xF5\x02\x00";
+    const CURRENT_VERSION                   = "\xDE\xF5\x02\x00";
 
-    public const CIPHER_METHOD                     = 'aes-256-ctr';
-    public const BLOCK_BYTE_SIZE                   = 16;
-    public const KEY_BYTE_SIZE                     = 32;
-    public const SALT_BYTE_SIZE                    = 32;
-    public const MAC_BYTE_SIZE                     = 32;
-    public const HASH_FUNCTION_NAME                = 'sha256';
-    public const ENCRYPTION_INFO_STRING            = 'DefusePHP|V2|KeyForEncryption';
-    public const AUTHENTICATION_INFO_STRING        = 'DefusePHP|V2|KeyForAuthentication';
-    public const BUFFER_BYTE_SIZE                  = 1_048_576;
+    const CIPHER_METHOD                     = 'aes-256-ctr';
+    const BLOCK_BYTE_SIZE                   = 16;
+    const KEY_BYTE_SIZE                     = 32;
+    const SALT_BYTE_SIZE                    = 32;
+    const MAC_BYTE_SIZE                     = 32;
+    const HASH_FUNCTION_NAME                = 'sha256';
+    const ENCRYPTION_INFO_STRING            = 'DefusePHP|V2|KeyForEncryption';
+    const AUTHENTICATION_INFO_STRING        = 'DefusePHP|V2|KeyForAuthentication';
+    const BUFFER_BYTE_SIZE                  = 1048576;
 
-    public const LEGACY_CIPHER_METHOD              = 'aes-128-cbc';
-    public const LEGACY_BLOCK_BYTE_SIZE            = 16;
-    public const LEGACY_KEY_BYTE_SIZE              = 16;
-    public const LEGACY_HASH_FUNCTION_NAME         = 'sha256';
-    public const LEGACY_MAC_BYTE_SIZE              = 32;
-    public const LEGACY_ENCRYPTION_INFO_STRING     = 'DefusePHP|KeyForEncryption';
-    public const LEGACY_AUTHENTICATION_INFO_STRING = 'DefusePHP|KeyForAuthentication';
+    const LEGACY_CIPHER_METHOD              = 'aes-128-cbc';
+    const LEGACY_BLOCK_BYTE_SIZE            = 16;
+    const LEGACY_KEY_BYTE_SIZE              = 16;
+    const LEGACY_HASH_FUNCTION_NAME         = 'sha256';
+    const LEGACY_MAC_BYTE_SIZE              = 32;
+    const LEGACY_ENCRYPTION_INFO_STRING     = 'DefusePHP|KeyForEncryption';
+    const LEGACY_AUTHENTICATION_INFO_STRING = 'DefusePHP|KeyForAuthentication';
 
     /*
      * V2.0 Format: VERSION (4 bytes) || SALT (32 bytes) || IV (16 bytes) ||
@@ -98,10 +98,15 @@ final class Core
      */
     public static function secureRandom($octets)
     {
+        if ($octets <= 0) {
+            throw new Ex\CryptoException(
+                'A zero or negative amount of random bytes was requested.'
+            );
+        }
         self::ensureFunctionExists('random_bytes');
         try {
-            return \random_bytes($octets);
-        } catch (\Exception) {
+            return \random_bytes(max(1, $octets));
+        } catch (\Exception $ex) {
             throw new Ex\EnvironmentIsBrokenException(
                 'Your system does not have a secure random number generator.'
             );
@@ -228,7 +233,10 @@ final class Core
      */
     public static function ensureConstantExists($name)
     {
-        Core::ensureTrue(\defined($name));
+        Core::ensureTrue(
+            \defined($name),
+            'Constant '.$name.' does not exists'
+        );
     }
 
     /**
@@ -241,7 +249,10 @@ final class Core
      */
     public static function ensureFunctionExists($name)
     {
-        Core::ensureTrue(\function_exists($name));
+        Core::ensureTrue(
+            \function_exists($name),
+            'function '.$name.' does not exists'
+        );
     }
 
     /**
@@ -279,7 +290,7 @@ final class Core
     {
         static $exists = null;
         if ($exists === null) {
-            $exists = \extension_loaded('mbstring') && \ini_get('mbstring.func_overload') !== false && (int)\ini_get('mbstring.func_overload') & MB_OVERLOAD_STRING;
+            $exists = \extension_loaded('mbstring') && \function_exists('mb_strlen');
         }
         if ($exists) {
             $length = \mb_strlen($str, '8bit');
@@ -305,7 +316,7 @@ final class Core
     {
         static $exists = null;
         if ($exists === null) {
-            $exists = \extension_loaded('mbstring') && \ini_get('mbstring.func_overload') !== false && (int)\ini_get('mbstring.func_overload') & MB_OVERLOAD_STRING;
+            $exists = \extension_loaded('mbstring') && \function_exists('mb_substr');
         }
 
         // This is required to make mb_substr behavior identical to substr.
@@ -375,7 +386,15 @@ final class Core
      *
      * @return string A $key_length-byte key derived from the password and salt.
      */
-    public static function pbkdf2($algorithm, $password, $salt, $count, $key_length, $raw_output = false)
+    public static function pbkdf2(
+        $algorithm,
+        #[\SensitiveParameter]
+        $password,
+        $salt,
+        $count,
+        $key_length,
+        $raw_output = false
+    )
     {
         // Type checks:
         if (! \is_string($algorithm)) {
@@ -434,6 +453,9 @@ final class Core
             $last = $xorsum = \hash_hmac($algorithm, $last, $password, true);
             // perform the other $count - 1 iterations
             for ($j = 1; $j < $count; $j++) {
+                /**
+                 * @psalm-suppress InvalidOperand
+                 */
                 $xorsum ^= ($last = \hash_hmac($algorithm, $last, $password, true));
             }
             $output .= $xorsum;

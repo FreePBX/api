@@ -1,129 +1,156 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
-use ArrayAccess;
-use Countable;
-use Generator;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Utils\AST;
-use IteratorAggregate;
-use function array_merge;
-use function array_splice;
-use function count;
-use function is_array;
 
-class NodeList implements ArrayAccess, IteratorAggregate, Countable
+/**
+ * @template T of Node
+ *
+ * @phpstan-implements \ArrayAccess<array-key, T>
+ * @phpstan-implements \IteratorAggregate<array-key, T>
+ */
+class NodeList implements \ArrayAccess, \IteratorAggregate, \Countable
 {
-    /** @var Node[]|mixed[] */
-    private $nodes;
-
     /**
-     * @param Node[]|mixed[] $nodes
+     * @var array<Node|array>
      *
-     * @return static
+     * @phpstan-var array<T|array<string, mixed>>
      */
-    public static function create(array $nodes)
-    {
-        return new static($nodes);
-    }
+    private array $nodes;
 
     /**
-     * @param Node[]|mixed[] $nodes
+     * @param array<Node|array> $nodes
+     *
+     * @phpstan-param array<T|array<string, mixed>> $nodes
      */
     public function __construct(array $nodes)
     {
         $this->nodes = $nodes;
     }
 
-    /**
-     * @param mixed $offset
-     *
-     * @return bool
-     */
-    public function offsetExists($offset)
+    /** @param int|string $offset */
+    #[\ReturnTypeWillChange]
+    public function offsetExists($offset): bool
     {
         return isset($this->nodes[$offset]);
     }
 
     /**
-     * @param mixed $offset
+     * @param int|string $offset
      *
-     * @return mixed
+     * @phpstan-return T
      */
-    public function offsetGet($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset): Node
     {
         $item = $this->nodes[$offset];
 
-        if (is_array($item) && isset($item['kind'])) {
-            $this->nodes[$offset] = $item = AST::fromArray($item);
+        if (\is_array($item)) {
+            // @phpstan-ignore-next-line not really possible to express the correctness of this in PHP
+            return $this->nodes[$offset] = AST::fromArray($item);
         }
 
         return $item;
     }
 
     /**
-     * @param mixed $offset
-     * @param mixed $value
+     * @param int|string|null           $offset
+     * @param Node|array<string, mixed> $value
+     *
+     * @phpstan-param T|array<string, mixed> $value
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
      */
-    public function offsetSet($offset, $value)
+    #[\ReturnTypeWillChange]
+    public function offsetSet($offset, $value): void
     {
-        if (is_array($value) && isset($value['kind'])) {
+        if (\is_array($value)) {
+            /** @phpstan-var T $value */
             $value = AST::fromArray($value);
         }
+
+        // Happens when a Node is pushed via []=
+        if ($offset === null) {
+            $this->nodes[] = $value;
+
+            return;
+        }
+
         $this->nodes[$offset] = $value;
     }
 
-    /**
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset)
+    /** @param int|string $offset */
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($offset): void
     {
         unset($this->nodes[$offset]);
     }
 
-    /**
-     * @param int   $offset
-     * @param int   $length
-     * @param mixed $replacement
-     *
-     * @return NodeList
-     */
-    public function splice($offset, $length, $replacement = null)
-    {
-        return new NodeList(array_splice($this->nodes, $offset, $length, $replacement));
-    }
-
-    /**
-     * @param NodeList|Node[] $list
-     *
-     * @return NodeList
-     */
-    public function merge($list)
-    {
-        if ($list instanceof self) {
-            $list = $list->nodes;
-        }
-
-        return new NodeList(array_merge($this->nodes, $list));
-    }
-
-    /**
-     * @return Generator
-     */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         foreach ($this->nodes as $key => $_) {
-            yield $this->offsetGet($key);
+            yield $key => $this->offsetGet($key);
         }
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
-        return count($this->nodes);
+        return \count($this->nodes);
+    }
+
+    /**
+     * Remove a portion of the NodeList and replace it with something else.
+     *
+     * @param T|array<T>|null $replacement
+     *
+     * @phpstan-return NodeList<T> the NodeList with the extracted elements
+     */
+    public function splice(int $offset, int $length, $replacement = null): NodeList
+    {
+        return new NodeList(
+            \array_splice($this->nodes, $offset, $length, $replacement)
+        );
+    }
+
+    /**
+     * @phpstan-param iterable<array-key, T> $list
+     *
+     * @phpstan-return NodeList<T>
+     */
+    public function merge(iterable $list): NodeList
+    {
+        if (! \is_array($list)) {
+            $list = \iterator_to_array($list);
+        }
+
+        return new NodeList(\array_merge($this->nodes, $list));
+    }
+
+    /** Resets the keys of the stored nodes to contiguous numeric indexes. */
+    public function reindex(): void
+    {
+        $this->nodes = array_values($this->nodes);
+    }
+
+    /**
+     * Returns a clone of this instance and all its children, except Location $loc.
+     *
+     * @throws \JsonException
+     * @throws InvariantViolation
+     *
+     * @return static<T>
+     */
+    public function cloneDeep(): self
+    {
+        /** @var static<T> $cloned */
+        $cloned = new static([]);
+        foreach ($this->getIterator() as $key => $node) {
+            $cloned[$key] = $node->cloneDeep();
+        }
+
+        return $cloned;
     }
 }

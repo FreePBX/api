@@ -6,7 +6,12 @@ use Defuse\Crypto\Exception as Ex;
 
 final class KeyProtectedByPassword
 {
-    public const PASSWORD_KEY_CURRENT_VERSION = "\xDE\xF1\x00\x00";
+    const PASSWORD_KEY_CURRENT_VERSION = "\xDE\xF1\x00\x00";
+
+    /**
+     * @var string
+     */
+    private $encrypted_key = '';
 
     /**
      * Creates a random key protected by the provided password.
@@ -17,7 +22,10 @@ final class KeyProtectedByPassword
      *
      * @return KeyProtectedByPassword
      */
-    public static function createRandomPasswordProtectedKey($password)
+    public static function createRandomPasswordProtectedKey(
+        #[\SensitiveParameter]
+        $password
+    )
     {
         $inner_key = Key::createNewRandomKey();
         /* The password is hashed as a form of poor-man's domain separation
@@ -42,7 +50,10 @@ final class KeyProtectedByPassword
      *
      * @return KeyProtectedByPassword
      */
-    public static function loadFromAsciiSafeString($saved_key_string)
+    public static function loadFromAsciiSafeString(
+        #[\SensitiveParameter]
+        $saved_key_string
+    )
     {
         $encrypted_key = Encoding::loadBytesFromChecksummedAsciiSafeString(
             self::PASSWORD_KEY_CURRENT_VERSION,
@@ -77,7 +88,10 @@ final class KeyProtectedByPassword
      * @param string $password
      * @return Key
      */
-    public function unlockKey($password)
+    public function unlockKey(
+        #[\SensitiveParameter]
+        $password
+    )
     {
         try {
             $inner_key_encoded = Crypto::decryptWithPassword(
@@ -86,7 +100,7 @@ final class KeyProtectedByPassword
                 true
             );
             return Key::loadFromAsciiSafeString($inner_key_encoded);
-        } catch (Ex\BadFormatException) {
+        } catch (Ex\BadFormatException $ex) {
             /* This should never happen unless an attacker replaced the
              * encrypted key ciphertext with some other ciphertext that was
              * encrypted with the same password. We transform the exception type
@@ -110,7 +124,12 @@ final class KeyProtectedByPassword
      *
      * @return KeyProtectedByPassword
      */
-    public function changePassword($current_password, $new_password)
+    public function changePassword(
+        #[\SensitiveParameter]
+        $current_password,
+        #[\SensitiveParameter]
+        $new_password
+    )
     {
         $inner_key = $this->unlockKey($current_password);
         /* The password is hashed as a form of poor-man's domain separation
@@ -133,7 +152,8 @@ final class KeyProtectedByPassword
      *
      * @param string $encrypted_key
      */
-    private function __construct(private $encrypted_key)
+    private function __construct($encrypted_key)
     {
+        $this->encrypted_key = $encrypted_key;
     }
 }

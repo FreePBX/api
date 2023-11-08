@@ -1,138 +1,107 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Type\Definition;
 
+use GraphQL\Error\Error;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use GraphQL\Language\AST\InterfaceTypeExtensionNode;
 use GraphQL\Utils\Utils;
-use function is_callable;
-use function is_string;
-use function sprintf;
 
-class InterfaceType extends Type implements AbstractType, OutputType, CompositeType, NullableType, NamedType
+/**
+ * @phpstan-import-type ResolveType from AbstractType
+ * @phpstan-import-type FieldsConfig from FieldDefinition
+ *
+ * @phpstan-type InterfaceTypeReference InterfaceType|callable(): InterfaceType
+ * @phpstan-type InterfaceConfig array{
+ *   name?: string|null,
+ *   description?: string|null,
+ *   fields: FieldsConfig,
+ *   interfaces?: iterable<InterfaceTypeReference>|callable(): iterable<InterfaceTypeReference>,
+ *   resolveType?: ResolveType|null,
+ *   astNode?: InterfaceTypeDefinitionNode|null,
+ *   extensionASTNodes?: array<int, InterfaceTypeExtensionNode>|null
+ * }
+ */
+class InterfaceType extends Type implements AbstractType, OutputType, CompositeType, NullableType, HasFieldsType, NamedType, ImplementingType
 {
-    /** @var InterfaceTypeDefinitionNode|null */
-    public $astNode;
+    use HasFieldsTypeImplementation;
+    use NamedTypeImplementation;
+    use ImplementingTypeImplementation;
 
-    /** @var InterfaceTypeExtensionNode[] */
-    public $extensionASTNodes;
+    public ?InterfaceTypeDefinitionNode $astNode;
 
-    /** @var FieldDefinition[] */
-    private $fields;
+    /** @var array<int, InterfaceTypeExtensionNode> */
+    public array $extensionASTNodes;
+
+    /** @phpstan-var InterfaceConfig */
+    public array $config;
 
     /**
-     * @param mixed[] $config
+     * @throws InvariantViolation
+     *
+     * @phpstan-param InterfaceConfig $config
      */
     public function __construct(array $config)
     {
-        if (! isset($config['name'])) {
-            $config['name'] = $this->tryInferName();
-        }
+        $this->name = $config['name'] ?? $this->inferName();
+        $this->description = $config['description'] ?? null;
+        $this->astNode = $config['astNode'] ?? null;
+        $this->extensionASTNodes = $config['extensionASTNodes'] ?? [];
 
-        Utils::invariant(is_string($config['name']), 'Must provide name.');
-
-        $this->name              = $config['name'];
-        $this->description       = $config['description'] ?? null;
-        $this->astNode           = $config['astNode'] ?? null;
-        $this->extensionASTNodes = $config['extensionASTNodes'] ?? null;
-        $this->config            = $config;
+        $this->config = $config;
     }
 
     /**
      * @param mixed $type
      *
-     * @return self
+     * @throws InvariantViolation
      */
-    public static function assertInterfaceType($type)
+    public static function assertInterfaceType($type): self
     {
-        Utils::invariant(
-            $type instanceof self,
-            'Expected ' . Utils::printSafe($type) . ' to be a GraphQL Interface type.'
-        );
+        if (! ($type instanceof self)) {
+            $notInterfaceType = Utils::printSafe($type);
+            throw new InvariantViolation("Expected {$notInterfaceType} to be a GraphQL Interface type.");
+        }
 
         return $type;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return FieldDefinition
-     */
-    public function getField($name)
-    {
-        if ($this->fields === null) {
-            $this->getFields();
-        }
-        Utils::invariant(isset($this->fields[$name]), 'Field "%s" is not defined for type "%s"', $name, $this->name);
-
-        return $this->fields[$name];
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasField($name)
-    {
-        if ($this->fields === null) {
-            $this->getFields();
-        }
-
-        return isset($this->fields[$name]);
-    }
-
-    /**
-     * @return FieldDefinition[]
-     */
-    public function getFields()
-    {
-        if ($this->fields === null) {
-            $fields       = $this->config['fields'] ?? [];
-            $this->fields = FieldDefinition::defineFieldMap($this, $fields);
-        }
-
-        return $this->fields;
-    }
-
-    /**
-     * Resolves concrete ObjectType for given object value
-     *
-     * @param object  $objectValue
-     * @param mixed[] $context
-     *
-     * @return Type|null
-     */
     public function resolveType($objectValue, $context, ResolveInfo $info)
     {
         if (isset($this->config['resolveType'])) {
-            $fn = $this->config['resolveType'];
-
-            return $fn($objectValue, $context, $info);
+            return ($this->config['resolveType'])($objectValue, $context, $info);
         }
 
         return null;
     }
 
     /**
+     * @throws Error
      * @throws InvariantViolation
      */
-    public function assertValid()
+    public function assertValid(): void
     {
-        parent::assertValid();
+        Utils::assertValidName($this->name);
 
         $resolveType = $this->config['resolveType'] ?? null;
+        // @phpstan-ignore-next-line not necessary according to types, but can happen during runtime
+        if ($resolveType !== null && ! \is_callable($resolveType)) {
+            $notCallable = Utils::printSafe($resolveType);
+            throw new InvariantViolation("{$this->name} must provide \"resolveType\" as null or a callable, but got: {$notCallable}.");
+        }
 
-        Utils::invariant(
-            ! isset($resolveType) || is_callable($resolveType),
-            sprintf(
-                '%s must provide "resolveType" as a function, but got: %s',
-                $this->name,
-                Utils::printSafe($resolveType)
-            )
-        );
+        $this->assertValidInterfaces();
+    }
+
+    public function astNode(): ?InterfaceTypeDefinitionNode
+    {
+        return $this->astNode;
+    }
+
+    /** @return array<int, InterfaceTypeExtensionNode> */
+    public function extensionASTNodes(): array
+    {
+        return $this->extensionASTNodes;
     }
 }

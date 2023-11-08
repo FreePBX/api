@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
@@ -10,70 +8,56 @@ use GraphQL\Language\Token;
 /**
  * Contains a range of UTF-8 character offsets and token references that
  * identify the region of the source from which the AST derived.
+ *
+ * @phpstan-type LocationArray array{start: int, end: int}
  */
 class Location
 {
-    /**
-     * The character offset at which this Node begins.
-     *
-     * @var int
-     */
-    public $start;
+    /** The character offset at which this Node begins. */
+    public int $start;
 
-    /**
-     * The character offset at which this Node ends.
-     *
-     * @var int
-     */
-    public $end;
+    /** The character offset at which this Node ends. */
+    public int $end;
 
-    /**
-     * The Token at which this Node begins.
-     *
-     * @var Token
-     */
-    public $startToken;
+    /** The Token at which this Node begins. */
+    public ?Token $startToken = null;
 
-    /**
-     * The Token at which this Node ends.
-     *
-     * @var Token
-     */
-    public $endToken;
+    /** The Token at which this Node ends. */
+    public ?Token $endToken = null;
 
-    /**
-     * The Source document the AST represents.
-     *
-     * @var Source|null
-     */
-    public $source;
+    /** The Source document the AST represents. */
+    public ?Source $source = null;
 
-    /**
-     * @param int $start
-     * @param int $end
-     *
-     * @return static
-     */
-    public static function create($start, $end)
+    public static function create(int $start, int $end): self
     {
-        $tmp        = new static();
+        $tmp = new static();
+
         $tmp->start = $start;
-        $tmp->end   = $end;
+        $tmp->end = $end;
 
         return $tmp;
     }
 
-    public function __construct(?Token $startToken = null, ?Token $endToken = null, ?Source $source = null)
+    public function __construct(Token $startToken = null, Token $endToken = null, Source $source = null)
     {
         $this->startToken = $startToken;
-        $this->endToken   = $endToken;
-        $this->source     = $source;
+        $this->endToken = $endToken;
+        $this->source = $source;
 
-        if (! $startToken || ! $endToken) {
+        if ($startToken === null || $endToken === null) {
             return;
         }
 
         $this->start = $startToken->start;
-        $this->end   = $endToken->end;
+        $this->end = $endToken->end;
+    }
+
+    /** @return LocationArray */
+    public function toArray(): array
+    {
+        return [
+            'start' => $this->start,
+            'end' => $this->end,
+        ];
     }
 }

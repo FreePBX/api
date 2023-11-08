@@ -1,17 +1,14 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Language\AST;
 
 class SchemaDefinitionNode extends Node implements TypeSystemDefinitionNode
 {
-    /** @var string */
-    public $kind = NodeKind::SCHEMA_DEFINITION;
+    public string $kind = NodeKind::SCHEMA_DEFINITION;
 
-    /** @var DirectiveNode[] */
-    public $directives;
+    /** @var NodeList<DirectiveNode> */
+    public NodeList $directives;
 
-    /** @var OperationTypeDefinitionNode[] */
-    public $operationTypes;
+    /** @var NodeList<OperationTypeDefinitionNode> */
+    public NodeList $operationTypes;
 }

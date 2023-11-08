@@ -1,90 +1,59 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace GraphQL\Type\Definition;
 
-use Exception;
 use GraphQL\Error\Error;
+use GraphQL\Error\SerializationError;
 use GraphQL\Language\AST\IntValueNode;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
+use GraphQL\Language\Printer;
 use GraphQL\Utils\Utils;
-use function is_int;
-use function is_object;
-use function is_scalar;
-use function is_string;
-use function method_exists;
 
 class IDType extends ScalarType
 {
-    /** @var string */
-    public $name = 'ID';
+    public string $name = 'ID';
 
-    /** @var string */
-    public $description =
-        'The `ID` scalar type represents a unique identifier, often used to
+    public ?string $description
+        = 'The `ID` scalar type represents a unique identifier, often used to
 refetch an object or as key for a cache. The ID type appears in a JSON
 response as a String; however, it is not intended to be human-readable.
 When expected as an input type, any string (such as `"4"`) or integer
 (such as `4`) input value will be accepted as an ID.';
 
-    /**
-     * @param mixed $value
-     *
-     * @return string
-     *
-     * @throws Error
-     */
-    public function serialize($value)
+    /** @throws SerializationError */
+    public function serialize($value): string
     {
-        if ($value === true) {
-            return 'true';
-        }
-        if ($value === false) {
-            return 'false';
-        }
-        if ($value === null) {
-            return 'null';
-        }
-        if (! is_scalar($value) && (! is_object($value) || ! method_exists($value, '__toString'))) {
-            throw new Error('ID type cannot represent non scalar value: ' . Utils::printSafe($value));
+        $canCast = \is_string($value)
+            || \is_int($value)
+            || (\is_object($value) && \method_exists($value, '__toString'));
+
+        if (! $canCast) {
+            $notID = Utils::printSafe($value);
+            throw new SerializationError("ID cannot represent a non-string and non-integer value: {$notID}");
         }
 
         return (string) $value;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return string
-     *
-     * @throws Error
-     */
-    public function parseValue($value)
+    /** @throws Error */
+    public function parseValue($value): string
     {
-        if (is_string($value) || is_int($value)) {
+        if (\is_string($value) || \is_int($value)) {
             return (string) $value;
         }
 
-        throw new Error('Cannot represent value as ID: ' . Utils::printSafe($value));
+        $notID = Utils::printSafeJson($value);
+        throw new Error("ID cannot represent a non-string and non-integer value: {$notID}");
     }
 
-    /**
-     * @param Node         $valueNode
-     * @param mixed[]|null $variables
-     *
-     * @return string|null
-     *
-     * @throws Exception
-     */
-    public function parseLiteral($valueNode, ?array $variables = null)
+    public function parseLiteral(Node $valueNode, array $variables = null): string
     {
         if ($valueNode instanceof StringValueNode || $valueNode instanceof IntValueNode) {
             return $valueNode->value;
         }
 
-        // Intentionally without message, as all information already in wrapped Exception
-        throw new Exception();
+        $notID = Printer::doPrint($valueNode);
+        throw new Error("ID cannot represent a non-string and non-integer value: {$notID}", $valueNode);
     }
 }

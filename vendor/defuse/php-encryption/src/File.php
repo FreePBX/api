@@ -11,6 +11,7 @@ final class File
      *
      * @param string $inputFilename
      * @param string $outputFilename
+     * @param Key    $key
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -37,7 +38,12 @@ final class File
      * @throws Ex\EnvironmentIsBrokenException
      * @throws Ex\IOException
      */
-    public static function encryptFileWithPassword($inputFilename, $outputFilename, $password)
+    public static function encryptFileWithPassword(
+        $inputFilename,
+        $outputFilename,
+        #[\SensitiveParameter]
+        $password
+    )
     {
         self::encryptFileInternal(
             $inputFilename,
@@ -51,6 +57,7 @@ final class File
      *
      * @param string $inputFilename
      * @param string $outputFilename
+     * @param Key    $key
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -79,7 +86,12 @@ final class File
      * @throws Ex\IOException
      * @throws Ex\WrongKeyOrModifiedCiphertextException
      */
-    public static function decryptFileWithPassword($inputFilename, $outputFilename, $password)
+    public static function decryptFileWithPassword(
+        $inputFilename,
+        $outputFilename,
+        #[\SensitiveParameter]
+        $password
+    )
     {
         self::decryptFileInternal(
             $inputFilename,
@@ -94,6 +106,7 @@ final class File
      *
      * @param resource $inputHandle
      * @param resource $outputHandle
+     * @param Key      $key
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -122,7 +135,12 @@ final class File
      * @throws Ex\IOException
      * @throws Ex\WrongKeyOrModifiedCiphertextException
      */
-    public static function encryptResourceWithPassword($inputHandle, $outputHandle, $password)
+    public static function encryptResourceWithPassword(
+        $inputHandle,
+        $outputHandle,
+        #[\SensitiveParameter]
+        $password
+    )
     {
         self::encryptResourceInternal(
             $inputHandle,
@@ -137,6 +155,7 @@ final class File
      *
      * @param resource $inputHandle
      * @param resource $outputHandle
+     * @param Key      $key
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
@@ -165,7 +184,12 @@ final class File
      * @throws Ex\IOException
      * @throws Ex\WrongKeyOrModifiedCiphertextException
      */
-    public static function decryptResourceWithPassword($inputHandle, $outputHandle, $password)
+    public static function decryptResourceWithPassword(
+        $inputHandle,
+        $outputHandle,
+        #[\SensitiveParameter]
+        $password
+    )
     {
         self::decryptResourceInternal(
             $inputHandle,
@@ -179,6 +203,7 @@ final class File
      *
      * @param string        $inputFilename
      * @param string        $outputFilename
+     * @param KeyOrPassword $secret
      * @return void
      *
      * @throws Ex\CryptoException
@@ -186,8 +211,14 @@ final class File
      */
     private static function encryptFileInternal($inputFilename, $outputFilename, KeyOrPassword $secret)
     {
+        if (file_exists($inputFilename) && file_exists($outputFilename) && realpath($inputFilename) === realpath($outputFilename)) {
+            throw new Ex\IOException('Input and output filenames must be different.');
+        }
+
         /* Open the input file. */
+        self::removePHPUnitErrorHandler();
         $if = @\fopen($inputFilename, 'rb');
+        self::restorePHPUnitErrorHandler();
         if ($if === false) {
             throw new Ex\IOException(
                 'Cannot open input file for encrypting: ' .
@@ -200,7 +231,9 @@ final class File
         }
 
         /* Open the output file. */
+        self::removePHPUnitErrorHandler();
         $of = @\fopen($outputFilename, 'wb');
+        self::restorePHPUnitErrorHandler();
         if ($of === false) {
             \fclose($if);
             throw new Ex\IOException(
@@ -243,6 +276,7 @@ final class File
      *
      * @param string        $inputFilename
      * @param string        $outputFilename
+     * @param KeyOrPassword $secret
      * @return void
      *
      * @throws Ex\CryptoException
@@ -250,8 +284,14 @@ final class File
      */
     private static function decryptFileInternal($inputFilename, $outputFilename, KeyOrPassword $secret)
     {
+        if (file_exists($inputFilename) && file_exists($outputFilename) && realpath($inputFilename) === realpath($outputFilename)) {
+            throw new Ex\IOException('Input and output filenames must be different.');
+        }
+
         /* Open the input file. */
+        self::removePHPUnitErrorHandler();
         $if = @\fopen($inputFilename, 'rb');
+        self::restorePHPUnitErrorHandler();
         if ($if === false) {
             throw new Ex\IOException(
                 'Cannot open input file for decrypting: ' .
@@ -265,7 +305,9 @@ final class File
         }
 
         /* Open the output file. */
+        self::removePHPUnitErrorHandler();
         $of = @\fopen($outputFilename, 'wb');
+        self::restorePHPUnitErrorHandler();
         if ($of === false) {
             \fclose($if);
             throw new Ex\IOException(
@@ -309,10 +351,14 @@ final class File
      *
      * @param resource      $inputHandle
      * @param resource      $outputHandle
+     * @param KeyOrPassword $secret
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
      * @throws Ex\IOException
+     * @psalm-suppress PossiblyInvalidArgument
+     *      Fixes erroneous errors caused by PHP 7.2 switching the return value
+     *      of hash_init from a resource to a HashContext.
      */
     private static function encryptResourceInternal($inputHandle, $outputHandle, KeyOrPassword $secret)
     {
@@ -339,7 +385,7 @@ final class File
         $iv     = Core::secureRandom($ivsize);
 
         /* Initialize a streaming HMAC state. */
-        /** @var resource $hmac */
+        /** @var mixed $hmac */
         $hmac = \hash_init(Core::HASH_FUNCTION_NAME, HASH_HMAC, $akey);
         Core::ensureTrue(
             \is_resource($hmac) || \is_object($hmac),
@@ -362,6 +408,9 @@ final class File
         $thisIv = $iv;
 
         /* How many blocks do we encrypt at a time? We increment by this value. */
+        /**
+         * @psalm-suppress RedundantCast
+         */
         $inc = (int) (Core::BUFFER_BYTE_SIZE / Core::BLOCK_BYTE_SIZE);
 
         /* Loop until we reach the end of the input file. */
@@ -423,11 +472,15 @@ final class File
      *
      * @param resource      $inputHandle
      * @param resource      $outputHandle
+     * @param KeyOrPassword $secret
      * @return void
      *
      * @throws Ex\EnvironmentIsBrokenException
      * @throws Ex\IOException
      * @throws Ex\WrongKeyOrModifiedCiphertextException
+     * @psalm-suppress PossiblyInvalidArgument
+     *      Fixes erroneous errors caused by PHP 7.2 switching the return value
+     *      of hash_init from a resource to a HashContext.
      */
     public static function decryptResourceInternal($inputHandle, $outputHandle, KeyOrPassword $secret)
     {
@@ -478,10 +531,13 @@ final class File
         $thisIv = $iv;
 
         /* How many blocks do we encrypt at a time? We increment by this value. */
+        /**
+         * @psalm-suppress RedundantCast
+         */
         $inc = (int) (Core::BUFFER_BYTE_SIZE / Core::BLOCK_BYTE_SIZE);
 
         /* Get the HMAC. */
-        if (\fseek($inputHandle, (-1 * Core::MAC_BYTE_SIZE), SEEK_END) === false) {
+        if (\fseek($inputHandle, (-1 * Core::MAC_BYTE_SIZE), SEEK_END) === -1) {
             throw new Ex\IOException(
                 'Cannot seek to beginning of MAC within input file'
             );
@@ -503,19 +559,19 @@ final class File
         $stored_mac = self::readBytes($inputHandle, Core::MAC_BYTE_SIZE);
 
         /* Initialize a streaming HMAC state. */
-        /** @var resource $hmac */
+        /** @var mixed $hmac */
         $hmac = \hash_init(Core::HASH_FUNCTION_NAME, HASH_HMAC, $akey);
         Core::ensureTrue(\is_resource($hmac) || \is_object($hmac), 'Cannot initialize a hash context');
 
         /* Reset file pointer to the beginning of the file after the header */
-        if (\fseek($inputHandle, Core::HEADER_VERSION_SIZE, SEEK_SET) === false) {
+        if (\fseek($inputHandle, Core::HEADER_VERSION_SIZE, SEEK_SET) === -1) {
             throw new Ex\IOException(
                 'Cannot read seek within input file'
             );
         }
 
         /* Seek to the start of the actual ciphertext. */
-        if (\fseek($inputHandle, Core::SALT_BYTE_SIZE + $ivsize, SEEK_CUR) === false) {
+        if (\fseek($inputHandle, Core::SALT_BYTE_SIZE + $ivsize, SEEK_CUR) === -1) {
             throw new Ex\IOException(
                 'Cannot seek input file to beginning of ciphertext'
             );
@@ -526,7 +582,7 @@ final class File
         \hash_update($hmac, $header);
         \hash_update($hmac, $file_salt);
         \hash_update($hmac, $iv);
-        /** @var resource $hmac2 */
+        /** @var mixed $hmac2 */
         $hmac2 = \hash_copy($hmac);
 
         $break = false;
@@ -557,7 +613,7 @@ final class File
             \hash_update($hmac, $read);
 
             /* Remember this buffer-sized chunk's HMAC. */
-            /** @var resource $chunk_mac */
+            /** @var mixed $chunk_mac */
             $chunk_mac = \hash_copy($hmac);
             Core::ensureTrue(\is_resource($chunk_mac) || \is_object($chunk_mac), 'Cannot duplicate a hash context');
             $macs []= \hash_final($chunk_mac);
@@ -577,7 +633,7 @@ final class File
         /* PASS #2: Decrypt and write output. */
 
         /* Rewind to the start of the actual ciphertext. */
-        if (\fseek($inputHandle, Core::SALT_BYTE_SIZE + $ivsize + Core::HEADER_VERSION_SIZE, SEEK_SET) === false) {
+        if (\fseek($inputHandle, Core::SALT_BYTE_SIZE + $ivsize + Core::HEADER_VERSION_SIZE, SEEK_SET) === -1) {
             throw new Ex\IOException(
                 'Could not move the input file pointer during decryption'
             );
@@ -611,7 +667,7 @@ final class File
              * remembered from pass #1 to ensure attackers didn't change the
              * ciphertext after MAC verification. */
             \hash_update($hmac2, $read);
-            /** @var resource $calc_mac */
+            /** @var mixed $calc_mac */
             $calc_mac = \hash_copy($hmac2);
             Core::ensureTrue(\is_resource($calc_mac) || \is_object($calc_mac), 'Cannot duplicate a hash context');
             $calc = \hash_final($calc_mac);
@@ -662,8 +718,6 @@ final class File
      *
      * @throws Ex\IOException
      * @throws Ex\EnvironmentIsBrokenException
-     *
-     * @return string
      */
     public static function readBytes($stream, $num_bytes)
     {
@@ -703,8 +757,6 @@ final class File
      * @return int
      *
      * @throws Ex\IOException
-     *
-     * @return string
      */
     public static function writeBytes($stream, $buf, $num_bytes = null)
     {
@@ -746,9 +798,38 @@ final class File
     {
         $error = error_get_last();
         if ($error === null) {
-            return '[no PHP error]';
+            return '[no PHP error, or you have a custom error handler set]';
         } else {
             return $error['message'];
+        }
+    }
+
+    /**
+     * PHPUnit sets an error handler, which prevents getLastErrorMessage() from working,
+     * because error_get_last does not work when custom handlers are set.
+     *
+     * This is a workaround, which should be a no-op in production deployments, to make
+     * getLastErrorMessage() return the error messages that the PHPUnit tests expect.
+     *
+     * If, in a production deployment, a custom error handler is set, the exception
+     * handling will still work as usual, but the error messages will be confusing.
+     *
+     * @return void
+     */
+    private static function removePHPUnitErrorHandler() {
+        if (defined('PHPUNIT_COMPOSER_INSTALL') || defined('__PHPUNIT_PHAR__')) {
+            set_error_handler(null);
+        }
+    }
+
+    /**
+     * Undoes what removePHPUnitErrorHandler did.
+     *
+     * @return void
+     */
+    private static function restorePHPUnitErrorHandler() {
+        if (defined('PHPUNIT_COMPOSER_INSTALL') || defined('__PHPUNIT_PHAR__')) {
+            restore_error_handler();
         }
     }
 }

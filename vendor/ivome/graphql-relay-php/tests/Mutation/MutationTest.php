@@ -8,13 +8,14 @@ namespace GraphQLRelay\Tests\Mutation;
 
 
 use GraphQL\GraphQL;
-use GraphQL\Schema;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Schema;
 use GraphQLRelay\Connection\Connection;
 use GraphQLRelay\Mutation\Mutation;
+use PHPUnit\Framework\TestCase;
 
-class MutationTest extends \PHPUnit_Framework_TestCase
+class MutationTest extends TestCase
 {
     /**
      * @var ObjectType
@@ -51,7 +52,7 @@ class MutationTest extends \PHPUnit_Framework_TestCase
      */
     protected $schema;
 
-    public function setup()
+    public function setup(): void
     {
         $this->simpleMutation = Mutation::mutationWithClientMutationId([
             'name' => 'SimpleMutation',
@@ -61,7 +62,9 @@ class MutationTest extends \PHPUnit_Framework_TestCase
                     'type' => Type::int()
                 ]
             ],
-            'mutateAndGetPayload' => fn() => ['result' => 1]
+            'mutateAndGetPayload' => function () {
+                return ['result' => 1];
+            }
         ]);
 
 	    $this->simpleMutationWithDescription = Mutation::mutationWithClientMutationId([
@@ -73,7 +76,9 @@ class MutationTest extends \PHPUnit_Framework_TestCase
 				    'type' => Type::int()
 			    ]
 		    ],
-		    'mutateAndGetPayload' => fn() => ['result' => 1]
+		    'mutateAndGetPayload' => function () {
+			    return ['result' => 1];
+		    }
 	    ]);
 
 	    $this->simpleMutationWithDeprecationReason = Mutation::mutationWithClientMutationId([
@@ -84,25 +89,33 @@ class MutationTest extends \PHPUnit_Framework_TestCase
 				    'type' => Type::int()
 			    ]
 		    ],
-		    'mutateAndGetPayload' => fn() => ['result' => 1],
+		    'mutateAndGetPayload' => function () {
+			    return ['result' => 1];
+		    },
 		    'deprecationReason' => 'Just because'
 	    ]);
 
         $this->simpleMutationWithThunkFields = Mutation::mutationWithClientMutationId([
             'name' => 'SimpleMutationWithThunkFields',
-            'inputFields' => fn() => [
-                'inputData' => [
-                    'type' => Type::int()
-                ]
-            ],
-            'outputFields' => fn() => [
-                'result' => [
-                    'type' => Type::int()
-                ]
-            ],
-            'mutateAndGetPayload' => fn($inputData) => [
-                'result' => $inputData['inputData']
-            ]
+            'inputFields' => function() {
+                return [
+                    'inputData' => [
+                        'type' => Type::int()
+                    ]
+                ];
+            },
+            'outputFields' => function() {
+                return [
+                    'result' => [
+                        'type' => Type::int()
+                    ]
+                ];
+            },
+            'mutateAndGetPayload' => function($inputData) {
+                return [
+                    'result' => $inputData['inputData']
+                ];
+            }
         ]);
 
         $userType = new ObjectType([
@@ -122,7 +135,9 @@ class MutationTest extends \PHPUnit_Framework_TestCase
                     'type' => Connection::createEdgeType(['nodeType' => $userType ])
                 ]
             ],
-            'mutateAndGetPayload' => fn() => ['result' => ['node' => ['name' => 'Robert'], 'cursor' => 'SWxvdmVHcmFwaFFM']]
+            'mutateAndGetPayload' => function () {
+                return ['result' => ['node' => ['name' => 'Robert'], 'cursor' => 'SWxvdmVHcmFwaFFM']];
+            }
         ]);
 
         $this->mutation = new ObjectType([
@@ -149,9 +164,9 @@ class MutationTest extends \PHPUnit_Framework_TestCase
             }
           }';
 
-        $result = GraphQL::execute($this->schema, $query);
+        $result = GraphQL::executeQuery($this->schema, $query)->toArray();
 
-        $this->assertEquals(is_countable($result['errors']) ? count($result['errors']) : 0, 1);
+        $this->assertEquals(count($result['errors']), 1);
         $this->assertEquals($result['errors'][0]['message'], 'Field "simpleMutation" argument "input" of type "SimpleMutationInput!" is required but not provided.');
     }
 
@@ -445,7 +460,7 @@ class MutationTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $result = GraphQL::execute($this->schema, $query);
+        $result = GraphQL::executeQuery($this->schema, $query)->toArray();
 
         $this->assertValidQuery($query, $expected);
     }
@@ -545,6 +560,6 @@ class MutationTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertValidQuery($query, $expected)
     {
-        $this->assertEquals(['data' => $expected], GraphQL::execute($this->schema, $query));
+        $this->assertEquals(['data' => $expected], GraphQL::executeQuery($this->schema, $query)->toArray());
     }
 }

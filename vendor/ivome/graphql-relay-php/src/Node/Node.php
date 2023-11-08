@@ -51,7 +51,9 @@ class Node {
                     'description' => 'The ID of an object'
                 ]
             ],
-            'resolve' => fn($obj, $args, $context, $info) => $idFetcher($args['id'], $context, $info)
+            'resolve' => function ($obj, $args, $context, $info) use ($idFetcher) {
+                return $idFetcher($args['id'], $context, $info);
+            }
         ];
 
         return [
@@ -103,10 +105,12 @@ class Node {
             'name' => 'id',
             'description' => 'The ID of an object',
             'type' => Type::nonNull(Type::id()),
-            'resolve' => fn($obj, $args, $context, $info) => self::toGlobalId(
-                $typeName ?? $info->parentType->name,
-                $idFetcher ? $idFetcher($obj, $info) : $obj['id']
-            )
+            'resolve' => function($obj, $args, $context, $info) use ($typeName, $idFetcher) {
+                return self::toGlobalId(
+                    $typeName !== null ? $typeName : $info->parentType->name,
+                    $idFetcher ? $idFetcher($obj, $info) : $obj['id']
+                );
+            }
         ];
     }
 

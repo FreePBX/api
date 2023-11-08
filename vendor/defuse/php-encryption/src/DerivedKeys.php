@@ -9,6 +9,16 @@ namespace Defuse\Crypto;
 final class DerivedKeys
 {
     /**
+     * @var string
+     */
+    private $akey = '';
+
+    /**
+     * @var string
+     */
+    private $ekey = '';
+
+    /**
      * Returns the authentication key.
      * @return string
      */
@@ -32,7 +42,9 @@ final class DerivedKeys
      * @param string $akey
      * @param string $ekey
      */
-    public function __construct(private $akey, private $ekey)
+    public function __construct($akey, $ekey)
     {
+        $this->akey = $akey;
+        $this->ekey = $ekey;
     }
 }

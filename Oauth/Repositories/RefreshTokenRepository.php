@@ -6,6 +6,7 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use FreePBX\modules\Api\Oauth\Entities\RefreshTokenEntity;
 
+#[\AllowDynamicProperties]
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface {
 	public function __construct($api) {
 		$this->api = $api;
