@@ -34,7 +34,7 @@ class ClientCredentialsGrant extends AbstractGrant
         list($clientId) = $this->getClientCredentials($request);
 
         $client = $this->getClientEntityOrFail($clientId, $request);
-        dbug($client->isConfidential());
+        // dbug($client->isConfidential());
         if (!$client->isConfidential()) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
 
@@ -43,7 +43,7 @@ class ClientCredentialsGrant extends AbstractGrant
 
         // Validate request
         $test = $this->validateClient($request);
-        dbug($test);
+        // dbug($test);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
 
         // Finalize the requested scopes

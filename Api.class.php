@@ -114,10 +114,17 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		$this->freepbx->PKCS->generateKey($this->oauthKey);
 		$this->freepbx->PKCS->extractPublicKey($this->oauthKey);
 
+		// $this->getConfig('installed');
+		$force = true;
+		$usenodecache = $this->getConfig('usenodecache');
+		if($usenodecache){
+			$force = false;
+		}
 		$this->freepbx->Pm2->installNodeDependencies(__DIR__ . "/node", function ($data)
 		{
 			outn($data);
-		});
+		}, array(), true, $force);
+		$this->setConfig('usenodecache', true);
 	}
 
 	public function uninstall() {
@@ -475,8 +482,9 @@ class Api extends \FreePBX_Helpers implements \BMO {
 
 		$process = \freepbx_get_process_obj('rm -Rf ' . __DIR__ . '/docs');
 		$process->mustRun();
-
+		dbug('node ' . __DIR__ . '/node/index.js -e ' . $host . '/admin/api/api/gql -o ' . __DIR__ . '/docs -x "Authorization: Bearer ' . $accessToken . '"');
 		$process = \freepbx_get_process_obj('node ' . __DIR__ . '/node/index.js -e ' . $host . '/admin/api/api/gql -o ' . __DIR__ . '/docs -x "Authorization: Bearer ' . $accessToken . '"');
+		// dbug($process);
 		$process->mustRun();
 
 		file_put_contents(__DIR__ . "/docs/.htaccess", $ht);

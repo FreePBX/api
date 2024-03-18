@@ -223,7 +223,7 @@ class Oauth {
 			}
 		});
 		$app->post('/token', function ($request, $response, $args) use ($app) {
-			dbug($request->getParsedBody());
+			// dbug($request->getParsedBody());
 			$authorizationServer = $app->getContainer()->get(AuthorizationServer::class);
 			try {
 				// Try to respond to the request
@@ -234,7 +234,7 @@ class Oauth {
 				return $exception->generateHttpResponse($response);
 
 			} catch (\Exception $exception) {
-				dbug($exception->getMessage());
+				// dbug($exception->getMessage());
 				// Unknown exception
 				$body = new Stream('php://temp', 'r+');
 				$body->write($exception->getMessage());

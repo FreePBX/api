@@ -93,7 +93,7 @@ function graphQLFetcher(graphQLParams) {
 }
 
 function renderGraphQLi() {
-	$("#graphiql-container").html("")
+	$("#graphiql-container").html("");
 	ReactDOM.render(
 		React.createElement(GraphiQL, {
 			fetcher: graphQLFetcher,

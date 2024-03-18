@@ -110,10 +110,20 @@ class Api {
 				$keys = array_keys((array)$decodedData);
 				$value = isset($keys[0]) ? $keys[0]:'';
 				$res   = json_decode((string) $newResponse->getBody(), null, 512, JSON_THROW_ON_ERROR)->data->$value;
+				// dbug($res);
 				//checking for the error case where status is false
-				if (isset($res->status) && json_decode((string) $res->status, null, 512, JSON_THROW_ON_ERROR) == false) {
+				//json_decode((string) $res->status, null, 512, JSON_THROW_ON_ERROR) == false
+				try {
+					$decodedStatus = json_decode((string) $res->status, null, 512, JSON_THROW_ON_ERROR);
+					// Handle decoded status here (if successful)
+				} catch (\Exception $e) {
+					$decodedStatus = 0;
+				}
+				dbug($decodedStatus);
+				if (isset($res->status) && $decodedStatus == false) {
 					$httpCode = 400;
 					$status   = [ "status" => $res->status ];
+					dbug($status);
 					if (isset($res->message)) {
 						$message          = [ "message" => $res->message ];
 						$data['errors'][] = [ ...$message, ...$status ];

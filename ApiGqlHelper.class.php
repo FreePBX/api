@@ -35,7 +35,7 @@ class ApiGqlHelper extends \FreePBX_Helpers {
 		}
 	
 		$result = shell_exec($bin."/fwconsole ma list|grep ".$module ."|awk '{print $5 $6}'");
-
+		dbug($result);
 		$reason = '';
 		$enabled = ['enable', 'install', 'upgrade'];
 
