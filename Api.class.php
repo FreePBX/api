@@ -114,10 +114,17 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		$this->freepbx->PKCS->generateKey($this->oauthKey);
 		$this->freepbx->PKCS->extractPublicKey($this->oauthKey);
 
+		$force = true;
+		$usenodecache = $this->getConfig('usenodecache');
+		if($usenodecache){
+			$force = false;
+		}
+
 		$this->freepbx->Pm2->installNodeDependencies(__DIR__ . "/node", function ($data)
 		{
 			outn($data);
-		});
+		}, array(), true, $force);
+		$this->setConfig('usenodecache', true);
 	}
 
 	public function uninstall() {
