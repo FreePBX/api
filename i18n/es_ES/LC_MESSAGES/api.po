@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-23 10:14+0000\n"
+"POT-Creation-Date: 2024-04-19 01:35-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 msgid "(Copy your secret as you will not be able to retrieve it later)."
 msgstr ""
 
-#: Console/Api.class.php:23 api.i18n.php:10 views/system/overview.php:6
+#: Console/Api.class.php:24 api.i18n.php:10 views/system/overview.php:6
 msgid "API"
 msgstr ""
 
@@ -66,7 +66,7 @@ msgstr ""
 msgid "Admin Ports"
 msgstr ""
 
-#: Api.class.php:273 Api.class.php:288
+#: Api.class.php:277 Api.class.php:292
 #, php-format
 msgid "All %s for %s"
 msgstr ""
@@ -166,7 +166,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: Console/Api.class.php:30
+#: Console/Api.class.php:25
 msgid "Execute Gql command"
 msgstr ""
 
@@ -182,11 +182,11 @@ msgstr ""
 msgid "Generate Documentation"
 msgstr ""
 
-#: Console/Api.class.php:25 Console/Api.class.php:26
+#: Console/Api.class.php:25
 msgid "Generate GQL from a database table"
 msgstr ""
 
-#: Console/Api.class.php:28
+#: Console/Api.class.php:25
 msgid "Generate GQL from a modules xml database definition"
 msgstr ""
 
@@ -230,11 +230,11 @@ msgstr ""
 msgid "Module"
 msgstr ""
 
-#: Console/Api.class.php:29
+#: Console/Api.class.php:25
 msgid "Module location path"
 msgstr ""
 
-#: Console/Api.class.php:27
+#: Console/Api.class.php:25
 msgid "Module to place the API file if using generatefromtable"
 msgstr ""
 
@@ -243,7 +243,7 @@ msgstr ""
 msgid "Native app"
 msgstr ""
 
-#: Console/Api.class.php:61
+#: Console/Api.class.php:57
 msgid "Only GQL type is supported at this time"
 msgstr ""
 
@@ -273,12 +273,12 @@ msgstr ""
 msgid "Protocol Disabled"
 msgstr ""
 
-#: Api.class.php:263
+#: Api.class.php:267
 #, php-format
 msgid "Read/Write for %s"
 msgstr ""
 
-#: Api.class.php:242 Api.class.php:249
+#: Api.class.php:246 Api.class.php:253
 #, php-format
 msgid "Read/Write for all modules [%s]"
 msgstr ""
