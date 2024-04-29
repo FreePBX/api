@@ -46,7 +46,7 @@ class Applications {
 			":description" => $description,
 			":type" => $type,
 			":client_id" => $client_id,
-			":client_secret" => ($type !== "browser") ? hash((string) $this->secretHashAlgo, $client_secret) : null,
+			":client_secret" => ($type !== "browser") ? hash((string) $this->secretHashAlgo, (string) $client_secret) : null,
 			":redirect_uri" => $redirect,
 			":website" => $website,
 			":algo" => $this->secretHashAlgo,
