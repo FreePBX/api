@@ -26,17 +26,18 @@ abstract class Base extends ApiBase {
 
 	protected function checkScopeMiddleware($scope) {
 		$self = $this;
-		return function ($request, $response, $next) use ($self,$scope) {
+		return function ($request, $handler) use ($self, $scope) {
 			$allowedScopes = $request->getAttribute('oauth_scopes');
 			$userId = $request->getAttribute('oauth_user_id');
-
 			$self->setAllowedScopes($allowedScopes);
 			if(!$self->checkScope($scope)) {
-				$response = $response->withStatus(401)->withJson(["status" => false, "message" => "unauthorized"]);
+					$response = new \GuzzleHttp\Psr7\Response();
+					$response = $response->withHeader('Content-Type', 'application/json');
+					$response->getBody()->write(json_encode(["status" => false, "message" => "unauthorized"]));
+					return $response;
 			} else {
-				$response = $next($request, $response);
+				return $handler->handle($request); // Call the next middleware or route handler
 			}
-			return $response;
 		};
 	}
 }
