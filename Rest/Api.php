@@ -2,6 +2,7 @@
 
 namespace FreePBX\modules\Api\Rest;
 
+use DI\Container;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use FreePBX\modules\Api\Oauth\Repositories\AccessTokenRepository;
 use League\OAuth2\Server\ResourceServer;
@@ -9,7 +10,8 @@ use League\OAuth2\Server\ResourceServer;
 use DirectoryIterator;
 
 use Slim\App;
-
+use Slim\Factory\AppFactory;
+use Psr\Container\ContainerInterface;
 #[\AllowDynamicProperties]
 class Api {
 	public function __construct($freepbx, $publicKey) {
@@ -46,18 +48,23 @@ class Api {
 				$publicKeyPath
 		);
 
-		$app = new App($config);
-
+		AppFactory::setSlimHttpDecoratorsAutomaticDetection(false);
+		$container = new Container();
+		AppFactory::setContainer($container);
+		$app = AppFactory::create();
+		$app->addBodyParsingMiddleware();
 		$app->add(new ResourceServerMiddleware($server));
-
-		$container = $app->getContainer();
-		$container['setupRest'] = $container->protect(fn($app) => $this->setupRest($app));
-
-		$container['freepbx'] = $this->freepbx;
-
-		$app->group('/api/rest', function () {
-			$this->setupRest($this);
+		$container->set('setupRest', function (Container $container) {
+			return function($app) use ($container) {
+				$this->setupRest($app);
+			};
 		});
+		$container->set('freepbx', $this->freepbx);
+		$self = $this;
+
+		$app->group('/api/rest', function ($app) use ($self) {
+			$self->setupRest($app);
+		 });
 		$app->run();
 	}
 
@@ -120,9 +127,9 @@ class Api {
 			$groups[$class['modname']][] = $class;
 		}
 		foreach($groups as $module => $classes) {
-			$app->group('/'.$module, function () use ($classes) {
+			$app->group('/'.$module, function ($app) use ($classes) {
 				foreach($classes as $class) {
-					$class['object']->setupRoutes($this);
+					$class['object']->setupRoutes($app);
 				}
 			});
 		}

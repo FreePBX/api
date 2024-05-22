@@ -1,11 +1,4 @@
 <?php
-/**
- * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) Alex Bilbie
- * @license     http://mit-license.org/
- *
- * @link        https://github.com/thephpleague/oauth2-server
- */
 
 namespace League\OAuth2\Server\Middleware;
 
@@ -14,6 +7,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class ResourceServerMiddleware
 {
@@ -32,25 +26,23 @@ class ResourceServerMiddleware
 
     /**
      * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param callable               $next
+     * @param RequestHandlerInterface $handler
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
             $request = $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $exception) {
+            $response = $handler->handle($request);
             return $exception->generateHttpResponse($response);
-            // @codeCoverageIgnoreStart
         } catch (Exception $exception) {
+            $response = $handler->handle($request);
             return (new OAuthServerException($exception->getMessage(), 0, 'unknown_error', 500))
                 ->generateHttpResponse($response);
-            // @codeCoverageIgnoreEnd
         }
 
-        // Pass the request and response on to the next responder in the chain
-        return $next($request, $response);
+        return $handler->handle($request);
     }
 }
