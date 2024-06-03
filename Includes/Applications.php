@@ -41,7 +41,7 @@ class Applications {
 		$sql = "INSERT INTO api_applications (`owner`,`name`,`description`,`grant_type`,`client_id`,`client_secret`,`redirect_uri`,`website`,`algo`,`allowed_scopes`) VALUES (:owner,:name,:description,:type,:client_id,:client_secret,:redirect_uri,:website,:algo,:allowed_scopes)";
 		$sth = $this->database->prepare($sql);
 		$sth->execute([
-			":owner" => $ownerid,
+			":owner" => (int)$ownerid,
 			":name" => $name,
 			":description" => $description,
 			":type" => $type,
