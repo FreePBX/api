@@ -7,6 +7,7 @@
  * License for all code of this FreePBX module can be found in the license file inside the module directory
  * Copyright 2013-2021 Sangoma Technologies Inc.
  */
+#[\AllowDynamicProperties]
 class ApiGqlHelper extends \FreePBX_Helpers {
 	public function __construct($freepbx = null)
 	{

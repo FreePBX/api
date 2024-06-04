@@ -13,6 +13,7 @@ use FreePBX\modules\Api\Oauth\Oauth;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
+#[\AllowDynamicProperties]
 class Api extends \FreePBX_Helpers implements \BMO {
 	private string $oauthKey = 'api_oauth';
 	private $flattenedScopes = [];
