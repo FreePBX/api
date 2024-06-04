@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-22 07:07-0400\n"
+"POT-Creation-Date: 2024-06-04 09:30-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,8 +75,8 @@ msgstr ""
 msgid "Admin Ports"
 msgstr ""
 
-#: Api.class.php:277
-#: Api.class.php:292
+#: Api.class.php:278
+#: Api.class.php:293
 #, php-format
 msgid "All %s for %s"
 msgstr ""
@@ -309,13 +309,13 @@ msgstr ""
 msgid "Protocol Disabled"
 msgstr ""
 
-#: Api.class.php:267
+#: Api.class.php:268
 #, php-format
 msgid "Read/Write for %s"
 msgstr ""
 
-#: Api.class.php:246
-#: Api.class.php:253
+#: Api.class.php:247
+#: Api.class.php:254
 #, php-format
 msgid "Read/Write for all modules [%s]"
 msgstr ""
