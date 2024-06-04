@@ -17,7 +17,7 @@ use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-
+#[\AllowDynamicProperties]
 class Api extends Command {
 	protected function configure() {
 		$this->setName('api')
@@ -135,8 +135,8 @@ class Api extends Command {
 		//generate the api
 		$res = $this->freepbx->applications->add('', 'client_credentials', 'System_Internal_GqlAll', 'System internal generated token so please do not delete', '', '', 'gql');
 
-		$protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
-		$serverip = $protocol . '://' . $args[1];
+		$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+		$serverip = $protocol . '://' . ($args[1] ?? '');
 
 		$obj                    = new \stdClass();
 		$obj->token_url         = $serverip . '/admin/api/api/token';
