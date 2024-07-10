@@ -99,8 +99,8 @@ class Applications {
 	}
 
 	public function remove($owner, $client_id) {
-		if(is_null($owner)) {
-			$sql = "SELECT * FROM api_applications WHERE `owner`is NULL AND `client_id` = :id";
+		if(empty($owner)) {
+			$sql = "SELECT * FROM api_applications WHERE `client_id` = :id";
 			$sth = $this->database->prepare($sql);
 		} else {
 			$sql = "SELECT * FROM api_applications WHERE `owner` = :owner AND `client_id` = :id";
