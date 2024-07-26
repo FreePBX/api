@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>17.0.1.5</version>
+	<version>17.0.1.6</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,7 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
-		*17.0.1.5* bump 
+		*17.0.1.6* bump 
 		*17.0.1alpha* 17.0.1 alpha release
 	</changelog>
 	<description>The API module allows administrators to configure and manage FreePBX remotely through automated. As an administrator you can use other languages to control your PBX systems.</description>
