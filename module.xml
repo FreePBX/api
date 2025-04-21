@@ -80,4 +80,10 @@
 	<supported>
 		<version>17.0</version>
 	</supported>
+	<console>
+		<command>
+			<name>api</name>
+			<class>Api</class>
+		</command>
+    </console>
 </module>
