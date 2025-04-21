@@ -8,7 +8,7 @@ use Slim\Factory\AppFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use FreePBX\modules\Api\Oauth\Repositories;
 use FreePBX\modules\Api\Oauth\Entities\UserEntity;
-use Slim\Http\Stream;
+use GuzzleHttp\Psr7\Stream;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Container\ContainerInterface;
 
@@ -165,6 +165,8 @@ class Oauth {
 				return $server;
 			}
 		);
+		$container->set('api', fn() => $this->freepbx);
+		$container->set('freepbx', fn() => $this->freepbx);
 		AppFactory::setContainer($container);
 		$app = AppFactory::create();
 		$app->get('/authorize', function ($request, $response, $args) use ($app) {
@@ -223,7 +225,6 @@ class Oauth {
 			}
 		});
 		$app->post('/token', function ($request, $response, $args) use ($app) {
-			dbug($request->getParsedBody());
 			$authorizationServer = $app->getContainer()->get(AuthorizationServer::class);
 			try {
 				// Try to respond to the request
@@ -234,7 +235,6 @@ class Oauth {
 				return $exception->generateHttpResponse($response);
 
 			} catch (\Exception $exception) {
-				dbug($exception->getMessage());
 				// Unknown exception
 				$body = new Stream('php://temp', 'r+');
 				$body->write($exception->getMessage());
