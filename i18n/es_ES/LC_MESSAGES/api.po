@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-04 09:30-0400\n"
+"POT-Creation-Date: 2025-09-01 04:57-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,7 +66,7 @@ msgstr ""
 msgid "Admin Ports"
 msgstr ""
 
-#: Api.class.php:278 Api.class.php:293
+#: Api.class.php:300 Api.class.php:315
 #, php-format
 msgid "All %s for %s"
 msgstr ""
@@ -273,12 +273,12 @@ msgstr ""
 msgid "Protocol Disabled"
 msgstr ""
 
-#: Api.class.php:268
+#: Api.class.php:290
 #, php-format
 msgid "Read/Write for %s"
 msgstr ""
 
-#: Api.class.php:247 Api.class.php:254
+#: Api.class.php:269 Api.class.php:276
 #, php-format
 msgid "Read/Write for all modules [%s]"
 msgstr ""
@@ -347,11 +347,22 @@ msgid ""
 "Google account"
 msgstr ""
 
+#: Api.class.php:135
+msgid "The API Key Regeneration Notification."
+msgstr ""
+
 #: api.i18n.php:8
 msgid ""
 "The API module allows administrators to configure and manage FreePBX "
 "remotely through automated. As an administrator you can use other languages "
 "to control your PBX systems."
+msgstr ""
+
+#: Api.class.php:135
+msgid ""
+"The API private key has been regenerated due to a detected security risk "
+"involving encryption keys. Please ensure your API integration operates as "
+"expected and regenerate your tokens if necessary."
 msgstr ""
 
 #: views/system/modals.php:37 views/user/modals.php:37
