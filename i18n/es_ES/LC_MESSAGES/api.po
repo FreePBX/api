@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-06 04:56+0000\n"
+"POT-Creation-Date: 2025-09-01 09:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,7 +66,7 @@ msgstr ""
 msgid "Admin Ports"
 msgstr ""
 
-#: Api.class.php:273 Api.class.php:288
+#: Api.class.php:296 Api.class.php:311
 #, php-format
 msgid "All %s for %s"
 msgstr ""
@@ -273,12 +273,12 @@ msgstr ""
 msgid "Protocol Disabled"
 msgstr ""
 
-#: Api.class.php:263
+#: Api.class.php:286
 #, php-format
 msgid "Read/Write for %s"
 msgstr ""
 
-#: Api.class.php:242 Api.class.php:249
+#: Api.class.php:265 Api.class.php:272
 #, php-format
 msgid "Read/Write for all modules [%s]"
 msgstr ""
@@ -352,6 +352,17 @@ msgid ""
 "The API module allows administrators to configure and manage FreePBX "
 "remotely through automated. As an administrator you can use other languages "
 "to control your PBX systems."
+msgstr ""
+
+#: Api.class.php:133
+msgid "The API private Key Regeneration Notification."
+msgstr ""
+
+#: Api.class.php:133
+msgid ""
+"The API private key has been regenerated due to a detected security risk "
+"involving encryption keys. Please ensure your API integration operates as "
+"expected and regenerate your tokens if necessary."
 msgstr ""
 
 #: views/system/modals.php:37 views/user/modals.php:37
