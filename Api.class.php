@@ -109,8 +109,31 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		if($this->freepbx->Modules->checkStatus("sysadmin")) {
 			touch("/var/spool/asterisk/incron/api.logrotate");
 		}
+
+		$keyRegenerate = $this->getConfig('key-regenerated');
+		if(!$keyRegenerate){
+			$location = $this->freepbx->PKCS->getKeysLocation();
+			$keyfile = "$location/$this->oauthKey.key";
+			$pubkeyfile = "{$location}/{$this->oauthKey}_public.key";
+			if (file_exists($keyfile)) {
+				unlink($keyfile);
+			}
+			if (file_exists($pubkeyfile)) {
+				unlink($pubkeyfile);
+			}
+		}
+
 		$this->freepbx->PKCS->generateKey($this->oauthKey);
 		$this->freepbx->PKCS->extractPublicKey($this->oauthKey);
+
+		if(isset($keyfile) && file_exists($keyfile)) {
+			$noKeyUpdateNotify = $this->getConfig('no-key-update-notifiy');
+			if (!$noKeyUpdateNotify) {
+				$nt = \notifications::create();
+				$nt->add_warning('api', 'key-regenerated', _("The API private Key Regeneration Notification."), _("The API private key has been regenerated due to a detected security risk involving encryption keys. Please ensure your API integration operates as expected and regenerate your tokens if necessary."), '?type=tool&display=api', true, true);
+			}
+			$this->setConfig('key-regenerated', true);
+		}
 
 		$this->freepbx->Pm2->installNodeDependencies(__DIR__."/node",function($data) {
 			outn($data);

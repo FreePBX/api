@@ -15,6 +15,32 @@ class Oauth {
 		$this->api = $api;
 		$this->privateKey = $privateKey;
 	}
+
+	/**
+	 * Get or generate a secure encryption key unique to this installation
+	 * @return string The encryption key
+	*/
+	private function getEncryptionKey() {
+		// First try to read from secure file if it exists
+		$keyFile = $this->freepbx->PKCS->getKeysLocation() . '/oauth_encryption.key';
+		if (file_exists($keyFile)) {
+			$key = trim(file_get_contents($keyFile));
+			if (!empty($key)) {
+				return $key;
+			}
+		}
+		// Generate a new key and store in file as fallback
+		$key = base64_encode(random_bytes(32)); // 256-bit key
+		// Store in secure file
+		file_put_contents($keyFile, $key);
+		chmod($keyFile, 0600);
+		if (function_exists('chown')) {
+			@chown($keyFile, 'asterisk');
+			@chgrp($keyFile, 'asterisk');
+		}
+		return $key;
+	}
+
 	public function access_token() {
 		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',$_SERVER['QUERY_STRING']);
 		$_SERVER['REQUEST_URI'] = '/'.$_GET['command'].(!empty($_GET['route']) ? '/'.$_GET['route'] : '');
@@ -30,7 +56,7 @@ class Oauth {
 						new Repositories\AccessTokenRepository($this->api),            // instance of AccessTokenRepositoryInterface
 						new Repositories\ScopeRepository($this->api),                  // instance of ScopeRepositoryInterface
 						'file://' . $this->privateKey,    // path to private key
-						'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'      // encryption key
+						$this->getEncryptionKey()      // encryption key
 				);
 
 				//Client Grant
