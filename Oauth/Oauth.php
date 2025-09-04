@@ -19,7 +19,7 @@ class Oauth {
 	/**
 	 * Get or generate a secure encryption key unique to this installation
 	 * @return string The encryption key
-	 */
+	*/
 	private function getEncryptionKey() {
 		// First try to read from secure file if it exists
 		$keyFile = $this->freepbx->PKCS->getKeysLocation() . '/oauth_encryption.key';
