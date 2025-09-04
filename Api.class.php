@@ -125,8 +125,9 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		
 		$this->freepbx->PKCS->generateKey($this->oauthKey);
 		$this->freepbx->PKCS->extractPublicKey($this->oauthKey);
-
 		if(isset($keyfile) && file_exists($keyfile)) {
+			chmod($keyFile, 0600);
+			chmod($pubkeyfile, 0600);
 			$noKeyUpdateNotify = $this->getConfig('no-key-update-notifiy');
 			if (!$noKeyUpdateNotify) {
 				$nt = \notifications::create();
