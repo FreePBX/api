@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>15.0.12</version>
+	<version>15.0.13</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*15.0.13* Packaging of ver 15.0.13
 		*15.0.12* FREEI-2045 Fixing issue of replacing hardcoded fixed encryption key with dynamically generated key. 
 		*15.0.11* FREEI-65 sanitizing the host parameter 
 		*15.0.10* FREEI-65 
