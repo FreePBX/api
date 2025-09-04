@@ -112,7 +112,6 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		if ($this->freepbx->Modules->checkStatus("sysadmin")) {
 			touch("/var/spool/asterisk/incron/api.logrotate");
 		}
-		
 		$keyRegenerate = $this->getConfig('key-regenerated');
 		if(!$keyRegenerate){
 			$location = $this->freepbx->PKCS->getKeysLocation();
