@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-01 04:57-0400\n"
+"POT-Creation-Date: 2025-09-04 09:22-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,8 +75,8 @@ msgstr ""
 msgid "Admin Ports"
 msgstr ""
 
-#: Api.class.php:300
-#: Api.class.php:315
+#: Api.class.php:301
+#: Api.class.php:316
 #, php-format
 msgid "All %s for %s"
 msgstr ""
@@ -309,13 +309,13 @@ msgstr ""
 msgid "Protocol Disabled"
 msgstr ""
 
-#: Api.class.php:290
+#: Api.class.php:291
 #, php-format
 msgid "Read/Write for %s"
 msgstr ""
 
-#: Api.class.php:269
-#: Api.class.php:276
+#: Api.class.php:270
+#: Api.class.php:277
 #, php-format
 msgid "Read/Write for all modules [%s]"
 msgstr ""
@@ -386,7 +386,7 @@ msgid ""
 "Google account"
 msgstr ""
 
-#: Api.class.php:135
+#: Api.class.php:136
 msgid "The API Key Regeneration Notification."
 msgstr ""
 
@@ -397,7 +397,7 @@ msgid ""
 "to control your PBX systems."
 msgstr ""
 
-#: Api.class.php:135
+#: Api.class.php:136
 msgid ""
 "The API private key has been regenerated due to a detected security risk "
 "involving encryption keys. Please ensure your API integration operates as "
