@@ -4,6 +4,7 @@ namespace FreePBX\modules\Api\Rest;
 
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use FreePBX\modules\Api\Oauth\Repositories\AccessTokenRepository;
+use FreePBX\modules\Api\Oauth\Middleware\ScopeValidationMiddleware;
 use League\OAuth2\Server\ResourceServer;
 
 use DirectoryIterator;
@@ -47,6 +48,7 @@ class Api {
 
 		$app = new App($config);
 
+		$app->add(new ScopeValidationMiddleware($accessTokenRepository));
 		$app->add(new ResourceServerMiddleware($server));
 
 		$container = $app->getContainer();
@@ -148,6 +150,7 @@ class Api {
 		);
 
 		$app = new App($config);
+		$app->add(new ScopeValidationMiddleware($accessTokenRepository));
 		$app->add(new ResourceServerMiddleware($server));
 
 		$container = $app->getContainer();

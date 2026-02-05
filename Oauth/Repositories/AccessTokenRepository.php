@@ -37,4 +37,8 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface {
 		$accessToken->setUserIdentifier($userIdentifier);
 		return $accessToken;
 	}
+
+	public function getTokenById($tokenId) {
+		return $this->api->accessTokens->get($tokenId);
+	}
 }
