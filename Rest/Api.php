@@ -5,6 +5,7 @@ namespace FreePBX\modules\Api\Rest;
 use DI\Container;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use FreePBX\modules\Api\Oauth\Repositories\AccessTokenRepository;
+use FreePBX\modules\Api\Oauth\Middleware\ScopeValidationMiddleware;
 use League\OAuth2\Server\ResourceServer;
 
 use DirectoryIterator;
@@ -54,6 +55,8 @@ class Api {
 		$app = AppFactory::create();
 		$app->addBodyParsingMiddleware();
 		$app->add(new ResourceServerMiddleware($server));
+		// Add scope validation middleware to prevent JWT tampering attacks
+		$app->add(new ScopeValidationMiddleware($accessTokenRepository));
 		$container->set('setupRest', function (Container $container) {
 			return function($app) use ($container) {
 				$this->setupRest($app);
@@ -155,6 +158,8 @@ class Api {
 
 		$app = new App($config);
 		$app->add(new ResourceServerMiddleware($server));
+		// Add scope validation middleware to prevent JWT tampering attacks
+		$app->add(new ScopeValidationMiddleware($accessTokenRepository));
 
 		$container = $app->getContainer();
 		$container['setupRest'] = $container->protect(fn($app) => $this->setupRest($app));

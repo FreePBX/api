@@ -29,6 +29,17 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface {
 		return false;
 	}
 
+	/**
+	 * Get token information including scopes from database by jti
+	 * This ensures scopes are validated against database, not JWT claims
+	 * 
+	 * @param string $tokenId The JWT ID (jti)
+	 * @return array|null Token data including scopes, or null if not found
+	 */
+	public function getTokenById($tokenId) {
+		return $this->api->accessTokens->get($tokenId);
+	}
+
 	public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null) {
 		$accessToken = new AccessTokenEntity();
 		$accessToken->setClient($clientEntity);
