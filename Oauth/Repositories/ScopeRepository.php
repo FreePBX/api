@@ -3,6 +3,7 @@
 namespace FreePBX\modules\Api\Oauth\Repositories;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use FreePBX\modules\Api\Oauth\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -28,46 +29,53 @@ class ScopeRepository implements ScopeRepositoryInterface {
 		$userIdentifier = null
 	) {
 		$application = $this->api->applications->getByClientId($clientEntity->getIdentifier());
-		$applicationAllowedScopes = trim((string) $application['allowed_scopes']);
+
+		if (empty($application)) {
+			throw OAuthServerException::serverError('API application not found for client');
+		}
+
+		$applicationAllowedScopes = trim((string) ($application['allowed_scopes'] ?? ''));
 
 		// If application scope is empty, then that means there are no restrictions
-		if (empty($applicationAllowedScopes)) {
+		if ($applicationAllowedScopes === '') {
 			// Allow access to both GraphQL and Rest
 			$applicationScopes = ['gql', 'rest'];
 		} else {
-			$applicationScopes = explode(" ", $applicationAllowedScopes);
+			$applicationScopes = array_values(array_filter(array_map('trim', explode(' ', $applicationAllowedScopes))));
 		}
 
 		// If no scopes are defined, then use the scopes from the application
-		if (empty($scopes)) {
+		if ($scopes === []) {
 			foreach($applicationScopes as $scopeIdentifier) {
-				$scopes[] = $this->getScopeEntityByIdentifier($scopeIdentifier);
+				$entity = $this->getScopeEntityByIdentifier($scopeIdentifier);
+				if ($entity instanceof ScopeEntityInterface) {
+					$scopes[] = $entity;
+				}
 			}
 			return $scopes;
 		}
 
-		// foreach($scopes as $scope) {
-		// 	if(!$this->checkScope($scope->getIdentifier(),$applicationScopes)) {
-		// 		throw OAuthServerException::invalidScope($scope->getIdentifier());
-		// 	}
-		// }
+		foreach($scopes as $scope) {
+			if (!$scope instanceof ScopeEntityInterface) {
+				throw OAuthServerException::invalidScope('');
+			}
+			if(!$this->checkScope($scope->getIdentifier(),$applicationScopes)) {
+				throw OAuthServerException::invalidScope($scope->getIdentifier());
+			}
+		}
 
 		return $scopes;
 	}
 
-	// private function checkScope($scope,$applicationScopes) {
-	// 	$parts = explode(":",(string) $scope);
-	// 	$scopeString = '';
-	// 	foreach($parts as $part) {
-	// 		if(empty($scopeString)) {
-	// 			$scopeString = $part;
-	// 		} else {
-	// 			$scopeString .= ':'.$part;
-	// 		}
-	// 		if(in_array($scopeString,$applicationScopes)) {
-	// 			return true;
-	// 		}
-	// 	}
-	// 	return false;
-	// }
+	private function checkScope(string $scope, array $applicationScopes): bool {
+		$parts = explode(":", $scope);
+		$scopeString = '';
+		foreach($parts as $part) {
+			$scopeString = $scopeString === '' ? $part : $scopeString . ':' . $part;
+			if (in_array($scopeString, $applicationScopes, true)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

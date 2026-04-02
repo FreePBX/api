@@ -35,6 +35,6 @@ class ClientRepository implements ClientRepositoryInterface {
 
 	public function validateClient($clientIdentifier, $clientSecret, $grantType)
     {
-        return true;
+        return $this->api->applications->authenticate($clientIdentifier, $clientSecret) === true;
     }
 }
