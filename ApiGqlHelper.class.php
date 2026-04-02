@@ -26,15 +26,16 @@ class ApiGqlHelper extends \FreePBX_Helpers {
 		$txnId = $args[3];
 
 		$bin =  $this->freepbx->Config()->get('AMPSBIN');
+		$fwconsole = escapeshellarg($bin . '/fwconsole');
 		if($module == 'upgradeall'){
 			$action = $module;
 			$txnId = $args[2];
-			shell_exec($bin.'/fwconsole ma '.$action);
+			shell_exec($fwconsole . ' ma ' . escapeshellarg($action));
 		} else {
-			shell_exec($bin . '/fwconsole ma ' . $action . ' ' . $module . ' --' . $track);
+			shell_exec($fwconsole . ' ma ' . escapeshellarg($action) . ' ' . escapeshellarg($module) . ' --' . escapeshellarg((string) $track));
 		}
 	
-		$result = shell_exec($bin."/fwconsole ma list|grep ".$module ."|awk '{print $5 $6}'");
+		$result = shell_exec($fwconsole . ' ma list|grep ' . escapeshellarg($module) . "|awk '{print $5 $6}'");
 
 		$reason = '';
 		$enabled = array('enable','install','upgrade');

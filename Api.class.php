@@ -550,7 +550,12 @@ class Api extends \FreePBX_Helpers implements \BMO {
 	// run as background job	
 	public function initiateGqlAPIProcess($args) {
 		$bin = $this->freepbx->Config()->get('AMPSBIN');
-		shell_exec($bin.'/fwconsole api gql '.$args[0].' '.$args[1].' '.$args[2].' '.$args[3].' >/dev/null 2>/dev/null &');
+		$fwconsole = escapeshellarg($bin . '/fwconsole');
+		$a0 = escapeshellarg((string) ($args[0] ?? ''));
+		$a1 = escapeshellarg((string) ($args[1] ?? ''));
+		$a2 = escapeshellarg((string) ($args[2] ?? ''));
+		$a3 = escapeshellarg((string) ($args[3] ?? ''));
+		shell_exec($fwconsole . ' api gql ' . $a0 . ' ' . $a1 . ' ' . $a2 . ' ' . $a3 . ' >/dev/null 2>/dev/null &');
 	}
 	
 	/**
