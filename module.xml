@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>16.0.17</version>
+	<version>16.0.18</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*16.0.18* FREEI-2805 fix:sanitize shell arguments in GraphQL moduleOperations execution 
 		*16.0.17* FREEI-2379 v16 graphql scope validation for the token is added 
 		*16.0.16* Packaging of ver 16.0.16
 		*16.0.15* Packaging of ver 16.0.15
