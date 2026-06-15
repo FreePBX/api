@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>17.0.8</version>
+	<version>17.0.9</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,6 +11,7 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
+		*17.0.9* FREEI-2973 api module command issue fix 
 		*17.0.8* FREEI-2804 changes done for fixing client authentication bypass in api 
 		*17.0.7* FREEI-2805 fix:sanitize shell arguments in GraphQL moduleOperations execution 
 		*17.0.6* Packaging of ver 17.0.6
