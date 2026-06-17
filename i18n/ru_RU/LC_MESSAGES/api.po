@@ -1,0 +1,438 @@
+# This file is part of FreePBX.
+#
+# For licensing information, please see the file named LICENSE located in the module directory
+#
+# FreePBX language template for api
+# Copyright (C) 2008-2024 Sangoma Technologies, Inc.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: api 17.0.1.6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-07-25 23:26-0400\n"
+"PO-Revision-Date: 2025-03-13 15:39+0500\n"
+"Last-Translator: Dmitriy Q <krotesk@yandex.ru>\n"
+"Language-Team: translAster\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+
+#: views/system/modals.php:192 views/system/modals.php:201
+#: views/system/modals.php:208
+#, php-format
+msgid "%s URLs"
+msgstr "%s URLов"
+
+#: views/system/modals.php:137
+msgid "(Copy your secret as you will not be able to retrieve it later)."
+msgstr ""
+"(Скопируйте свой пароль, так как позже вы не сможете его восстановить)."
+
+#: Console/Api.class.php:24 api.i18n.php:10 views/system/overview.php:6
+msgid "API"
+msgstr "API"
+
+#: views/system/modals.php:73 views/system/modals.php:181
+msgid "API Ports"
+msgstr "Порты API"
+
+#: views/system/scopeVisualizer.php:40
+msgid "API Type"
+msgstr "Тип API"
+
+#: views/system/applicationGrid.php:6
+msgid "API URL List"
+msgstr "Список URL API"
+
+#: views/system/modals.php:167
+msgid "API URLs"
+msgstr "URLы API"
+
+#: views/system/overview.php:10
+msgid "Access Tokens"
+msgstr "Токены доступа"
+
+#: views/system/accessTokenGrid.php:20 views/system/applicationGrid.php:33
+#: views/system/refreshTokenGrid.php:20 views/user/grid.php:27
+msgid "Actions"
+msgstr "Действия"
+
+#: views/system/applicationGrid.php:4 views/system/modals.php:48
+#: views/user/grid.php:4 views/user/modals.php:42
+msgid "Add Application"
+msgstr "Добавить приложение"
+
+#: views/system/modals.php:72 views/system/modals.php:180
+msgid "Admin Ports"
+msgstr "Порты администрирования"
+
+#: Api.class.php:278 Api.class.php:293
+#, php-format
+msgid "All %s for %s"
+msgstr "Все %s для %s"
+
+#: views/system/modals.php:40
+msgid "Allowed Scopes"
+msgstr "Разрешенные диапазоны"
+
+#: views/system/applicationGrid.php:31 views/user/grid.php:26
+msgid "Application Description"
+msgstr "Описание приложения"
+
+#: views/system/accessTokenGrid.php:16 views/system/refreshTokenGrid.php:16
+msgid "Application Name"
+msgstr "Название приложения"
+
+#: views/system/applicationGrid.php:30
+msgid "Application Owner"
+msgstr "Владелец приложения"
+
+#: views/system/applicationGrid.php:32
+msgid "Application Type"
+msgstr "Тип приложения"
+
+#: views/system/applicationGrid.php:29 views/user/grid.php:25
+msgid "Application name"
+msgstr "Название приложения"
+
+#: views/system/overview.php:9
+msgid "Applications"
+msgstr "Приложения"
+
+#: assets/js/api.js:426
+msgid "Are you sure you wish to delete this access token?"
+msgstr "Вы уверены, что хотите удалить этот токен доступа?"
+
+#: assets/js/api.js:374
+msgid "Are you sure you wish to delete this application?"
+msgstr "Вы уверены, что хотите удалить это приложение?"
+
+#: assets/js/api.js:448
+msgid "Are you sure you wish to delete this refresh token?"
+msgstr "Вы уверены, что хотите удалить этот токен обновления?"
+
+#: assets/js/api.js:468
+msgid ""
+"Are you sure you wish to regenerate this application? This will break any "
+"clients using the old credentials"
+msgstr ""
+"Вы уверены, что хотите пересоздать это приложение? Это приведет к поломке "
+"всех клиентов, использующих старые учетные данные"
+
+#: views/authorize.php:12
+#, php-format
+msgid "Authorize %s to use your %s account?"
+msgstr "Разрешить %s использовать вашу учетную запись %s?"
+
+#: views/authorize.php:4
+msgid "Authorize your account"
+msgstr "Авторизуйте свою учетную запись"
+
+#: views/system/applicationGrid.php:9 views/user/grid.php:8
+#: assets/js/api.js:332 assets/js/api.js:500
+msgid "Browser-based/Single Page app"
+msgstr "Браузерное/одностраничное приложение"
+
+#: views/authorize.php:25
+msgid "Cancel"
+msgstr "Отмена"
+
+#: views/system/modals.php:59 views/user/modals.php:52
+msgid "Client Credentials"
+msgstr "Учетные данные клиента"
+
+#: views/system/modals.php:137
+msgid "Client Secret"
+msgstr "Пароль клиента"
+
+#: views/system/modals.php:47 views/system/modals.php:148
+#: views/user/modals.php:41 views/user/modals.php:63
+msgid "Close"
+msgstr "Закрыть"
+
+#: api.i18n.php:6
+msgid "Connectivity"
+msgstr "Подключение"
+
+#: views/system/modals.php:94 views/system/modals.php:102
+#: views/system/modals.php:110 views/system/modals.php:118
+#: views/system/modals.php:130 views/system/modals.php:134
+#: views/system/modals.php:139 views/system/modals.php:194
+#: views/system/modals.php:195 views/system/modals.php:196
+#: views/system/modals.php:203 views/system/modals.php:210
+msgid "Copy to clipboard"
+msgstr "Копировать в буфер обмена"
+
+#: views/system/modals.php:26 views/system/scopeVisualizer.php:42
+#: views/user/modals.php:26
+msgid "Description"
+msgstr "Описание"
+
+#: Console/Api.class.php:25
+msgid "Execute Gql command"
+msgstr "Выполнение команды Gql"
+
+#: views/system/accessTokenGrid.php:18 views/system/refreshTokenGrid.php:18
+msgid "Expiry Time"
+msgstr "Срок действия"
+
+#: views/system/graphiql.php:5
+msgid "Explore GraphQL based on scopes"
+msgstr "Изучение GraphQL на основе диапазонов"
+
+#: views/system/gqldocVisualizer.php:4
+msgid "Generate Documentation"
+msgstr "Создание документации"
+
+#: Console/Api.class.php:25
+msgid "Generate GQL from a database table"
+msgstr "Создание GQL на основе таблицы базы данных"
+
+#: Console/Api.class.php:25
+msgid "Generate GQL from a modules xml database definition"
+msgstr "Создание GQL из определения базы данных модулей xml"
+
+#: views/system/gqldocVisualizer.php:1
+msgid "Generate GraphQL Documentation based on scopes"
+msgstr "Создайте документацию GraphQL на основе диапазонов"
+
+#: views/system/overview.php:13
+msgid "GraphQL Documentation"
+msgstr "Документация GraphQL"
+
+#: views/system/overview.php:14
+msgid "GraphQL Explorer"
+msgstr "Обзор GraphQL"
+
+#: views/system/accessTokenGrid.php:17 views/system/refreshTokenGrid.php:17
+msgid "IP Address"
+msgstr "IP-адрес"
+
+#: assets/js/api.js:333
+msgid ""
+"It is intended to be used for user-agent-based clients (e.g. single page web "
+"apps) that can’t keep a client secret because all of the application code "
+"and storage is easily accessible"
+msgstr ""
+"Он предназначен для клиентов на основе пользовательских агентов (например, "
+"одностраничных веб-приложений), которые не могут сохранить пароль клиента, "
+"поскольку весь код приложения и хранилище легко доступны"
+
+#: views/system/accessTokenGrid.php:19 views/system/refreshTokenGrid.php:19
+msgid "Last Accessed Time"
+msgstr "Время последнего доступа"
+
+#: views/system/modals.php:13 views/user/modals.php:13
+msgid "Learn more about this API type"
+msgstr "Узнайте больше об этом типе API"
+
+#: views/system/applicationGrid.php:11 views/user/grid.php:10
+#: assets/js/api.js:344 assets/js/api.js:509
+msgid "Machine-to-Machine app"
+msgstr "Приложение \"машина-машина\""
+
+#: views/system/scopeVisualizer.php:41
+msgid "Module"
+msgstr "Модуль"
+
+#: Console/Api.class.php:25
+msgid "Module location path"
+msgstr "Путь расположения модуля"
+
+#: Console/Api.class.php:25
+msgid "Module to place the API file if using generatefromtable"
+msgstr "Модуль для размещения файла API при использовании generatefromtable"
+
+#: views/system/applicationGrid.php:10 views/user/grid.php:9
+#: assets/js/api.js:340 assets/js/api.js:506
+msgid "Native app"
+msgstr "Встроенное приложение"
+
+#: Console/Api.class.php:57
+msgid "Only GQL type is supported at this time"
+msgstr "В настоящее время поддерживается только тип GQL"
+
+#: api.i18n.php:4
+msgid "PBX API"
+msgstr "PBX API"
+
+#: views/system/gqldocVisualizer.php:2 views/system/graphiql.php:6
+msgid ""
+"Paste Scope(s) Here (You can generate scopes in the Scope Visualizer Tab)"
+msgstr ""
+"Вставьте сюда область(-и) (Вы можете генерировать области на вкладке "
+"\"Визуализатор областей\")."
+
+#: views/user/modals.php:57
+msgid "Please copy your secret as you will not be able to retrieve it later"
+msgstr ""
+"Пожалуйста, скопируйте свой пароль, так как позже вы не сможете его "
+"восстановить"
+
+#: assets/js/api.js:260
+msgid "Please enter a valid application description"
+msgstr "Пожалуйста, введите правильное описание приложения"
+
+#: assets/js/api.js:256
+msgid "Please enter a valid application name"
+msgstr "Пожалуйста, введите правильное название приложения"
+
+#: views/system/modals.php:123 views/system/modals.php:197
+#: views/system/modals.php:204 views/system/modals.php:211
+msgid "Protocol Disabled"
+msgstr "Протокол отключен"
+
+#: Api.class.php:268
+#, php-format
+msgid "Read/Write for %s"
+msgstr "Чтение/запись для %s"
+
+#: Api.class.php:247 Api.class.php:254
+#, php-format
+msgid "Read/Write for all modules [%s]"
+msgstr "Чтение/запись для всех модулей [%s]"
+
+#: views/system/modals.php:34 views/user/modals.php:34
+msgid "Redirect URI"
+msgstr "Перенаправление URI"
+
+#: views/system/overview.php:11
+msgid "Refresh Tokens"
+msgstr "Обновление токенов"
+
+#: views/system/modals.php:147 views/user/modals.php:62
+msgid "Regenerate Credentials"
+msgstr "Восстановление учетных данных"
+
+#: views/system/graphiql.php:8
+msgid "Reload Explorer (If scope was changed)"
+msgstr "Перезагрузите проводник (если область видимости была изменена)"
+
+#: views/system/scopeVisualizer.php:39
+msgid "Scope"
+msgstr "Область"
+
+#: views/system/scopeVisualizer.php:14
+msgid "Scope List"
+msgstr "Список областей"
+
+#: views/system/scopeVisualizer.php:10
+msgid "Scope Tree"
+msgstr "Дерево областей"
+
+#: views/system/overview.php:12
+msgid "Scope Visualizer"
+msgstr "Визуализатор областей"
+
+#: assets/js/api.js:333
+msgid ""
+"Secondly instead of the authorization server returning an authorization code "
+"which is exchanged for an access token, the authorization server returns an "
+"access token"
+msgstr ""
+"Во-вторых, вместо того, чтобы сервер авторизации возвращал код авторизации, "
+"который обменивается на токен доступа, сервер авторизации возвращает токен "
+"доступа"
+
+#: views/system/scopeVisualizer.php:3
+msgid "Selected Scopes"
+msgstr "Выбранные области"
+
+#: views/system/scopeVisualizer.php:17
+msgid "Show API types"
+msgstr "Показать типы API"
+
+#: views/authorize.php:24
+msgid "Submit"
+msgstr "Принять"
+
+#: assets/js/api.js:333
+msgid ""
+"The 'Browser-based/Single Page app', also known as 'Implicit Code Grant', is "
+"similar to the 'Web-server App' with two distinct differences"
+msgstr ""
+"Браузерное/одностраничное приложение, также известное как \"Неявный код "
+"гранта\", похоже на \"Приложение для веб-сервера\" с двумя отличиями"
+
+#: assets/js/api.js:337
+msgid ""
+"The 'Web-server App', also known as 'Authorization Code Grant', should be "
+"very familiar if you’ve ever signed into a web app using your Facebook or "
+"Google account"
+msgstr ""
+"\"Веб-серверное приложение\", также известное как \"Предоставление кода "
+"авторизации\", должно быть очень знакомым, если вы когда-либо входили в веб-"
+"приложения, используя свою учетную запись Facebook или Google."
+
+#: api.i18n.php:8
+msgid ""
+"The API module allows administrators to configure and manage FreePBX "
+"remotely through automated. As an administrator you can use other languages "
+"to control your PBX systems."
+msgstr ""
+"Модуль API позволяет администраторам настраивать и управлять FreePBX "
+"удаленно с помощью автоматики. Как администратор вы можете использовать "
+"другие языки для управления системами АТС."
+
+#: views/system/modals.php:37 views/user/modals.php:37
+msgid ""
+"The redirect uri specifies where we redirect users after they have chosen "
+"whether or not to authenticate your application"
+msgstr ""
+"Перенаправление URI определяет, куда мы перенаправляем пользователей после "
+"того, как они выбрали, аутентифицировать ваше приложение или нет"
+
+#: views/system/accessTokenGrid.php:1 views/system/refreshTokenGrid.php:1
+msgid ""
+"The tokens listed below are encrypted and therefore you can not copy them "
+"below and expect to use them in your application. You can only use the "
+"token(s) that are presented to you in your application. This is a security "
+"mechanisim so that someone can't steal your credentials by just looking at "
+"this page"
+msgstr ""
+"Перечисленные ниже токены зашифрованы, поэтому вы не можете скопировать их и "
+"ожидать, что они будут использованы в вашем приложении. Вы можете "
+"использовать только тот токен(ы), который(ые) представлен(ы) вам в вашем "
+"приложении. Это механизм безопасности, чтобы кто-то не смог украсть ваши "
+"учетные данные, просто взглянув на эту страницу"
+
+#: views/authorize.php:35
+msgid "This application is requesting being able to:"
+msgstr "Это приложение запрашивает возможность:"
+
+#: views/system/accessTokenGrid.php:15 views/system/refreshTokenGrid.php:15
+msgid "Token"
+msgstr "Токен"
+
+#: views/system/modals.php:86
+msgid "URLs"
+msgstr "URLы"
+
+#: views/system/modals.php:43
+msgid ""
+"Use the Scope Visualizer to paste valid scopes into this text box to "
+"restrict this application to be only able to use these scopes. Leave blank "
+"to not have any scope restrictions"
+msgstr ""
+"С помощью визуализатора диапазонов вставьте в это текстовое поле допустимые "
+"диапазоны, чтобы ограничить использование приложением только этих "
+"диапазонов. Оставьте пустым, чтобы не было никаких ограничений на область "
+"применения"
+
+#: assets/js/api.js:336 assets/js/api.js:503
+msgid "Web-server App"
+msgstr "Веб-серверное приложение"
+
+#: views/system/applicationGrid.php:8 views/user/grid.php:7
+msgid "Web-server app"
+msgstr "Веб-серверное приложение"
+
+#: views/system/modals.php:30 views/user/modals.php:30
+msgid "Website"
+msgstr "Вебсайт"
+
+#: views/system/modals.php:22 views/user/modals.php:22
+msgid "Your App Name"
+msgstr "Название вашего приложения"
