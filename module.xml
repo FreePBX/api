@@ -2,7 +2,7 @@
 	<rawname>api</rawname>
 	<repo>standard</repo>
 	<name>PBX API</name>
-	<version>17.0.9</version>
+	<version>18.0.1</version>
 	<publisher>Sangoma Technologies Corporation</publisher>
 	<license>AGPLv3+</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
@@ -11,19 +11,12 @@
 		<api>API</api>
 	</menuitems>
 	<changelog>
-		*17.0.9* FREEI-2973 api module command issue fix 
-		*17.0.8* FREEI-2804 changes done for fixing client authentication bypass in api 
-		*17.0.7* FREEI-2805 fix:sanitize shell arguments in GraphQL moduleOperations execution 
-		*17.0.6* Packaging of ver 17.0.6
-		*17.0.5* FREEI-2379 v16 graphql scope validation for the token is added 
-		*17.0.3* Packaging of ver 17.0.3
-		*17.0.2* FREEI-2045 Fixing issue of replacing hardcoded fixed encryption key with dynamically generated key. 
-		*17.0.1alpha* 17.0.1 alpha release
+		*18.0.1* initial release
 	</changelog>
 	<description>The API module allows administrators to configure and manage FreePBX remotely through automated. As an administrator you can use other languages to control your PBX systems.</description>
 	<more-info>https://sangomakb.atlassian.net/wiki/spaces/FP/pages/10289746/PBX+API</more-info>
 	<depends>
-		<module>pm2 ge 17.0.1</module>
+		<module>pm2 ge 18.0.1</module>
 	</depends>
 	<hooks>
 		<framework class="Chown" namespace="FreePBX\Console\Command">
@@ -84,7 +77,7 @@
 		</table>
 	</database>
 	<supported>
-		<version>17.0</version>
+		<version>18.0</version>
 	</supported>
 	<console>
 		<command>
