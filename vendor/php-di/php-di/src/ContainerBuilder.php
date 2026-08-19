@@ -13,6 +13,7 @@ use DI\Definition\Source\NoAutowiring;
 use DI\Definition\Source\ReflectionBasedAutowiring;
 use DI\Definition\Source\SourceCache;
 use DI\Definition\Source\SourceChain;
+use DI\Proxy\NativeProxyFactory;
 use DI\Proxy\ProxyFactory;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -133,7 +134,9 @@ class ContainerBuilder
             $source = new SourceCache($source, $this->sourceCacheNamespace);
         }
 
-        $proxyFactory = new ProxyFactory($this->proxyDirectory);
+        $proxyFactory = (\PHP_VERSION_ID >= 80400)
+            ? new NativeProxyFactory()
+            : new ProxyFactory($this->proxyDirectory);
 
         $this->locked = true;
 
@@ -182,7 +185,7 @@ class ContainerBuilder
     public function enableCompilation(
         string $directory,
         string $containerClass = 'CompiledContainer',
-        string $containerParentClass = CompiledContainer::class
+        string $containerParentClass = CompiledContainer::class,
     ) : self {
         $this->ensureNotLocked();
 
@@ -238,7 +241,7 @@ class ContainerBuilder
      * @return $this
      * @throws InvalidArgumentException when writeToFile is set to true and the proxy directory is null
      */
-    public function writeProxiesToFile(bool $writeToFile, string $proxyDirectory = null) : self
+    public function writeProxiesToFile(bool $writeToFile, ?string $proxyDirectory = null) : self
     {
         $this->ensureNotLocked();
 

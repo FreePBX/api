@@ -15,9 +15,15 @@ namespace League\Uri\Contracts;
 
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
+/**
+ * @deprecated since version 7.6.0
+ */
 interface UriAccess
 {
     public function getUri(): UriInterface|Psr7UriInterface;
 
+    /**
+     * Returns the RFC3986 string representation of the complete URI.
+     */
     public function getUriString(): string;
 }

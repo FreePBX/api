@@ -13,8 +13,11 @@ use DirectoryIterator;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Psr\Container\ContainerInterface;
-#[\AllowDynamicProperties]
 class Api {
+	private $freepbx;
+	private $publicKey;
+	private $classes = [];
+
 	public function __construct($freepbx, $publicKey) {
 		$this->freepbx = $freepbx;
 		$this->publicKey = $publicKey;

@@ -13,9 +13,16 @@ use FreePBX\modules\Api\Oauth\Oauth;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-#[\AllowDynamicProperties]
 class Api extends \FreePBX_Helpers implements \BMO {
 	private string $oauthKey = 'api_oauth';
+	public $freepbx;
+	private $gql = null;
+	private $rest = null;
+	private $refreshTokens = null;
+	private $accessTokens = null;
+	private $applications = null;
+	private $authCodes = null;
+	private $transactionStatus = null;
 	private $flattenedScopes = [];
 	private static $gqlApi = false;
 
@@ -34,31 +41,37 @@ class Api extends \FreePBX_Helpers implements \BMO {
 	public function __get($var) {
 		switch ($var) {
 			case "gql":
-				$location = $this->freepbx->PKCS->getKeysLocation();
-				$this->gql = new Gql\Api($this->freepbx, $location . '/' . $this->oauthKey . '_public.key');
+				if ($this->gql === null) {
+					$location = $this->freepbx->PKCS->getKeysLocation();
+					$this->gql = new Gql\Api($this->freepbx, $location . '/' . $this->oauthKey . '_public.key');
+				}
 				return $this->gql;
-				break;
 			case "rest":
-				$location = $this->freepbx->PKCS->getKeysLocation();
-				$this->rest = new Rest\Api($this->freepbx, $location . '/' . $this->oauthKey . '_public.key');
+				if ($this->rest === null) {
+					$location = $this->freepbx->PKCS->getKeysLocation();
+					$this->rest = new Rest\Api($this->freepbx, $location . '/' . $this->oauthKey . '_public.key');
+				}
 				return $this->rest;
-				break;
 			case "refreshTokens":
-				$this->refreshTokens = new Api\Includes\RefreshTokens($this->freepbx->Database);
+				if ($this->refreshTokens === null) {
+					$this->refreshTokens = new Api\Includes\RefreshTokens($this->freepbx->Database);
+				}
 				return $this->refreshTokens;
-				break;
 			case "accessTokens":
-				$this->accessTokens = new Api\Includes\AccessTokens($this->freepbx->Database);
+				if ($this->accessTokens === null) {
+					$this->accessTokens = new Api\Includes\AccessTokens($this->freepbx->Database);
+				}
 				return $this->accessTokens;
-				break;
 			case "applications":
-				$this->applications = new Api\Includes\Applications($this->freepbx->Database);
+				if ($this->applications === null) {
+					$this->applications = new Api\Includes\Applications($this->freepbx->Database);
+				}
 				return $this->applications;
-				break;
 			case "authCodes":
-				$this->authCodes = new Api\Includes\AuthCodes($this->freepbx->Database);
+				if ($this->authCodes === null) {
+					$this->authCodes = new Api\Includes\AuthCodes($this->freepbx->Database);
+				}
 				return $this->authCodes;
-				break;
 		}
 	}
 
@@ -220,32 +233,32 @@ class Api extends \FreePBX_Helpers implements \BMO {
 				return $scopes;
 				break;
 			case "remove_access_token":
-				$this->accessTokens->remove($_POST['id']);
+				$this->__get('accessTokens')->remove($_POST['id']);
 				return [ "status" => true ];
 				break;
 			case "remove_refresh_token":
-				$this->refreshTokens->remove($_POST['id']);
+				$this->__get('refreshTokens')->remove($_POST['id']);
 				return [ "status" => true ];
 				break;
 			case "getTokens":
-				return $this->accessTokens->getAll();
+				return $this->__get('accessTokens')->getAll();
 				break;
 			case "getRefreshTokens":
-				return $this->refreshTokens->getAll();
+				return $this->__get('refreshTokens')->getAll();
 				break;
 			case "getApplications":
-				return $this->applications->getAll();
+				return $this->__get('applications')->getAll();
 				break;
 			case "add_application":
-				$res = $this->applications->add((!empty($_POST['user']) ? $_POST['user'] : null), $_POST['type'], $_POST['name'], $_POST['description'], $_POST['website'], $_POST['redirect'], $_POST['allowed_scopes']);
+				$res = $this->__get('applications')->add((!empty($_POST['user']) ? $_POST['user'] : null), $_POST['type'], $_POST['name'], $_POST['description'], $_POST['website'], $_POST['redirect'], $_POST['allowed_scopes']);
 				return [ "status" => true, "type" => $res['type'], "owner" => $res['owner'], "client_id" => $res['client_id'], "client_secret" => $res['client_secret'], "id" => $res['id'], "allowed_scopes" => $res['allowed_scopes'] ];
 				break;
 			case "remove_application":
-				$this->applications->remove((!empty($_POST['user']) ? $_POST['user'] : null), $_POST['client_id']);
+				$this->__get('applications')->remove((!empty($_POST['user']) ? $_POST['user'] : null), $_POST['client_id']);
 				return [ "status" => true ];
 				break;
 			case "regenerate_application":
-				$res = $this->applications->regenerate((!empty($_POST['user']) ? $_POST['user'] : null), $_POST['client_id']);
+				$res = $this->__get('applications')->regenerate((!empty($_POST['user']) ? $_POST['user'] : null), $_POST['client_id']);
 				return [ "status" => true, "client_id" => $res['client_id'], "client_secret" => $res['client_secret'], "id" => $res['id'], "name" => $res['name'], "description" => $res['description'] ];
 				break;
 		}
@@ -253,8 +266,8 @@ class Api extends \FreePBX_Helpers implements \BMO {
 
 	public function getScopes() {
 		$validScopes = [
-			"rest" => $this->rest->getValidScopes(),
-			"gql"  => $this->gql->getValidScopes()
+			"rest" => $this->__get('rest')->getValidScopes(),
+			"gql"  => $this->__get('gql')->getValidScopes()
 		];
 
 		return $validScopes;
@@ -402,11 +415,11 @@ class Api extends \FreePBX_Helpers implements \BMO {
 	public function ajaxCustomHandler() {
 		switch ($_REQUEST['command']) {
 			case "rest":
-				$this->rest->execute();
+				$this->__get('rest')->execute();
 				return true;
 				break;
 			case "gql":
-				$this->gql->execute();
+				$this->__get('gql')->execute();
 				return true;
 				break;
 			case "authorize":
@@ -428,7 +441,7 @@ class Api extends \FreePBX_Helpers implements \BMO {
 						[
 							"title"   => "API",
 							"rawname" => "api",
-							"content" => load_view(__DIR__ . '/views/userman_config.php', [ "applications" => $this->applications->getAllByOwnerId($_REQUEST['user']) ])
+							"content" => load_view(__DIR__ . '/views/userman_config.php', [ "applications" => $this->__get('applications')->getAllByOwnerId($_REQUEST['user']) ])
 						]
 					];
 					break;
@@ -456,8 +469,8 @@ class Api extends \FreePBX_Helpers implements \BMO {
 
 	public function getDeveloperAccessToken($scope, $host = 'http://localhost') {
 		$devApplication = $this->getConfig("devApplication");
-		if (empty($devApplication['clientId']) || empty($devApplication['clientSecret']) || empty($this->applications->getByClientId($devApplication['clientId']))) {
-			$application = $this->applications->add(null, 'client_credentials', 'GQL Developer Explorer', 'Used for the GraphQL Documentation and GraphQL Explorer tabs');
+		if (empty($devApplication['clientId']) || empty($devApplication['clientSecret']) || empty($this->__get('applications')->getByClientId($devApplication['clientId']))) {
+			$application = $this->__get('applications')->add(null, 'client_credentials', 'GQL Developer Explorer', 'Used for the GraphQL Documentation and GraphQL Explorer tabs');
 
 			$devApplication = [
 				"clientId"     => $application['client_id'],
@@ -466,7 +479,7 @@ class Api extends \FreePBX_Helpers implements \BMO {
 		}
 
 		//TODO: need to figure out a way to validate tokens
-		if (empty($devApplication['accessToken']) || empty($this->accessTokens->get($devApplication['accessToken']['access_token'])) || time() > $devApplication['accessToken']['expires'] || $scope !== $devApplication['accessToken']['scope']) {
+		if (empty($devApplication['accessToken']) || empty($this->__get('accessTokens')->get($devApplication['accessToken']['access_token'])) || time() > $devApplication['accessToken']['expires'] || $scope !== $devApplication['accessToken']['scope']) {
 			$provider = new \League\OAuth2\Client\Provider\GenericProvider([
 				'clientId'                => $devApplication['clientId'],
 				// The client ID assigned to you by the provider
@@ -493,6 +506,15 @@ class Api extends \FreePBX_Helpers implements \BMO {
 	}
 
 	public function generateDocumentation($scope, $host = 'http://localhost') {
+		// node_modules ships with the packaged module but is absent in a source checkout,
+		// where the raw MODULE_NOT_FOUND from node gives no hint about how to fix it.
+		if (!is_dir(__DIR__ . '/node/node_modules/@2fd/graphdoc')) {
+			throw new \Exception(sprintf(
+				_("The GraphQL documentation generator is not installed. Run 'npm install' in %s and retry."),
+				__DIR__ . '/node'
+			));
+		}
+
 		$accessToken = $this->getDeveloperAccessToken($scope, $host);
 		if (!preg_match('/^[a-zA-Z0-9\-_.]+$/', (string) $accessToken)) {
 			return false;

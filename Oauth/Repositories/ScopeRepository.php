@@ -9,25 +9,27 @@ use FreePBX\modules\Api\Oauth\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 
 class ScopeRepository implements ScopeRepositoryInterface {
-	public $api=null;
+	public $api = null;
 	public function __construct($api) {
 		$this->api = $api;
 	}
-	public function getScopeEntityByIdentifier($scopeIdentifier) {
-		if ($this->api->isScopeValid($scopeIdentifier) === false) {
-			return;
+
+	public function getScopeEntityByIdentifier(string $identifier): ?ScopeEntityInterface {
+		if ($this->api->isScopeValid($identifier) === false) {
+			return null;
 		}
 		$scope = new ScopeEntity();
-		$scope->setIdentifier($scopeIdentifier);
+		$scope->setIdentifier($identifier);
 		return $scope;
 	}
 
 	public function finalizeScopes(
 		array $scopes,
-		$grantType,
+		string $grantType,
 		ClientEntityInterface $clientEntity,
-		$userIdentifier = null
-	) {
+		string|null $userIdentifier = null,
+		?string $authCodeId = null
+	): array {
 		$application = $this->api->applications->getByClientId($clientEntity->getIdentifier());
 
 		if (empty($application)) {
@@ -46,7 +48,7 @@ class ScopeRepository implements ScopeRepositoryInterface {
 
 		// If no scopes are defined, then use the scopes from the application
 		if ($scopes === []) {
-			foreach($applicationScopes as $scopeIdentifier) {
+			foreach ($applicationScopes as $scopeIdentifier) {
 				$entity = $this->getScopeEntityByIdentifier($scopeIdentifier);
 				if ($entity instanceof ScopeEntityInterface) {
 					$scopes[] = $entity;
@@ -55,11 +57,11 @@ class ScopeRepository implements ScopeRepositoryInterface {
 			return $scopes;
 		}
 
-		foreach($scopes as $scope) {
+		foreach ($scopes as $scope) {
 			if (!$scope instanceof ScopeEntityInterface) {
 				throw OAuthServerException::invalidScope('');
 			}
-			if(!$this->checkScope($scope->getIdentifier(),$applicationScopes)) {
+			if (!$this->checkScope($scope->getIdentifier(), $applicationScopes)) {
 				throw OAuthServerException::invalidScope($scope->getIdentifier());
 			}
 		}
@@ -70,7 +72,7 @@ class ScopeRepository implements ScopeRepositoryInterface {
 	private function checkScope(string $scope, array $applicationScopes): bool {
 		$parts = explode(":", $scope);
 		$scopeString = '';
-		foreach($parts as $part) {
+		foreach ($parts as $part) {
 			$scopeString = $scopeString === '' ? $part : $scopeString . ':' . $part;
 			if (in_array($scopeString, $applicationScopes, true)) {
 				return true;

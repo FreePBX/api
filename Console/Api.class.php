@@ -17,15 +17,18 @@ use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-#[\AllowDynamicProperties]
 class Api extends Command {
-	protected function configure() {
+	private $input;
+	private $freepbx;
+	private $db;
+
+	protected function configure(): void {
 		$this->setName('api')
 			->setDescription(_('API'))
 			->setDefinition([ new InputOption('type', null, InputOption::VALUE_REQUIRED, _('Generate GQL from a database table'), 'gql'), new InputOption('generatefromtable', null, InputOption::VALUE_REQUIRED, _('Generate GQL from a database table')), new InputOption('module', null, InputOption::VALUE_REQUIRED, _('Module to place the API file if using generatefromtable')), new InputOption('generatefrommodule', null, InputOption::VALUE_REQUIRED, _('Generate GQL from a modules xml database definition')), new InputOption('path', null, InputOption::VALUE_REQUIRED, _('Module location path'), \FreePBX::Config()->get('AMPWEBROOT') . '/admin/modules'), new InputArgument('args', InputArgument::IS_ARRAY, _('Execute Gql command'), null) ]);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 
 		$this->input = $input;
 
@@ -33,7 +36,7 @@ class Api extends Command {
 		if (!empty($args) && $args[0] == 'gql') {
 			/* API module normal console command handling */
 			$this->handleArgs($args, $output);
-			return;
+			return 0;
 		}
 		if (!empty($args) && $args[0] == 'doreload') {
 			$res   = do_reload();
@@ -51,11 +54,11 @@ class Api extends Command {
 			else {
 				$output->writeln($res['status']);
 			}
-			return;
+			return 0;
 		}
 		if ($input->getOption('type') !== "gql") {
 			$output->writeln(_("Only GQL type is supported at this time"));
-			return;
+			return 0;
 		}
 		if ($input->getOption('generatefromtable') && $input->getOption('module')) {
 			$tablename = $input->getOption('generatefromtable');
@@ -64,11 +67,11 @@ class Api extends Command {
 			$dir = $input->getOption('path') . '/' . basename((string) $module);
 			if (!file_exists($dir)) {
 				$output->writeln("<error>Module directory $dir does not exist!</error>");
-				return;
+				return 0;
 			}
 
 			$this->generateGQLFile($module, $tablename, $input, $output);
-			return;
+			return 0;
 		}
 		if ($input->getOption('generatefrommodule')) {
 			$module = $input->getOption('generatefrommodule');
@@ -76,7 +79,7 @@ class Api extends Command {
 			$dir = $input->getOption('path') . '/' . basename((string) $module);
 			if (!file_exists($dir)) {
 				$output->writeln("<error>Module directory $dir does not exist!</error>");
-				return;
+				return 0;
 			}
 
 			$xml = simplexml_load_file($dir . '/module.xml');
@@ -99,9 +102,10 @@ class Api extends Command {
 			else {
 				$output->writeln("No Database definitions in module.xml");
 			}
-			return;
+			return 0;
 		}
 		$this->outputHelp($input, $output);
+		return 0;
 	}
 
 	private function handleArgs($args, $output) {

@@ -12,8 +12,11 @@ use GuzzleHttp\Psr7\Stream;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Container\ContainerInterface;
 
-#[\AllowDynamicProperties]
 class Oauth {
+	private $freepbx;
+	private $api;
+	private $privateKey;
+
 	public function __construct($api, $privateKey) {
 		$this->freepbx = $api->freepbx;
 		$this->api = $api;

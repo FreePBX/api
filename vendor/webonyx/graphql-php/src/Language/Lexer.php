@@ -34,6 +34,18 @@ class Lexer
     private const TOKEN_PIPE = 124;
     private const TOKEN_BRACE_R = 125;
 
+    /**
+     * Bytes that must be individually inspected while scanning a string body:
+     * the closing quote ("), the escape character (\), and all C0 control
+     * characters (0x00-0x1F) except TAB (0x09), which is a legal, unescaped
+     * SourceCharacter per the GraphQL spec and is scanned through like any
+     * other ordinary character.
+     */
+    private const STRING_STOP_BYTES = "\"\\\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f";
+
+    /** Ignored single-byte characters that never start or end a line, so runs of them can be skipped in bulk. */
+    private const HORIZONTAL_WHITESPACE_BYTES = "\t ,";
+
     public Source $source;
 
     /** @phpstan-var ParserOptions */
@@ -60,7 +72,7 @@ class Lexer
     /** @phpstan-param ParserOptions $options */
     public function __construct(Source $source, array $options = [])
     {
-        $startOfFileToken = new Token(Token::SOF, 0, 0, 0, 0, null);
+        $startOfFileToken = new Token(Token::SOF, 0, 0, 0, 0);
 
         $this->source = $source;
         $this->options = $options;
@@ -244,11 +256,7 @@ class Lexer
                     ->readString($line, $col, $prev);
         }
 
-        throw new SyntaxError(
-            $this->source,
-            $position,
-            $this->unexpectedCharacterMessage($code)
-        );
+        throw new SyntaxError($this->source, $position, $this->unexpectedCharacterMessage($code));
     }
 
     /** @throws \JsonException */
@@ -273,21 +281,11 @@ class Lexer
      */
     private function readName(int $line, int $col, Token $prev): Token
     {
-        $value = '';
         $start = $this->position;
-        [$char, $code] = $this->readChar();
-
-        while (
-            $code !== null && (
-                $code === 95 // _
-                || ($code >= 48 && $code <= 57) // 0-9
-                || ($code >= 65 && $code <= 90) // A-Z
-                || ($code >= 97 && $code <= 122) // a-z
-            )
-        ) {
-            $value .= $char;
-            [$char, $code] = $this->moveStringCursor(1, 1)->readChar();
-        }
+        $body = $this->source->body;
+        $length = strspn($body, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_', $this->byteStreamPosition);
+        $value = substr($body, $this->byteStreamPosition, $length);
+        $this->moveStringCursor($length, $length);
 
         return new Token(
             Token::NAME,
@@ -329,11 +327,7 @@ class Lexer
             [$char, $code] = $this->moveStringCursor(1, 1)->readChar();
 
             if ($code >= 48 && $code <= 57) {
-                throw new SyntaxError(
-                    $this->source,
-                    $this->position,
-                    'Invalid number, unexpected digit after 0: ' . Utils::printCharCode($code)
-                );
+                throw new SyntaxError($this->source, $this->position, 'Invalid number, unexpected digit after 0: ' . Utils::printCharCode($code));
             }
         } else {
             $value .= $this->readDigits();
@@ -398,11 +392,7 @@ class Lexer
             $code = null;
         }
 
-        throw new SyntaxError(
-            $this->source,
-            $this->position,
-            'Invalid number, expected digit but got: ' . Utils::printCharCode($code)
-        );
+        throw new SyntaxError($this->source, $this->position, 'Invalid number, expected digit but got: ' . Utils::printCharCode($code));
     }
 
     /**
@@ -413,21 +403,43 @@ class Lexer
     {
         $start = $this->position;
 
-        // Skip leading quote and read first string char:
-        [$char, $code, $bytes] = $this->moveStringCursor(1, 1)
-            ->readChar();
+        // Skip leading quote
+        $this->moveStringCursor(1, 1);
 
-        $chunk = '';
+        // Bulk-scan runs of bytes that need no special handling via strcspn()
+        // (a single native call) instead of decoding/validating one UTF-8
+        // character at a time.
+        //
+        // The stop-byte set includes ASCII control characters (0x00-0x1F),
+        // not just backslash/quote/line-terminators, because
+        // assertValidStringCharacterCode() must still reject most of them.
+        // See self::STRING_STOP_BYTES for details on the excluded TAB (0x09).
+
+        $body = $this->source->body;
+        $bodyLength = strlen($body);
         $value = '';
 
-        while (
-            $code !== null
-            && $code !== 10 && $code !== 13 // not LineTerminator
-        ) {
-            if ($code === 34) { // Closing Quote (")
-                $value .= $chunk;
+        while (true) {
+            $byteStart = $this->byteStreamPosition;
+            $runLength = strcspn($body, self::STRING_STOP_BYTES, $byteStart);
 
-                // Skip quote
+            if ($runLength > 0) {
+                $chunk = substr($body, $byteStart, $runLength);
+                $value .= $chunk;
+                // $this->position counts decoded characters, not bytes: use
+                // mb_strlen() to get the codepoint count for multi-byte UTF-8 content.
+                $this->position += mb_strlen($chunk, 'UTF-8');
+                $this->byteStreamPosition = $byteStart + $runLength;
+            }
+
+            $bytePos = $this->byteStreamPosition;
+            if ($bytePos >= $bodyLength) {
+                break; // EOF mid-string
+            }
+
+            $code = ord($body[$bytePos]);
+
+            if ($code === 34) { // Closing Quote (")
                 $this->moveStringCursor(1, 1);
 
                 return new Token(
@@ -441,98 +453,82 @@ class Lexer
                 );
             }
 
-            $this->assertValidStringCharacterCode($code, $this->position);
-            $this->moveStringCursor(1, $bytes);
-
-            if ($code === 92) { // \
-                $value .= $chunk;
-                [, $code] = $this->readChar(true);
-
-                switch ($code) {
-                    case 34:
-                        $value .= '"';
-                        break;
-                    case 47:
-                        $value .= '/';
-                        break;
-                    case 92:
-                        $value .= '\\';
-                        break;
-                    case 98:
-                        $value .= \chr(8); // \b (backspace)
-                        break;
-                    case 102:
-                        $value .= "\f";
-                        break;
-                    case 110:
-                        $value .= "\n";
-                        break;
-                    case 114:
-                        $value .= "\r";
-                        break;
-                    case 116:
-                        $value .= "\t";
-                        break;
-                    case 117:
-                        $position = $this->position;
-                        [$hex] = $this->readChars(4);
-                        if (\preg_match('/[0-9a-fA-F]{4}/', $hex) !== 1) {
-                            throw new SyntaxError(
-                                $this->source,
-                                $position - 1,
-                                "Invalid character escape sequence: \\u{$hex}"
-                            );
-                        }
-
-                        $code = \hexdec($hex);
-                        assert(is_int($code), 'Since only a single char is read');
-
-                        // UTF-16 surrogate pair detection and handling.
-                        $highOrderByte = $code >> 8;
-                        if ($highOrderByte >= 0xD8 && $highOrderByte <= 0xDF) {
-                            [$utf16Continuation] = $this->readChars(6);
-                            if (\preg_match('/^\\\u[0-9a-fA-F]{4}$/', $utf16Continuation) !== 1) {
-                                throw new SyntaxError(
-                                    $this->source,
-                                    $this->position - 5,
-                                    'Invalid UTF-16 trailing surrogate: ' . $utf16Continuation
-                                );
-                            }
-
-                            $surrogatePairHex = $hex . \substr($utf16Continuation, 2, 4);
-                            $value .= \mb_convert_encoding(\pack('H*', $surrogatePairHex), 'UTF-8', 'UTF-16');
-                            break;
-                        }
-
-                        $this->assertValidStringCharacterCode($code, $position - 2);
-
-                        $value .= Utils::chr($code);
-                        break;
-                        // null means EOF, will delegate to general handling of unterminated strings
-                    case null:
-                        continue 2;
-                    default:
-                        $chr = Utils::chr($code);
-                        throw new SyntaxError(
-                            $this->source,
-                            $this->position - 1,
-                            "Invalid character escape sequence: \\{$chr}"
-                        );
-                }
-
-                $chunk = '';
-            } else {
-                $chunk .= $char;
+            if ($code === 10 || $code === 13) { // LineTerminator
+                break;
             }
 
-            [$char, $code, $bytes] = $this->readChar();
+            // Any other control character reaching here must be invalid
+            // (TAB, the only legal one, is excluded from the stop-byte set).
+            $this->assertValidStringCharacterCode($code, $this->position);
+
+            // $code === 92 (\), i.e. an escape sequence.
+            $this->moveStringCursor(1, 1);
+            [, $code] = $this->readChar(true);
+
+            // null means EOF; checked separately since switch is not a strict comparison.
+            if ($code === null) {
+                break;
+            }
+
+            switch ($code) {
+                case 34:
+                    $value .= '"';
+                    break;
+                case 47:
+                    $value .= '/';
+                    break;
+                case 92:
+                    $value .= '\\';
+                    break;
+                case 98:
+                    $value .= chr(8); // \b (backspace)
+                    break;
+                case 102:
+                    $value .= "\f";
+                    break;
+                case 110:
+                    $value .= "\n";
+                    break;
+                case 114:
+                    $value .= "\r";
+                    break;
+                case 116:
+                    $value .= "\t";
+                    break;
+                case 117:
+                    $position = $this->position;
+                    [$hex] = $this->readChars(4);
+                    if (preg_match('/[0-9a-fA-F]{4}/', $hex) !== 1) {
+                        throw new SyntaxError($this->source, $position - 1, "Invalid character escape sequence: \\u{$hex}");
+                    }
+
+                    $code = hexdec($hex);
+                    assert(is_int($code), 'Since only a single char is read');
+
+                    // UTF-16 surrogate pair detection and handling.
+                    $highOrderByte = $code >> 8;
+                    if ($highOrderByte >= 0xD8 && $highOrderByte <= 0xDF) {
+                        [$utf16Continuation] = $this->readChars(6);
+                        if (preg_match('/^\\\u[0-9a-fA-F]{4}$/', $utf16Continuation) !== 1) {
+                            throw new SyntaxError($this->source, $this->position - 5, 'Invalid UTF-16 trailing surrogate: ' . $utf16Continuation);
+                        }
+
+                        $surrogatePairHex = $hex . substr($utf16Continuation, 2, 4);
+                        $value .= mb_convert_encoding(pack('H*', $surrogatePairHex), 'UTF-8', 'UTF-16');
+                        break;
+                    }
+
+                    $this->assertValidStringCharacterCode($code, $position - 2);
+
+                    $value .= Utils::chr($code);
+                    break;
+                default:
+                    $chr = Utils::chr($code);
+                    throw new SyntaxError($this->source, $this->position - 1, "Invalid character escape sequence: \\{$chr}");
+            }
         }
 
-        throw new SyntaxError(
-            $this->source,
-            $this->position,
-            'Unterminated string.'
-        );
+        throw new SyntaxError($this->source, $this->position, 'Unterminated string.');
     }
 
     /**
@@ -598,18 +594,21 @@ class Lexer
                 $value .= $chunk . '"""';
                 $chunk = '';
             } else {
+                // move cursor back to before the first quote
                 $this->moveStringCursor(-2, -2);
+
+                if ($code === 10) { // new line
+                    ++$this->line;
+                    $this->lineStart = $this->position;
+                }
+
                 $chunk .= $char;
             }
 
             [$char, $code, $bytes] = $this->readChar();
         }
 
-        throw new SyntaxError(
-            $this->source,
-            $this->position,
-            'Unterminated string.'
-        );
+        throw new SyntaxError($this->source, $this->position, 'Unterminated string.');
     }
 
     /**
@@ -644,12 +643,20 @@ class Lexer
      */
     private function positionAfterWhitespace(): void
     {
+        $body = $this->source->body;
+
         while ($this->position < $this->source->length) {
+            // Tab, space, and comma runs carry no line/column bookkeeping, so
+            // an entire run can be consumed in one native scan instead of one
+            // readChar()/moveStringCursor() call per character.
+            $run = strspn($body, self::HORIZONTAL_WHITESPACE_BYTES, $this->byteStreamPosition);
+            if ($run > 0) {
+                $this->moveStringCursor($run, $run);
+            }
+
             [, $code, $bytes] = $this->readChar();
 
-            // Skip whitespace
-            // tab | space | comma | BOM
-            if ($code === 9 || $code === 32 || $code === 44 || $code === 0xFEFF) {
+            if ($code === 0xFEFF) { // BOM
                 $this->moveStringCursor(1, $bytes);
             } elseif ($code === 10) { // new line
                 $this->moveStringCursor(1, $bytes);
@@ -706,7 +713,7 @@ class Lexer
      *
      * @return array{string, int|null, int}
      */
-    private function readChar(bool $advance = false, int $byteStreamPosition = null): array
+    private function readChar(bool $advance = false, ?int $byteStreamPosition = null): array
     {
         if ($byteStreamPosition === null) {
             $byteStreamPosition = $this->byteStreamPosition;
@@ -718,7 +725,7 @@ class Lexer
         $positionOffset = 0;
 
         if (isset($this->source->body[$byteStreamPosition])) {
-            $ord = \ord($this->source->body[$byteStreamPosition]);
+            $ord = ord($this->source->body[$byteStreamPosition]);
 
             if ($ord < 128) {
                 $bytes = 1;
