@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri\IPv4;
 
+use BackedEnum;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\FeatureDetection;
 use Stringable;
@@ -21,10 +22,16 @@ use function array_pop;
 use function count;
 use function explode;
 use function extension_loaded;
+use function hexdec;
+use function long2ip;
 use function ltrim;
 use function preg_match;
 use function str_ends_with;
 use function substr;
+
+use const FILTER_FLAG_IPV4;
+use const FILTER_FLAG_IPV6;
+use const FILTER_VALIDATE_IP;
 
 final class Converter
 {
@@ -42,6 +49,9 @@ final class Converter
         '/^0(?<number>[0-7]*)$/' => 8,
         '/^(?<number>\d+)$/' => 10,
     ];
+
+    private const IPV6_6TO4_PREFIX = '2002:';
+    private const IPV4_MAPPED_PREFIX = '::ffff:';
 
     private readonly mixed $maxIPv4Number;
 
@@ -93,12 +103,71 @@ final class Converter
         };
     }
 
-    public function isIpv4(Stringable|string|null $host): bool
+    public function isIpv4(BackedEnum|Stringable|string|null $host): bool
     {
-        return null !== $this->toDecimal($host);
+        if ($host instanceof BackedEnum) {
+            $host = (string) $host->value;
+        }
+
+        if (null === $host) {
+            return false;
+        }
+
+        if (null !== $this->toDecimal($host)) {
+            return true;
+        }
+
+        $host = (string) $host;
+        if (false === filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            return false;
+        }
+
+        $ipAddress = strtolower((string) inet_ntop((string) inet_pton($host)));
+        if (str_starts_with($ipAddress, self::IPV4_MAPPED_PREFIX)) {
+            return false !== filter_var(substr($ipAddress, 7), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+        }
+
+        if (!str_starts_with($ipAddress, self::IPV6_6TO4_PREFIX)) {
+            return false;
+        }
+
+        $hexParts = explode(':', substr($ipAddress, 5, 9));
+        if (count($hexParts) < 2) {
+            return false;
+        }
+
+        $ipAddress = long2ip((int) hexdec($hexParts[0]) * 65536 + (int) hexdec($hexParts[1]));
+
+        return '' !== ''.$ipAddress;
     }
 
-    public function toOctal(Stringable|string|null $host): ?string
+    public function toIPv6Using6to4(BackedEnum|Stringable|string|null $host): ?string
+    {
+        $host = $this->toDecimal($host);
+        if (null === $host) {
+            return null;
+        }
+
+        /** @var array<string> $parts */
+        $parts = array_map(
+            fn (string $part): string => sprintf('%02x', $part),
+            explode('.', $host)
+        );
+
+        return '['.self::IPV6_6TO4_PREFIX.$parts[0].$parts[1].':'.$parts[2].$parts[3].'::]';
+    }
+
+    public function toIPv6UsingMapping(BackedEnum|Stringable|string|null $host): ?string
+    {
+        $host = $this->toDecimal($host);
+        if (null === $host) {
+            return null;
+        }
+
+        return '['.self::IPV4_MAPPED_PREFIX.$host.']';
+    }
+
+    public function toOctal(BackedEnum|Stringable|string|null $host): ?string
     {
         $host = $this->toDecimal($host);
 
@@ -111,7 +180,7 @@ final class Converter
         };
     }
 
-    public function toHexadecimal(Stringable|string|null $host): ?string
+    public function toHexadecimal(BackedEnum|Stringable|string|null $host): ?string
     {
         $host = $this->toDecimal($host);
 
@@ -130,9 +199,36 @@ final class Converter
      *
      * @see https://url.spec.whatwg.org/#concept-ipv4-parser
      */
-    public function toDecimal(Stringable|string|null $host): ?string
+    public function toDecimal(BackedEnum|Stringable|string|null $host): ?string
     {
+        if ($host instanceof BackedEnum) {
+            $host = $host->value;
+        }
+
         $host = (string) $host;
+        if (str_starts_with($host, '[') && str_ends_with($host, ']')) {
+            $host = substr($host, 1, -1);
+            if (false === filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                return null;
+            }
+
+            $ipAddress = strtolower((string) inet_ntop((string) inet_pton($host)));
+            if (str_starts_with($ipAddress, self::IPV4_MAPPED_PREFIX)) {
+                return substr($ipAddress, 7);
+            }
+
+            if (!str_starts_with($ipAddress, self::IPV6_6TO4_PREFIX)) {
+                return null;
+            }
+
+            $hexParts = explode(':', substr($ipAddress, 5, 9));
+
+            return (string) match (true) {
+                count($hexParts) < 2 => null,
+                default => long2ip((int) hexdec($hexParts[0]) * 65536 + (int) hexdec($hexParts[1])),
+            };
+        }
+
         if (1 !== preg_match(self::REGEXP_IPV4_HOST, $host)) {
             return null;
         }

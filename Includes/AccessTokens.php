@@ -4,8 +4,9 @@ namespace FreePBX\modules\Api\Includes;
 
 use PDO;
 
-#[\AllowDynamicProperties]
 class AccessTokens {
+	private $database;
+
 	public function __construct($database) {
 		$this->database = $database;
 	}

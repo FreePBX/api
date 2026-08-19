@@ -2,14 +2,14 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="api-app-title"></h4>
 			</div>
 			<div class="modal-body">
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="api-app-info-heading">
 						<h4 class="panel-title">
-							<a role="button" data-toggle="collapse" href="#api-app-info" role="button" aria-expanded="false" aria-controls="api-app-info">
+							<a role="button" data-bs-toggle="collapse" href="#api-app-info" role="button" aria-expanded="false" aria-controls="api-app-info">
 								<?php echo _("Learn more about this API type")?>
 							</a>
 						</h4>
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close")?></button>
+				<button type="button" class="btn btn-default" data-bs-dismiss="modal"><?php echo _("Close")?></button>
 				<button type="button" class="btn btn-primary" id="api-save-app"><?php echo _("Add Application")?></button>
 			</div>
 		</div>
@@ -48,7 +48,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title"><?php echo _("Client Credentials")?></h4>
 			</div>
 			<div class="modal-body">
@@ -60,7 +60,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" id="api-application-regenerate"><?php echo _('Regenerate Credentials')?></button>
-				<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _('Close')?></button>
+				<button type="button" class="btn btn-default" data-bs-dismiss="modal"><?php echo _('Close')?></button>
 			</div>
 		</div>
 	</div>

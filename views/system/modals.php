@@ -2,14 +2,14 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="api-app-title"></h4>
 			</div>
 			<div class="modal-body">
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="api-app-info-heading">
 						<h4 class="panel-title">
-							<a class="collapsed" data-toggle="collapse" href="#api-app-info" role="button" aria-expanded="false" aria-controls="api-app-info">
+							<a class="collapsed" data-bs-toggle="collapse" href="#api-app-info" role="button" aria-expanded="false" aria-controls="api-app-info">
 								<?php echo _("Learn more about this API type")?>
 							</a>
 						</h4>
@@ -44,7 +44,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _("Close")?></button>
+				<button type="button" class="btn btn-default" data-bs-dismiss="modal"><?php echo _("Close")?></button>
 				<button type="button" class="btn btn-primary" id="api-save-app"><?php echo _("Add Application")?></button>
 			</div>
 		</div>
@@ -55,7 +55,7 @@
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title"><?php echo _("Client Credentials")?></h4>
 			</div>
 			<div class="modal-body">
@@ -145,7 +145,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" id="api-application-regenerate"><?php echo _('Regenerate Credentials')?></button>
-				<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _('Close')?></button>
+				<button type="button" class="btn btn-default" data-bs-dismiss="modal"><?php echo _('Close')?></button>
 				<input type="text" value="" id="copytmp">
 				<input type="hidden" id="restapi" value="<?php echo !empty($data_api["API"]["HTTP"]) ? $data_api["API"]["HTTP"] : ""; ?>">
 				<input type="hidden" id="sslrestapi" value="<?php echo !empty($data_api["API"]["HTTPS"]) ? $data_api["API"]["HTTPS"] : ""; ?>">
@@ -163,7 +163,7 @@
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel"><?php echo _("API URLs")?></h4>
 			</div>
 			<div class="modal-body">
@@ -213,7 +213,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
 				<input type="text" value="" id="copytmpum" style="color: white; border-color: white; font-size: 0px;">
 			</div>
 		</div>

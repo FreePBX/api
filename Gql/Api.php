@@ -16,15 +16,15 @@ use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use FreePBX\modules\Api\Oauth\Repositories\AccessTokenRepository;
 use League\OAuth2\Server\ResourceServer;
 
-use GraphQL\Error\Debug;
-
 use DirectoryIterator;
 
 use Slim\App;
 use Slim\Factory\AppFactory;
 
-#[\AllowDynamicProperties]
 class Api {
+	private $freepbx;
+	private $publicKey;
+	private $objectReferences;
 	private ?array $classes = null;
 	private bool $safeMode = false;
 	private array $restricted = [
