@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 08:30-0400\n"
+"POT-Creation-Date: 2026-10-06 06:09-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "(Copy your secret as you will not be able to retrieve it later)."
 msgstr ""
 
-#: Console/Api.class.php:24
+#: Console/Api.class.php:27
 #: api.i18n.php:10
 #: views/system/overview.php:6
 msgid "API"
@@ -75,8 +75,8 @@ msgstr ""
 msgid "Admin Ports"
 msgstr ""
 
-#: Api.class.php:301
-#: Api.class.php:316
+#: Api.class.php:314
+#: Api.class.php:329
 #, php-format
 msgid "All %s for %s"
 msgstr ""
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: Console/Api.class.php:25
+#: Console/Api.class.php:28
 msgid "Execute Gql command"
 msgstr ""
 
@@ -208,11 +208,11 @@ msgstr ""
 msgid "Generate Documentation"
 msgstr ""
 
-#: Console/Api.class.php:25
+#: Console/Api.class.php:28
 msgid "Generate GQL from a database table"
 msgstr ""
 
-#: Console/Api.class.php:25
+#: Console/Api.class.php:28
 msgid "Generate GQL from a modules xml database definition"
 msgstr ""
 
@@ -261,11 +261,11 @@ msgstr ""
 msgid "Module"
 msgstr ""
 
-#: Console/Api.class.php:25
+#: Console/Api.class.php:28
 msgid "Module location path"
 msgstr ""
 
-#: Console/Api.class.php:25
+#: Console/Api.class.php:28
 msgid "Module to place the API file if using generatefromtable"
 msgstr ""
 
@@ -276,7 +276,7 @@ msgstr ""
 msgid "Native app"
 msgstr ""
 
-#: Console/Api.class.php:57
+#: Console/Api.class.php:60
 msgid "Only GQL type is supported at this time"
 msgstr ""
 
@@ -309,13 +309,13 @@ msgstr ""
 msgid "Protocol Disabled"
 msgstr ""
 
-#: Api.class.php:291
+#: Api.class.php:304
 #, php-format
 msgid "Read/Write for %s"
 msgstr ""
 
-#: Api.class.php:270
-#: Api.class.php:277
+#: Api.class.php:283
+#: Api.class.php:290
 #, php-format
 msgid "Read/Write for all modules [%s]"
 msgstr ""
@@ -386,7 +386,7 @@ msgid ""
 "Google account"
 msgstr ""
 
-#: Api.class.php:136
+#: Api.class.php:149
 msgid "The API Key Regeneration Notification."
 msgstr ""
 
@@ -397,11 +397,18 @@ msgid ""
 "to control your PBX systems."
 msgstr ""
 
-#: Api.class.php:136
+#: Api.class.php:149
 msgid ""
 "The API private key has been regenerated due to a detected security risk "
 "involving encryption keys. Please ensure your API integration operates as "
 "expected and regenerate your tokens if necessary."
+msgstr ""
+
+#: Api.class.php:513
+#, php-format
+msgid ""
+"The GraphQL documentation generator is not installed. Run 'npm install' in "
+"%s and retry."
 msgstr ""
 
 #: views/system/modals.php:37
