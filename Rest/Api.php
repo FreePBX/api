@@ -54,9 +54,10 @@ class Api {
 		AppFactory::setContainer($container);
 		$app = AppFactory::create();
 		$app->addBodyParsingMiddleware();
-		$app->add(new ResourceServerMiddleware($server));
-		// Add scope validation middleware to prevent JWT tampering attacks
+		// Slim runs the last-added middleware first. Authenticate first so the
+		// token id exists, then replace JWT scopes and subject with the token row.
 		$app->add(new ScopeValidationMiddleware($accessTokenRepository));
+		$app->add(new ResourceServerMiddleware($server));
 		$container->set('setupRest', function (Container $container) {
 			return function($app) use ($container) {
 				$this->setupRest($app);
@@ -157,9 +158,10 @@ class Api {
 		);
 
 		$app = new App($config);
-		$app->add(new ResourceServerMiddleware($server));
-		// Add scope validation middleware to prevent JWT tampering attacks
+		// Slim runs the last-added middleware first. Authenticate first so the
+		// token id exists, then replace JWT scopes and subject with the token row.
 		$app->add(new ScopeValidationMiddleware($accessTokenRepository));
+		$app->add(new ResourceServerMiddleware($server));
 
 		$container = $app->getContainer();
 		$container['setupRest'] = $container->protect(fn($app) => $this->setupRest($app));
