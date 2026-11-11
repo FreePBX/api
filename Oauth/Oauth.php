@@ -191,8 +191,12 @@ class Oauth {
 				return $server;
 			}
 		);
-		$container->set('api', fn() => $this->freepbx);
-		$container->set('freepbx', fn() => $this->freepbx);
+		$container->set('api', $this->api);
+		$container->set('freepbx', [
+			'identity' => $ident,
+			'brand_image' => $image,
+			'flattenedScopes' => $flattenedScopes,
+		]);
 		AppFactory::setContainer($container);
 		$app = AppFactory::create();
 		$app->get('/authorize', function ($request, $response, $args) use ($app) {
@@ -235,7 +239,7 @@ class Oauth {
 						//"visualScopes" => $api->getVisualScopes(json_decode(json_encode($authRequest->getScopes(), JSON_THROW_ON_ERROR),true, 512, JSON_THROW_ON_ERROR))
 						"visualScopes" => $api->getVisualScopes(json_decode(json_encode($authRequest->getScopes()),true))
 					]));
-					return;
+					return $response;
 				}
 			} catch (OAuthServerException $exception) {
 
