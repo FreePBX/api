@@ -35,7 +35,7 @@
 					<p class="text-success"><strong><?php echo _("This application is requesting being able to:")?></strong></p>
 					<ul>
 					<?php foreach($visualScopes as $typeInfo) { ?>
-						<li><?php echo $typeInfo['description']?> <?php echo !empty($module['modData']['name']) ? '('.$module['modData']['name'].')' : ''?></li>
+						<li><?php echo $typeInfo['description']?> <?php echo !empty($typeInfo['modData']['name']) ? '('.$typeInfo['modData']['name'].')' : ''?></li>
 					<?php } ?>
 					</ul>
 				</div>
