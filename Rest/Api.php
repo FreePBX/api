@@ -3,8 +3,8 @@
 namespace FreePBX\modules\Api\Rest;
 
 use DI\Container;
-use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use FreePBX\modules\Api\Oauth\Repositories\AccessTokenRepository;
+use FreePBX\modules\Api\Oauth\Middleware\AuthenticationMiddleware;
 use FreePBX\modules\Api\Oauth\Middleware\ScopeValidationMiddleware;
 use League\OAuth2\Server\ResourceServer;
 
@@ -33,7 +33,7 @@ class Api {
 	}
 
 	public function execute() {
-		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'',(string) $_SERVER['QUERY_STRING']);
+		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.($_GET['route'] ?? ''),'',(string) ($_SERVER['QUERY_STRING'] ?? ''));
 		$_SERVER['REQUEST_URI'] = '/api/rest'.(!empty($_GET['route']) ? '/'.$_GET['route'] : '');
 
 		$config = [
@@ -54,7 +54,9 @@ class Api {
 		AppFactory::setContainer($container);
 		$app = AppFactory::create();
 		$app->addBodyParsingMiddleware();
-		$app->add(new ResourceServerMiddleware($server));
+		// Return 401 before the route runs. The vendored resource-server
+		// middleware calls the route on failure, which 500s when scopes are absent.
+		$app->add(new AuthenticationMiddleware($server));
 		// Add scope validation middleware to prevent JWT tampering attacks
 		$app->add(new ScopeValidationMiddleware($accessTokenRepository));
 		$container->set('setupRest', function (Container $container) {
@@ -157,7 +159,7 @@ class Api {
 		);
 
 		$app = new App($config);
-		$app->add(new ResourceServerMiddleware($server));
+		$app->add(new AuthenticationMiddleware($server));
 		// Add scope validation middleware to prevent JWT tampering attacks
 		$app->add(new ScopeValidationMiddleware($accessTokenRepository));
 

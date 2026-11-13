@@ -28,7 +28,12 @@ abstract class Base extends ApiBase {
 		$self = $this;
 		return function ($request, $handler) use ($self, $scope) {
 			$allowedScopes = $request->getAttribute('oauth_scopes');
-			$userId = $request->getAttribute('oauth_user_id');
+			if (!is_array($allowedScopes)) {
+				$response = new \GuzzleHttp\Psr7\Response(401);
+				$response = $response->withHeader('Content-Type', 'application/json');
+				$response->getBody()->write(json_encode(["status" => false, "message" => "unauthorized"]));
+				return $response;
+			}
 			$self->setAllowedScopes($allowedScopes);
 			if(!$self->checkScope($scope)) {
 					$response = new \GuzzleHttp\Psr7\Response();
