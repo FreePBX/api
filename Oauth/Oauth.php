@@ -46,7 +46,7 @@ class Oauth {
 	}
 	
 	public function access_token() {
-		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.$_GET['route'],'', $_SERVER['QUERY_STRING']);
+		$_SERVER['QUERY_STRING'] = str_replace('module=api&command='.$_GET['command'].'&route='.($_GET['route'] ?? ''),'', (string) ($_SERVER['QUERY_STRING'] ?? ''));
 		$_SERVER['REQUEST_URI'] = '/'.$_GET['command'].(!empty($_GET['route']) ? '/'.$_GET['route'] : '');
 
 		$config = [

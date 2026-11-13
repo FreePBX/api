@@ -14,7 +14,7 @@ abstract class ApiBase {
 	}
 
 	public function setAllowedScopes($scopes) {
-		$this->validScopes = $scopes;
+		$this->validScopes = is_array($scopes) ? $scopes : [];
 	}
 
 	protected function checkAllReadScope() {
@@ -34,6 +34,10 @@ abstract class ApiBase {
 	}
 
 	protected function checkScope($scope) {
+		if (!is_array($this->validScopes)) {
+			$this->validScopes = [];
+		}
+
 		//all of API type
 		if(in_array($this->type,$this->validScopes)) {
 			return true;

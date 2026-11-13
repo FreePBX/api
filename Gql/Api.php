@@ -12,8 +12,8 @@ use GraphQLRelay\Relay;
 
 use GraphQL\Server\StandardServer;
 
-use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use FreePBX\modules\Api\Oauth\Repositories\AccessTokenRepository;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 
 use GraphQL\Error\Debug;
@@ -63,7 +63,7 @@ class Api {
 	}
 
 	public function buildSlimApp() {
-		$_SERVER['QUERY_STRING'] = str_replace('module=api&command=' . $_GET['command'] . '&route=' . $_GET['route'], '', (string) $_SERVER['QUERY_STRING']);
+		$_SERVER['QUERY_STRING'] = str_replace('module=api&command=' . $_GET['command'] . '&route=' . ($_GET['route'] ?? ''), '', (string) ($_SERVER['QUERY_STRING'] ?? ''));
 		$_SERVER['REQUEST_URI']  = '/api/gql' . (!empty($_GET['route']) ? '/' . $_GET['route'] : '');
 
 		$config = [
@@ -88,7 +88,11 @@ class Api {
 		$self = $this;
 		$app->post('/api/gql', function ($request, $response, $args) use ($self, $server, $accessTokenRepository)
 		{
-			$request = $server->validateAuthenticatedRequest($request);
+			try {
+				$request = $server->validateAuthenticatedRequest($request);
+			} catch (OAuthServerException $exception) {
+				return $exception->generateHttpResponse(new \GuzzleHttp\Psr7\Response());
+			}
 
 			// Start by clearing out the scopes, if any.
 			$request = $request->withoutAttribute('oauth_scopes');
