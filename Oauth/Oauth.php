@@ -219,6 +219,11 @@ class Oauth {
 				if(!$authRequest->isAuthorizationApproved()) {
 					if(!empty($_REQUEST['username']) && !empty($_REQUEST['password'])) {
 						if($api->freepbx->Userman->checkCredentials($_REQUEST['username'], $_REQUEST['password'])) {
+							// Pending AuthRequest load calls session_destroy(), so the session may be inactive.
+							if (session_status() !== PHP_SESSION_ACTIVE) {
+								session_start();
+							}
+							session_regenerate_id(true);
 							$user = $api->freepbx->Userman->getUserByUsername($_REQUEST['username']);
 							// Once the user has logged in set the user on the AuthorizationRequest
 							$authRequest->setUser(new UserEntity($user));
