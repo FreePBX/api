@@ -17,15 +17,22 @@ if (isset($argv[1])) {
 
 try {
 	$output = array();
-	$cmd = "/usr/sbin/fwconsole $command 2>&1";
-	$result = exec($cmd, $output, $return);
-	if ($return == 0) {
-		$message = 'Command executed successfully';
-		$status = 'Executed';
-	} else {
-		$output = json_encode($output);
-		$message =  "Failed to execute command [ " . $cmd . " ] , command output = $output";
+	$allowed = array('r', 'restart', 'reload', 'chown');
+	if (!in_array($command, $allowed, true)) {
+		$cmd = '';
+		$message = 'Rejected command';
 		$status = 'Failed';
+	} else {
+		$cmd = '/usr/sbin/fwconsole ' . escapeshellarg($command) . ' 2>&1';
+		$result = exec($cmd, $output, $return);
+		if ($return == 0) {
+			$message = 'Command executed successfully';
+			$status = 'Executed';
+		} else {
+			$output = json_encode($output);
+			$message = "Failed to execute command [ " . $cmd . " ] , command output = $output";
+			$status = 'Failed';
+		}
 	}
 } catch (\Exception $e) {
 	$message = "Exception occurred in executing command " . $cmd .  " Error = " . $e->getMessage();
